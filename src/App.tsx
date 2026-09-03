@@ -31,40 +31,44 @@ import { AssetGroupManagerModal } from './components/AssetGroupManagerModal';
 import { NewTemplateModal } from './components/NewTemplateModal';
 import { NewAssetGroupModal } from './components/NewAssetGroupModal';
 import { ProjectManagerModal } from './components/ProjectManagerModal';
+import { fetchProjects, saveAllProjects, syncDeletedProjects } from './lib/projectsDB';
 
 const STORAGE_PROJECTS_KEY = 'chhub_projects_v3';
 const STORAGE_ACTIVE_PROJ_KEY = 'chhub_active_project_id_v3';
 
+// Helper: migrate old project data to ensure all fields exist
+function migrateProject(proj: any): Project {
+  return {
+    ...proj,
+    assetGroups: (proj.assetGroups || []).map((ag: any) => ({
+      ...ag,
+      folders: {
+        ...ag.folders,
+        logo_3: ag.folders.logo_3 ?? [],
+        product_image_3: ag.folders.product_image_3 ?? [],
+        texto_3: ag.folders.texto_3 ?? { fileName: 'texto_3.txt', content: '', variations: [] },
+        texto_4: ag.folders.texto_4 ?? { fileName: 'texto_4.txt', content: '', variations: [] },
+      },
+    })),
+    templates: (proj.templates || []).map((tpl: any) => ({
+      ...tpl,
+      layers: (tpl.layers || []).map((l: any) => ({
+        ...l,
+        dynamizationType: l.dynamizationType === 'conditional' ? 'by_folder' : l.dynamizationType,
+      })),
+    })),
+  };
+}
+
 export default function App() {
-  // 1. Projects State (Defaults to completely clean, empty project)
+  // 1. Projects State (start from localStorage, then hydrate from Supabase)
   const initialProjects = useMemo(() => {
     try {
       const saved = localStorage.getItem(STORAGE_PROJECTS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Migrate: ensure new folders exist + fix 'conditional' dynamizationType
-          const migrated = (parsed as Project[]).map((proj) => ({
-            ...proj,
-            assetGroups: proj.assetGroups.map((ag) => ({
-              ...ag,
-              folders: {
-                ...ag.folders,
-                logo_3: ag.folders.logo_3 ?? [],
-                product_image_3: ag.folders.product_image_3 ?? [],
-                texto_3: ag.folders.texto_3 ?? { fileName: 'texto_3.txt', content: '', variations: [] },
-                texto_4: ag.folders.texto_4 ?? { fileName: 'texto_4.txt', content: '', variations: [] },
-              },
-            })),
-            templates: proj.templates.map((tpl) => ({
-              ...tpl,
-              layers: tpl.layers.map((l: any) => ({
-                ...l,
-                dynamizationType: l.dynamizationType === 'conditional' ? 'by_folder' : l.dynamizationType,
-              })),
-            })),
-          }));
-          return migrated;
+          return parsed.map(migrateProject);
         }
       }
     } catch {
@@ -86,23 +90,71 @@ export default function App() {
   const [activeProjectId, setActiveProjectId] = useState<string>(() => {
     try {
       const savedId = localStorage.getItem(STORAGE_ACTIVE_PROJ_KEY);
-      if (savedId && projects.some((p) => p.id === savedId)) {
+      if (savedId && initialProjects.some((p: Project) => p.id === savedId)) {
         return savedId;
       }
     } catch {
       // fallback
     }
-    return projects[0]?.id || INITIAL_EMPTY_PROJECTS[0].id;
+    return initialProjects[0]?.id || INITIAL_EMPTY_PROJECTS[0].id;
   });
 
-  // Save to localStorage
+  const [cloudStatus, setCloudStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [isCloudLoaded, setIsCloudLoaded] = useState(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load from Supabase on mount
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const cloudProjects = await fetchProjects();
+        if (cancelled) return;
+        if (cloudProjects.length > 0) {
+          const migrated = cloudProjects.map(migrateProject);
+          setProjects(migrated);
+          // Also update localStorage
+          localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(migrated));
+        }
+      } catch (err) {
+        console.error('[Cloud] Failed to load projects:', err);
+      } finally {
+        if (!cancelled) setIsCloudLoaded(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Save to localStorage immediately + debounce save to Supabase
+  useEffect(() => {
+    // Always save to localStorage
     try {
       localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
-    } catch {
-      // ignore
-    }
-  }, [projects]);
+    } catch { /* ignore */ }
+
+    // Skip cloud save until initial load is done
+    if (!isCloudLoaded) return;
+
+    // Debounce cloud save (1.5s after last change)
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(async () => {
+      try {
+        setCloudStatus('saving');
+        await saveAllProjects(projects);
+        await syncDeletedProjects(projects.map((p) => p.id));
+        setCloudStatus('saved');
+        setTimeout(() => setCloudStatus('idle'), 2000);
+      } catch {
+        setCloudStatus('error');
+        setTimeout(() => setCloudStatus('idle'), 3000);
+      }
+    }, 1500);
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, [projects, isCloudLoaded]);
 
   useEffect(() => {
     try {
@@ -779,6 +831,25 @@ export default function App() {
         onClose={() => setIsNewAssetGroupOpen(false)}
         onCreateAssetGroup={handleCreateAssetGroup}
       />
+
+      {/* Cloud sync status indicator */}
+      {cloudStatus !== 'idle' && (
+        <div className={`fixed bottom-4 right-4 z-[9999] flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shadow-lg transition-all ${
+          cloudStatus === 'saving' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+          cloudStatus === 'saved' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
+          'bg-red-100 text-red-700 border border-red-200'
+        }`}>
+          {cloudStatus === 'saving' && (
+            <><svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4 31.4" strokeLinecap="round"/></svg> Saving to cloud...</>
+          )}
+          {cloudStatus === 'saved' && (
+            <><svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg> Saved to cloud</>
+          )}
+          {cloudStatus === 'error' && (
+            <><svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg> Cloud save failed</>
+          )}
+        </div>
+      )}
     </div>
   );
 }
