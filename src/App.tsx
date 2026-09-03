@@ -102,6 +102,7 @@ export default function App() {
   const [cloudStatus, setCloudStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [isCloudLoaded, setIsCloudLoaded] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipNextCloudSaveRef = useRef(false);
 
   // Load from Supabase on mount
   useEffect(() => {
@@ -112,9 +113,15 @@ export default function App() {
         if (cancelled) return;
         if (cloudProjects.length > 0) {
           const migrated = cloudProjects.map(migrateProject);
+          // Skip the debounced cloud save that would be triggered by setProjects
+          skipNextCloudSaveRef.current = true;
           setProjects(migrated);
-          // Also update localStorage
           localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(migrated));
+          // Update active project if current one doesn't exist in cloud data
+          const ids = migrated.map((p: Project) => p.id);
+          if (!ids.includes(activeProjectId)) {
+            setActiveProjectId(migrated[0].id);
+          }
         }
       } catch (err) {
         console.error('[Cloud] Failed to load projects:', err);
@@ -136,7 +143,13 @@ export default function App() {
     // Skip cloud save until initial load is done
     if (!isCloudLoaded) return;
 
-    // Debounce cloud save (1.5s after last change)
+    // Skip if this change came from cloud load (prevents re-uploading what we just downloaded)
+    if (skipNextCloudSaveRef.current) {
+      skipNextCloudSaveRef.current = false;
+      return;
+    }
+
+    // Debounce cloud save (2s after last change)
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(async () => {
       try {
@@ -149,7 +162,7 @@ export default function App() {
         setCloudStatus('error');
         setTimeout(() => setCloudStatus('idle'), 3000);
       }
-    }, 1500);
+    }, 2000);
 
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);

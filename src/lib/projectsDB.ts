@@ -66,6 +66,7 @@ export async function saveAllProjects(projects: Project[]): Promise<void> {
 
   if (error) {
     console.error('[Supabase] Error saving all projects:', error.message);
+    throw new Error(error.message);
   }
 }
 
