@@ -37,6 +37,14 @@ export function getFolderItems(
       const vars = assetGroup.folders.texto_2.variations.filter((v) => v.trim().length > 0);
       return { items: [], count: vars.length, textStrings: vars };
     }
+    case 'texto_3': {
+      const vars = assetGroup.folders.texto_3.variations.filter((v) => v.trim().length > 0);
+      return { items: [], count: vars.length, textStrings: vars };
+    }
+    case 'texto_4': {
+      const vars = assetGroup.folders.texto_4.variations.filter((v) => v.trim().length > 0);
+      return { items: [], count: vars.length, textStrings: vars };
+    }
   }
 }
 
