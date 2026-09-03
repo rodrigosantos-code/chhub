@@ -28,6 +28,7 @@ interface HeaderProps {
   onOpenAssetManager: () => void;
   onNewTemplate: () => void;
   onRenameTemplate: (templateId: string, newName: string) => void;
+  onRenameAssetGroup: (assetGroupId: string, newName: string) => void;
   onNewAssetGroup: () => void;
   totalVariationsCount: number;
 
@@ -53,6 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAssetManager,
   onNewTemplate,
   onRenameTemplate,
+  onRenameAssetGroup,
   onNewAssetGroup,
   totalVariationsCount,
   activeMode,
@@ -66,6 +68,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [showTemplateMenu, setShowTemplateMenu] = useState(false);
   const [renamingTemplateId, setRenamingTemplateId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
+  const [renamingAssetGroupId, setRenamingAssetGroupId] = useState<string | null>(null);
+  const [renameAGValue, setRenameAGValue] = useState('');
   const [showAssetGroupMenu, setShowAssetGroupMenu] = useState(false);
 
   const currentProject = projects.find((p) => p.id === activeProjectId) || projects[0];
@@ -339,7 +343,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={onOpenAssetManager}
                 className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors cursor-pointer"
-                title="Abrir carpetas de este Asset Group"
+                title="Open folders of this Asset Group"
               >
                 <FolderOpen className="w-3.5 h-3.5" />
               </button>
@@ -351,23 +355,69 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="max-h-56 overflow-y-auto py-1">
                     {currentProject.assetGroups.map((ag) => (
-                      <button
+                      <div
                         key={ag.id}
-                        onClick={() => {
-                          onSelectAssetGroup(ag.id);
-                          setShowAssetGroupMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer ${
                           ag.id === activeAssetGroup.id
                             ? 'text-emerald-700 font-bold bg-emerald-50/60'
                             : 'text-gray-700'
                         }`}
+                        onClick={() => {
+                          if (renamingAssetGroupId) return;
+                          onSelectAssetGroup(ag.id);
+                          if (ag.id !== activeAssetGroup.id) setShowAssetGroupMenu(false);
+                        }}
                       >
-                        <span className="truncate">{ag.name}</span>
-                        {ag.id === activeAssetGroup.id && (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        {renamingAssetGroupId === ag.id ? (
+                          <input
+                            autoFocus
+                            type="text"
+                            value={renameAGValue}
+                            onChange={(e) => setRenameAGValue(e.target.value)}
+                            onBlur={() => {
+                              if (renameAGValue.trim()) onRenameAssetGroup(ag.id, renameAGValue.trim());
+                              setRenamingAssetGroupId(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                if (renameAGValue.trim()) onRenameAssetGroup(ag.id, renameAGValue.trim());
+                                setRenamingAssetGroupId(null);
+                              } else if (e.key === 'Escape') {
+                                setRenamingAssetGroupId(null);
+                              }
+                            }}
+                            className="flex-1 bg-white border border-emerald-400 rounded px-1.5 py-0.5 text-xs outline-none focus:ring-1 focus:ring-emerald-500"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <>
+                            <span
+                              className="truncate flex-1"
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingAssetGroupId(ag.id);
+                                setRenameAGValue(ag.name);
+                              }}
+                            >
+                              {ag.name}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingAssetGroupId(ag.id);
+                                setRenameAGValue(ag.name);
+                              }}
+                              className="hover:text-emerald-600 text-gray-400 p-0.5 rounded transition-all cursor-pointer"
+                              title="Rename"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                            </button>
+                          </>
                         )}
-                      </button>
+                        {ag.id === activeAssetGroup.id && (
+                          <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        )}
+                      </div>
                     ))}
                   </div>
                   <div className="border-t border-gray-100 mt-1 pt-1.5 px-2">
@@ -379,7 +429,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full text-left px-2.5 py-1.5 rounded text-xs text-blue-600 hover:bg-blue-50 flex items-center gap-2 font-medium cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Nuevo Asset Group</span>
+                      <span>New Asset Group</span>
                     </button>
                   </div>
                 </div>
@@ -390,7 +440,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {activeMode === 'asset_groups' && currentProject && (
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-gray-500 font-medium">Grupo actual:</span>
+            <span className="text-[11px] text-gray-500 font-medium">Current group:</span>
             <div className="relative">
               <button
                 onClick={() => {
@@ -411,23 +461,69 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="max-h-56 overflow-y-auto py-1">
                     {currentProject.assetGroups.map((ag) => (
-                      <button
+                      <div
                         key={ag.id}
-                        onClick={() => {
-                          onSelectAssetGroup(ag.id);
-                          setShowAssetGroupMenu(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer ${
                           ag.id === activeAssetGroup.id
                             ? 'text-emerald-700 font-bold bg-emerald-50/60'
                             : 'text-gray-700'
                         }`}
+                        onClick={() => {
+                          if (renamingAssetGroupId) return;
+                          onSelectAssetGroup(ag.id);
+                          if (ag.id !== activeAssetGroup.id) setShowAssetGroupMenu(false);
+                        }}
                       >
-                        <span className="truncate">{ag.name}</span>
-                        {ag.id === activeAssetGroup.id && (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        {renamingAssetGroupId === ag.id ? (
+                          <input
+                            autoFocus
+                            type="text"
+                            value={renameAGValue}
+                            onChange={(e) => setRenameAGValue(e.target.value)}
+                            onBlur={() => {
+                              if (renameAGValue.trim()) onRenameAssetGroup(ag.id, renameAGValue.trim());
+                              setRenamingAssetGroupId(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                if (renameAGValue.trim()) onRenameAssetGroup(ag.id, renameAGValue.trim());
+                                setRenamingAssetGroupId(null);
+                              } else if (e.key === 'Escape') {
+                                setRenamingAssetGroupId(null);
+                              }
+                            }}
+                            className="flex-1 bg-white border border-emerald-400 rounded px-1.5 py-0.5 text-xs outline-none focus:ring-1 focus:ring-emerald-500"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <>
+                            <span
+                              className="truncate flex-1"
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingAssetGroupId(ag.id);
+                                setRenameAGValue(ag.name);
+                              }}
+                            >
+                              {ag.name}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingAssetGroupId(ag.id);
+                                setRenameAGValue(ag.name);
+                              }}
+                              className="hover:text-emerald-600 text-gray-400 p-0.5 rounded transition-all cursor-pointer"
+                              title="Rename"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                            </button>
+                          </>
                         )}
-                      </button>
+                        {ag.id === activeAssetGroup.id && (
+                          <Check className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        )}
+                      </div>
                     ))}
                   </div>
                   <div className="border-t border-gray-100 mt-1 pt-1.5 px-2">
@@ -439,7 +535,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full text-left px-2.5 py-1.5 rounded text-xs text-blue-600 hover:bg-blue-50 flex items-center gap-2 font-medium cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Nuevo Asset Group</span>
+                      <span>New Asset Group</span>
                     </button>
                   </div>
                 </div>

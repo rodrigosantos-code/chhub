@@ -320,6 +320,20 @@ export default function App() {
     );
   };
 
+  const handleRenameAssetGroup = (assetGroupId: string, newName: string) => {
+    setProjects((prevProjects) =>
+      prevProjects.map((p) => {
+        if (p.id !== currentProject.id) return p;
+        return {
+          ...p,
+          assetGroups: p.assetGroups.map((ag) =>
+            ag.id === assetGroupId ? { ...ag, name: newName } : ag
+          ),
+        };
+      })
+    );
+  };
+
   // Toggle active aspect ratios (max 3)
   const handleToggleActiveRatio = (ratio: AspectRatioKey) => {
     updateActiveTemplate((t) => {
@@ -646,6 +660,7 @@ export default function App() {
         onOpenAssetManager={() => setIsAssetManagerOpen(true)}
         onNewTemplate={() => setIsNewTemplateOpen(true)}
         onRenameTemplate={handleRenameTemplate}
+        onRenameAssetGroup={handleRenameAssetGroup}
         onNewAssetGroup={() => setIsNewAssetGroupOpen(true)}
         totalVariationsCount={calculationReport.totalVariationsCount}
         activeMode={activeMode}
