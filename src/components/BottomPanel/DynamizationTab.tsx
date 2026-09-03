@@ -40,7 +40,7 @@ interface DynamizationTabProps {
 }
 
 const FOLDER_OPTIONS: { value: FolderType; label: string }[] = [
-  { value: 'background', label: 'background (Fondo)' },
+  { value: 'background', label: 'background' },
   { value: 'logo_1', label: 'logo_1 (Logotipo)' },
   { value: 'logo_2', label: 'logo_2 (Symbol)' },
   { value: 'logo_3', label: 'logo_3 (Logo 3)' },
@@ -394,7 +394,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           {/* Depends on */}
                           <div>
                             <label className="text-[10px] uppercase text-gray-500 font-semibold block mb-1">
-                              Si la capa:
+                              If the layer:
                             </label>
                             <select
                               value={layer.conditionalRule.dependsOnLayerId || ''}

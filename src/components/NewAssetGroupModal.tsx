@@ -27,7 +27,7 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
         background: [
           {
             id: `bg_${Date.now()}`,
-            name: 'Fondo Minimal Gris',
+            name: 'Minimal Grey Background',
             url: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920"><rect width="1080" height="1920" fill="%23F3F4F6"/><circle cx="540" cy="960" r="400" fill="%23E5E7EB"/></svg>',
             tone: 'light',
           },

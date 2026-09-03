@@ -166,7 +166,7 @@ export function calculateVariationReport(
   // Check circular dependencies
   const cycleCheck = detectCircularDependency(template.layers);
   if (cycleCheck.hasCycle) {
-    errors.push(`Dependencia circular detectada entre capas: ${cycleCheck.cyclePath}`);
+    errors.push(`Circular dependency detected between layers: ${cycleCheck.cyclePath}`);
   }
 
   // Separate layers by role
@@ -235,7 +235,7 @@ export function calculateVariationReport(
   let branchDesc = '';
   if (contrastLayersCount > 0 || logoLayersCount > 0) {
     const parts: string[] = [];
-    if (contrastLayersCount > 0) parts.push(`${contrastLayersCount} capa(s) por contraste`);
+    if (contrastLayersCount > 0) parts.push(`${contrastLayersCount} layer(s) by contrast`);
     if (logoLayersCount > 0) parts.push(`logos filtrados por tono opuesto al fondo`);
     branchDesc = `Variaciones base (${parts.join(', ')})`;
   } else {

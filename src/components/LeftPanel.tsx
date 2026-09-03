@@ -83,7 +83,7 @@ const FIXED_FOLDER_DEFS: {
   category: 'background' | 'logo' | 'product' | 'text';
   desc: string;
 }[] = [
-  { type: 'background', title: 'Fondo (Background)', category: 'background', desc: 'Background images' },
+  { type: 'background', title: 'Background', category: 'background', desc: 'Background images' },
   { type: 'logo_1', title: 'Logo 1 (Logotype)', category: 'logo', desc: 'Primary logotype variants' },
   { type: 'logo_2', title: 'Logo 2 (Symbol)', category: 'logo', desc: 'Isotype or symbol variants' },
   { type: 'logo_3', title: 'Logo 3', category: 'logo', desc: 'Third logotype or variant' },
@@ -265,7 +265,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
         {/* Grouped by category */}
         {[
-          { key: 'background', label: 'Fondo', color: 'amber' },
+          { key: 'background', label: 'Background', color: 'amber' },
           { key: 'logo', label: 'Logos', color: 'blue' },
           { key: 'product', label: 'Overlays', color: 'violet' },
           { key: 'text', label: 'Textos', color: 'emerald' },
@@ -1114,7 +1114,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                           className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer"
                         />
                         <span className="text-[10px] text-blue-700 font-semibold">
-                          {(selectedLayer.textDynamization?.contrastColorEnabled ?? true) ? 'Activo' : 'Inactivo'}
+                          {(selectedLayer.textDynamization?.contrastColorEnabled ?? true) ? 'Active' : 'Inactive'}
                         </span>
                       </label>
                     </div>

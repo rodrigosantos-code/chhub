@@ -182,7 +182,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
-        {/* 2. Mode Selector: Plantillas vs Asset Groups */}
+        {/* 2. Mode Selector: Templates vs Asset Groups */}
         <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">
           <button
             onClick={() => onChangeMode('templates')}
@@ -193,7 +193,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-blue-600" />
-            <span>Plantillas</span>
+            <span>Templates</span>
             <span className="text-[10px] font-mono font-normal opacity-70">
               ({currentProject ? currentProject.templates.length : 0})
             </span>
@@ -208,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <FolderTree className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Recursos</span>
+            <span>Assets</span>
             <span className="text-[10px] font-mono font-normal opacity-70">
               ({currentProject ? currentProject.assetGroups.length : 0})
             </span>

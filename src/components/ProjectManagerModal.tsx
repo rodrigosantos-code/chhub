@@ -236,7 +236,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                           </span>
                           {isActive && (
                             <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-blue-600 text-white">
-                              Activo
+                              Active
                             </span>
                           )}
                         </div>

@@ -32,8 +32,8 @@ import { NewTemplateModal } from './components/NewTemplateModal';
 import { NewAssetGroupModal } from './components/NewAssetGroupModal';
 import { ProjectManagerModal } from './components/ProjectManagerModal';
 
-const STORAGE_PROJECTS_KEY = 'chstudio_projects_v2';
-const STORAGE_ACTIVE_PROJ_KEY = 'chstudio_active_project_id_v2';
+const STORAGE_PROJECTS_KEY = 'chhub_projects_v3';
+const STORAGE_ACTIVE_PROJ_KEY = 'chhub_active_project_id_v3';
 
 export default function App() {
   // 1. Projects State (Defaults to completely clean, empty project)
@@ -343,7 +343,7 @@ export default function App() {
   // Add Layer
   const handleAddLayer = (folderType: FolderType) => {
     const layerNames: Record<FolderType, string> = {
-      background: 'Fondo',
+      background: 'Background',
       logo_1: 'Logotype 1',
       logo_2: 'Logotype 2 (Isotype)',
       logo_3: 'Logotype 3',

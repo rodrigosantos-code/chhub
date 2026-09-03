@@ -287,7 +287,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
           <div className="flex items-center gap-2">
             <FolderTree className="w-4.5 h-4.5 text-blue-600" />
             <span className="font-bold text-sm text-gray-900">
-              Recursos
+              Assets
             </span>
           </div>
 
@@ -329,7 +329,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
           onClick={onBackToEditor}
           className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer transition-colors"
         >
-          <span>Editor de Plantillas</span>
+          <span>Template Editor</span>
           <span className="text-blue-200">→</span>
         </button>
       </div>
@@ -939,7 +939,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                     <div className="flex items-center gap-1 shrink-0">
                                       <label className="px-2 py-1 rounded bg-white hover:bg-blue-50 text-blue-600 border border-gray-200 hover:border-blue-300 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors">
                                         <Upload className="w-2.5 h-2.5" />
-                                        <span>{currentUrl ? 'Change' : 'Subir'}</span>
+                                        <span>{currentUrl ? 'Change' : 'Upload'}</span>
                                         <input
                                           type="file"
                                           accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif"

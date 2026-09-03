@@ -51,8 +51,8 @@ export const LayersTab: React.FC<LayersTabProps> = ({
   return (
     <div className="h-full overflow-y-auto px-5 py-3 space-y-1.5 text-xs bg-white text-gray-800">
       <div className="flex items-center justify-between text-[10px] uppercase font-bold text-gray-400 tracking-wider pb-1 border-b border-gray-100">
-        <span>Orden de Apilado (z-index: Superior → Fondo)</span>
-        <span>{layers.length} capas</span>
+        <span>Stacking Order (z-index: Top → Bottom)</span>
+        <span>{layers.length} layers</span>
       </div>
 
       {displayLayers.map((layer, index) => {

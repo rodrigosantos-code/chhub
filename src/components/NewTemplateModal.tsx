@@ -42,7 +42,7 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
       layers: [
         {
           id: `layer_bg_${Date.now()}`,
-          name: 'Fondo',
+          name: 'Background',
           folderType: 'background',
           dynamizationType: 'by_folder',
           visible: true,
