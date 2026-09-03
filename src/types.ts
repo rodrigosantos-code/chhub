@@ -7,7 +7,9 @@ export type FolderType =
   | 'product_image_2'
   | 'product_image_3'
   | 'texto_1'
-  | 'texto_2';
+  | 'texto_2'
+  | 'texto_3'
+  | 'texto_4';
 
 export type AspectRatioKey = '1:1' | '4:5' | '9:16' | '16:9';
 
@@ -77,6 +79,8 @@ export interface AssetGroup {
     product_image_3: AssetItem[];
     texto_1: TextFolderData;
     texto_2: TextFolderData;
+    texto_3: TextFolderData;
+    texto_4: TextFolderData;
   };
 }
 

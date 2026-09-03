@@ -138,7 +138,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
   // Multi-text file upload (.txt)
   const handleTextFileUpload = async (
-    folderKey: 'texto_1' | 'texto_2',
+    folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4',
     files: FileList | File[] | null
   ) => {
     if (!files || files.length === 0) return;
@@ -224,7 +224,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   };
 
   // Update Text Folder
-  const handleUpdateTextFolder = (folderKey: 'texto_1' | 'texto_2', rawContent: string) => {
+  const handleUpdateTextFolder = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', rawContent: string) => {
     const variations = rawContent
       .split(',')
       .map((s) => s.trim())
@@ -345,7 +345,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
           {FIXED_FOLDER_TABS.map((tab) => {
             const count = tab.isText
-              ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2'].variations.length
+              ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length
               : (assetGroup.folders[tab.key as keyof typeof assetGroup.folders] as AssetItem[]).length;
             const isSelected = activeTab === tab.key;
             const isDraggingOver = dragOverSidebarTab === tab.key;
@@ -365,7 +365,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                     setActiveTab(tab.key);
                     if (tab.isText) {
-                      handleTextFileUpload(tab.key as 'texto_1' | 'texto_2', e.dataTransfer.files);
+                      handleTextFileUpload(tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.dataTransfer.files);
                     } else {
                       handleMultiFileUpload(
                         tab.key as
@@ -421,7 +421,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 <div className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-blue-600" />
                   <span className="font-bold text-sm text-gray-900">
-                    Archivo de Texto: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].fileName}</code>
+                    Archivo de Texto: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -434,13 +434,13 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                       multiple
                       className="hidden"
                       onChange={(e) => {
-                        handleTextFileUpload(activeTab as 'texto_1' | 'texto_2', e.target.files);
+                        handleTextFileUpload(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.files);
                         e.target.value = '';
                       }}
                     />
                   </label>
                   <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2.5 py-1 rounded">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].variations.length} variaciones
+                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variaciones
                   </span>
                 </div>
               </div>
@@ -462,9 +462,9 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 </label>
                 <textarea
                   rows={4}
-                  value={assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].content}
+                  value={assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].content}
                   onChange={(e) =>
-                    handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2', e.target.value)
+                    handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.value)
                   }
                   placeholder="ej. Oferta de verano, Nueva colección 2026, 20% de descuento en tienda..."
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 font-sans text-xs focus:border-blue-500 outline-none leading-relaxed"
@@ -474,11 +474,11 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
               {/* Badges */}
               <div>
                 <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">
-                  Variantes generadas ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].variations.length}):
+                  Variantes generadas ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length}):
                 </div>
-                {assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].variations.length > 0 ? (
+                {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].variations.map((v, i) => (
+                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.map((v, i) => (
                       <span
                         key={i}
                         className="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-xs flex items-center gap-2"

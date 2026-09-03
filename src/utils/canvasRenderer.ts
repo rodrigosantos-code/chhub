@@ -156,7 +156,7 @@ export async function renderVariationOnCanvas(
     const layerH = (pos.height / 100) * baseH;
 
     // 1. Text Layer
-    if (layer.folderType === 'texto_1' || layer.folderType === 'texto_2' || resolved.textValue) {
+    if (layer.folderType.startsWith('texto') || resolved.textValue) {
       const text = resolved.textValue || '';
       if (text) {
         // Optional background box behind text

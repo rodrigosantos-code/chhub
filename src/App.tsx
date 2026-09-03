@@ -350,6 +350,8 @@ export default function App() {
       product_image_3: 'Overlay 3',
       texto_1: 'Texto 1 (Titular)',
       texto_2: 'Texto 2 (Subtítulo)',
+      texto_3: 'Texto 3',
+      texto_4: 'Texto 4',
     };
 
     const isText = folderType.startsWith('texto');

@@ -318,7 +318,7 @@ export function generateAllVariations(
     const info = getFolderItems(assetGroup, layer.folderType);
 
     // Text layers
-    if (layer.folderType === 'texto_1' || layer.folderType === 'texto_2') {
+    if (layer.folderType.startsWith('texto')) {
       if (layer.textDynamization?.dynamicContent === false) {
         const singleText = info.textStrings?.[0] || 'Texto';
         return [{ layer, text: singleText }];
@@ -439,7 +439,7 @@ export function generateAllVariations(
 
       // Resolve text layer colors by contrast
       for (const layer of visibleLayers) {
-        if (layer.folderType === 'texto_1' || layer.folderType === 'texto_2') {
+        if (layer.folderType.startsWith('texto')) {
           const textRes = resolved[layer.id];
           if (textRes) {
             const defaultTextColor =

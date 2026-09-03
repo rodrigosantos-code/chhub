@@ -74,7 +74,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
             <div className="flex items-center gap-2.5">
               {/* Layer Thumbnail */}
               {(() => {
-                const isText = layer.folderType === 'texto_1' || layer.folderType === 'texto_2';
+                const isText = layer.folderType.startsWith('texto');
                 if (isText) {
                   return (
                     <div className="w-8 h-8 rounded-md bg-gray-100 flex items-center justify-center text-gray-500 border border-gray-200 shrink-0">
@@ -172,7 +172,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                     type="file"
                     multiple
                     accept={
-                      layer.folderType === 'texto_1' || layer.folderType === 'texto_2'
+                      layer.folderType.startsWith('texto')
                         ? '.txt,text/plain'
                         : 'image/png,image/jpeg,image/svg+xml,image/webp,image/gif'
                     }
@@ -180,7 +180,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                     onChange={async (e) => {
                       const files = e.target.files;
                       if (!files || files.length === 0) return;
-                      if (layer.folderType === 'texto_1' || layer.folderType === 'texto_2') {
+                      if (layer.folderType.startsWith('texto')) {
                         const phrases = await readTextFiles(files);
                         if (phrases.length > 0) {
                           const key = layer.folderType;

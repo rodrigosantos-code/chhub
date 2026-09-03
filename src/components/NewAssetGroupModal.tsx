@@ -48,6 +48,8 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
           content: 'Disponible por tiempo limitado',
           variations: ['Disponible por tiempo limitado'],
         },
+        texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
+        texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
       },
     };
 

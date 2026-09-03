@@ -108,7 +108,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
           const isSelected = layer.id === selectedLayerId;
           const otherLayers = activeLayers.filter((l) => l.id !== layer.id);
           const currentCount = getFolderItems(assetGroup, layer.folderType).count;
-          const isTextLayer = layer.folderType === 'texto_1' || layer.folderType === 'texto_2';
+          const isTextLayer = layer.folderType.startsWith('texto');
           const isBgLayer = layer.folderType === 'background';
 
           // Text dynamization defaults

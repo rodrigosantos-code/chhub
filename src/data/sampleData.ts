@@ -300,6 +300,8 @@ export const DEFAULT_PROJECT: Project = {
             'Exclusivo en Web',
           ],
         },
+        texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
+        texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
       },
     },
     {
@@ -388,6 +390,8 @@ export const DEFAULT_PROJECT: Project = {
           content: 'Exclusivo Miembros VIP, Envío Urgente Incluido',
           variations: ['Exclusivo Miembros VIP', 'Envío Urgente Incluido'],
         },
+        texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
+        texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
       },
     },
   ],

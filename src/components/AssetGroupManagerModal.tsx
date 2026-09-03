@@ -148,7 +148,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
   };
 
   // Update text folder (.txt comma-separated)
-  const handleUpdateTextFolder = (folderKey: 'texto_1' | 'texto_2', newContent: string) => {
+  const handleUpdateTextFolder = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', newContent: string) => {
     const vars = newContent
       .split(',')
       .map((v) => v.trim())
@@ -202,7 +202,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
 
   // Text file upload (.txt)
   const handleTextFileUpload = async (
-    folderKey: 'texto_1' | 'texto_2',
+    folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4',
     files: FileList | File[] | null
   ) => {
     if (!files || files.length === 0) return;
@@ -271,7 +271,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
             {FIXED_FOLDER_TABS.map((tab) => {
               const isSelected = activeTab === tab.key;
               const count = tab.isText
-                ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2'].variations.length
+                ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length
                 : (assetGroup.folders[tab.key as keyof typeof assetGroup.folders] as AssetItem[]).length;
 
               return (
@@ -314,7 +314,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-blue-600" />
                     <span className="font-bold text-gray-800">
-                      Archivo único: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].fileName}</code>
+                      Archivo único: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -326,14 +326,14 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                         accept=".txt,text/plain"
                         multiple
                         onChange={(e) => {
-                          handleTextFileUpload(activeTab as 'texto_1' | 'texto_2', e.target.files);
+                          handleTextFileUpload(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.files);
                           e.target.value = '';
                         }}
                         className="hidden"
                       />
                     </label>
                     <span className="text-[11px] text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded">
-                      {assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].variations.length} variaciones
+                      {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variaciones
                     </span>
                   </div>
                 </div>
@@ -351,9 +351,9 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
 
                 <textarea
                   rows={4}
-                  value={assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].content}
+                  value={assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].content}
                   onChange={(e) =>
-                    handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2', e.target.value)
+                    handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.value)
                   }
                   placeholder="Escribe variantes separadas por comas..."
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 font-sans text-xs focus:border-blue-500 outline-none leading-relaxed"
@@ -365,7 +365,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                     Variantes generadas:
                   </div>
                   <div className="flex flex-wrap gap-1.5">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2'].variations.map((v, i) => (
+                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.map((v, i) => (
                       <span
                         key={i}
                         className="px-2.5 py-1 rounded-md bg-gray-50 border border-gray-200 text-gray-800 text-xs flex items-center gap-1.5"

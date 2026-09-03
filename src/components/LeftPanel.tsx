@@ -14,6 +14,8 @@ import {
   Upload,
   Crosshair,
   Link2,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import {
   ASPECT_RATIOS,
@@ -90,6 +92,8 @@ const FIXED_FOLDER_DEFS: {
   { type: 'product_image_3', title: 'Overlay 3', category: 'product', desc: 'Tercera imagen overlay' },
   { type: 'texto_1', title: 'Texto 1 (Titular)', category: 'text', desc: 'Archivo .txt con frases' },
   { type: 'texto_2', title: 'Texto 2 (Subtítulo)', category: 'text', desc: 'Archivo .txt secundario' },
+  { type: 'texto_3', title: 'Texto 3', category: 'text', desc: 'Tercer campo de texto' },
+  { type: 'texto_4', title: 'Texto 4', category: 'text', desc: 'Cuarto campo de texto' },
 ];
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -109,6 +113,12 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
   const [dragOverSlot, setDragOverSlot] = useState<FolderType | null>(null);
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
   const [linkedWH, setLinkedWH] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    background: true,
+    logo: true,
+    product: true,
+    text: true,
+  });
 
   const selectedLayer = template.layers.find((l) => l.id === selectedLayerId);
   const layerPosition = selectedLayer
@@ -125,7 +135,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     if (category === 'text') {
       const phrases = await readTextFiles(files);
       if (phrases.length > 0) {
-        const key = slotType as 'texto_1' | 'texto_2';
+        const key = slotType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
         const existing = assetGroup.folders[key].variations;
         const combined = Array.from(new Set([...existing, ...phrases]));
         onUpdateAssetGroup({
@@ -236,7 +246,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             <Plus className="w-4 h-4 text-blue-600" />
             Añadir Objetos al Lienzo
           </span>
-          <span className="text-[10px] text-gray-400 font-mono">7 slots fijos</span>
+          <span className="text-[10px] text-gray-400 font-mono">{FIXED_FOLDER_DEFS.length} slots</span>
         </div>
 
         {uploadFeedback && (
@@ -245,8 +255,39 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
           </div>
         )}
 
-        <div className="space-y-2">
-          {FIXED_FOLDER_DEFS.map((slot) => {
+        {/* Grouped by category */}
+        {[
+          { key: 'background', label: 'Fondo', color: 'amber' },
+          { key: 'logo', label: 'Logos', color: 'blue' },
+          { key: 'product', label: 'Overlays', color: 'violet' },
+          { key: 'text', label: 'Textos', color: 'emerald' },
+        ].map((group) => {
+          const groupSlots = FIXED_FOLDER_DEFS.filter((s) => s.category === group.key);
+          const totalCount = groupSlots.reduce((acc, s) => acc + getFolderItems(assetGroup, s.type).count, 0);
+          const isExpanded = expandedCategories[group.key] ?? true;
+          const colorMap: Record<string, { dot: string; text: string; bg: string; border: string }> = {
+            amber: { dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+            blue: { dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
+            violet: { dot: 'bg-violet-400', text: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
+            emerald: { dot: 'bg-emerald-400', text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+          };
+          const cc = colorMap[group.color];
+
+          return (
+            <div key={group.key} className="mb-1">
+              <button
+                onClick={() => setExpandedCategories((prev) => ({ ...prev, [group.key]: !prev[group.key] }))}
+                className="w-full flex items-center gap-2 py-1.5 px-1 rounded hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                {isExpanded ? <ChevronDown className="w-3 h-3 text-gray-400" /> : <ChevronRight className="w-3 h-3 text-gray-400" />}
+                <div className={`w-2 h-2 rounded-full ${cc.dot}`} />
+                <span className={`text-[11px] font-bold uppercase tracking-wider ${cc.text}`}>{group.label}</span>
+                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${cc.bg} ${cc.text} ${cc.border} border ml-auto`}>{totalCount}</span>
+              </button>
+
+              {isExpanded && (
+                <div className="space-y-1 mt-1 ml-2">
+                  {groupSlots.map((slot) => {
             const { count } = getFolderItems(assetGroup, slot.type);
             const isDragging = dragOverSlot === slot.type;
 
@@ -359,7 +400,11 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
               </div>
             );
           })}
-        </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* 3. Selected Layer Position Controls for Active Ratio (Section 4.3) */}
@@ -505,7 +550,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             })()}
 
             {/* Object Fit for Image Layers */}
-            {selectedLayer.folderType !== 'texto_1' && selectedLayer.folderType !== 'texto_2' && (
+            {!selectedLayer.folderType.startsWith('texto') && (
               <div className="mb-3">
                 <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
                   Ajuste de Imagen (Object-Fit)
@@ -810,7 +855,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 </div>
               );
             })()}
-            {(selectedLayer.folderType === 'texto_1' || selectedLayer.folderType === 'texto_2') && (
+            {(selectedLayer.folderType.startsWith('texto')) && (
               <div className="space-y-3 pt-1 border-t border-gray-200">
                 <div>
                   <div className="flex justify-between mb-1">
