@@ -38,7 +38,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProjectName.trim()) return;
-    onCreateProject(newProjectName.trim(), newProjectDesc.trim() || 'Proyecto de marca');
+    onCreateProject(newProjectName.trim(), newProjectDesc.trim() || 'Brand project');
     setNewProjectName('');
     setNewProjectDesc('');
     setIsCreating(false);
@@ -78,7 +78,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-gray-500 mt-0.5">
-                Cada proyecto contiene sus propios Asset Groups y Plantillas Master.
+                Each project contains its own Asset Groups and Master Templates.
               </p>
             </div>
           </div>
@@ -120,7 +120,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                 </div>
                 <div>
                   <label className="text-[10px] font-semibold text-gray-600 block mb-1 uppercase">
-                    Nombre del Proyecto / Marca *
+                    Project / Brand Name *
                   </label>
                   <input
                     type="text"
@@ -128,19 +128,19 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                     autoFocus
                     value={newProjectName}
                     onChange={(e) => setNewProjectName(e.target.value)}
-                    placeholder="ej. Café Gourmet, Ropa Urbana, etc."
+                    placeholder="e.g. Gourmet Coffee, Urban Clothing, etc."
                     className="w-full bg-white border border-gray-300 rounded px-2.5 py-1.5 text-xs text-gray-900 outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
                   <label className="text-[10px] font-semibold text-gray-600 block mb-1 uppercase">
-                    Descripción (opcional)
+                    Description (optional)
                   </label>
                   <input
                     type="text"
                     value={newProjectDesc}
                     onChange={(e) => setNewProjectDesc(e.target.value)}
-                    placeholder="ej. Campaña publicitaria para redes sociales"
+                    placeholder="e.g. Social media advertising campaign"
                     className="w-full bg-white border border-gray-300 rounded px-2.5 py-1.5 text-xs text-gray-900 outline-none focus:border-blue-500"
                   />
                 </div>
@@ -185,7 +185,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                         type="text"
                         value={editDesc}
                         onChange={(e) => setEditDesc(e.target.value)}
-                        placeholder="Descripción"
+                        placeholder="Description"
                         className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-xs text-gray-600 outline-none focus:border-blue-500"
                       />
                       <div className="flex justify-end gap-2 pt-1">
@@ -246,7 +246,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                         <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-400">
                           <span className="flex items-center gap-1">
                             <Layers className="w-3 h-3 text-blue-600" />
-                            {p.templates.length} {p.templates.length === 1 ? 'Plantilla' : 'Plantillas'}
+                            {p.templates.length} {p.templates.length === 1 ? 'Template' : 'Templates'}
                           </span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
@@ -271,12 +271,12 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                       {projects.length > 1 && (
                         <button
                           onClick={() => {
-                            if (window.confirm(`¿Seguro que deseas eliminar el proyecto "${p.name}"?`)) {
+                            if (window.confirm(`Are you sure you want to delete project "${p.name}"?`)) {
                               onDeleteProject(p.id);
                             }
                           }}
                           className="p-1.5 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                          title="Eliminar proyecto"
+                          title="Delete project"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -291,7 +291,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
           {/* Optional Demo Project Loader */}
           {onLoadDemoProject && (
             <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
-              <span>¿Quieres ver cómo funciona con un ejemplo?</span>
+              <span>Want to see how it works with an example?</span>
               <button
                 type="button"
                 onClick={() => {
@@ -300,7 +300,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                 }}
                 className="text-blue-600 hover:underline font-medium cursor-pointer"
               >
-                Cargar proyecto de ejemplo
+                Load sample project
               </button>
             </div>
           )}

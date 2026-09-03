@@ -223,7 +223,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
             },
           },
         });
-        setUploadFeedback(`¡${phrases.length} frases importadas!`);
+        setUploadFeedback(`${phrases.length} phrases imported!`);
         setTimeout(() => setUploadFeedback(null), 3500);
       }
     } finally {
@@ -245,7 +245,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                 Asset Management: {assetGroup.name}
               </span>
               <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">
-                7 Carpetas Fijas
+                7 Fixed Folders
               </span>
             </div>
             <p className="text-[11px] text-gray-500 mt-0.5">
@@ -459,7 +459,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1.5">
                     <input
                       type="text"
-                      placeholder="Nombre del recurso"
+                      placeholder="Asset name"
                       value={newAssetName}
                       onChange={(e) => setNewAssetName(e.target.value)}
                       className="bg-white border border-gray-300 rounded px-2.5 py-1.5 text-gray-800 outline-none focus:border-blue-500 text-xs"
@@ -507,7 +507,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                 {/* Items List */}
                 <div className="space-y-2">
                   <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
-                    Archivos en esta carpeta (
+                    Files in this folder (
                     {(assetGroup.folders[activeTab as keyof typeof assetGroup.folders] as AssetItem[]).length}
                     )
                   </div>
@@ -554,7 +554,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                                       ? 'bg-gray-100 text-gray-700 border-gray-200'
                                       : 'bg-amber-50 text-amber-800 border-amber-200'
                                   }`}
-                                  title="Haz clic para alternar tono claro/oscuro"
+                                  title="Click to toggle light/dark tone"
                                 >
                                   {item.tone === 'dark' ? (
                                     <>

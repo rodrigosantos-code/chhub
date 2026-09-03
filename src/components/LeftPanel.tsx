@@ -150,7 +150,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             },
           },
         });
-        setUploadFeedback(`+${phrases.length} frases a ${slotType}`);
+        setUploadFeedback(`+${phrases.length} phrases to ${slotType}`);
         setTimeout(() => setUploadFeedback(null), 3000);
       }
     } else {
@@ -164,7 +164,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             [key]: [...assetGroup.folders[key], ...newItems],
           },
         });
-        setUploadFeedback(`+${newItems.length} imágenes a ${slotType}`);
+        setUploadFeedback(`+${newItems.length} images to ${slotType}`);
         setTimeout(() => setUploadFeedback(null), 3000);
       }
     }
@@ -180,7 +180,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
         <div className="flex items-center justify-between">
           <span className="font-semibold text-gray-700 uppercase tracking-wider text-[11px] flex items-center gap-2">
             <Maximize2 className="w-3.5 h-3.5 text-blue-600" />
-            Formato de Edición
+            Editing Format
           </span>
           <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 font-mono text-blue-700 font-bold border border-blue-200">
             {template.activeAspectRatios.length} activo{template.activeAspectRatios.length > 1 ? 's' : ''}
@@ -207,7 +207,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
         <div className="pt-1">
           <details className="group">
             <summary className="text-[11px] text-blue-600 hover:text-blue-700 cursor-pointer font-medium list-none flex items-center justify-between">
-              <span>Gestionar formatos ({template.activeAspectRatios.length}/3 máx)</span>
+              <span>Manage formats ({template.activeAspectRatios.length}/3 max)</span>
               <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▾</span>
             </summary>
             <div className="mt-2 space-y-1 bg-gray-50 p-2 rounded-lg border border-gray-200">
@@ -381,7 +381,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   {/* Batch Upload Button for this slot */}
                   <label
                     className="w-5 h-5 rounded hover:bg-blue-100 hover:text-blue-600 flex items-center justify-center text-gray-400 cursor-pointer transition-colors"
-                    title={`Subir varias imágenes o archivos a ${slot.title}`}
+                    title={`Upload multiple images or files to ${slot.title}`}
                   >
                     <Upload className="w-3 h-3" />
                     <input
@@ -441,7 +441,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 <span className="font-mono font-bold text-blue-600">{selectedRatio}</span>
               </div>
               <p className="text-[10px] text-gray-500">
-                Los cambios de posición y tamaño aplican exclusivamente a este aspect ratio.
+                Position and size changes apply exclusively to this aspect ratio.
               </p>
             </div>
 
@@ -659,7 +659,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   })}
                 </div>
                 <p className="text-[9px] text-gray-500 leading-tight">
-                  100% = tamaño de serie de diseño. Escala respecto al punto de anclaje.
+                  100% = base design size. Scales relative to the anchor point.
                 </p>
               </div>
             )}
@@ -711,14 +711,14 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   </div>
 
                   <div className="text-[10px] text-gray-500 leading-tight">
-                    Por defecto está en el <strong className="text-gray-700 font-semibold">centro</strong>.
-                    Determina la alineación y el punto de referencia para escalado y posición.
+                    Default is <strong className="text-gray-700 font-semibold">center</strong>.
+                    Determines alignment and reference point for scaling and positioning.
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Posición del Sujeto en Composición (background layers only) */}
+            {/* Subject Position in Composition (background layers only) */}
             {selectedLayer.folderType === 'background' && (() => {
               const fp = layerPosition.focalPoint || { x: 0.5, y: 0.5 };
               // Show detected asset focal point for reference
@@ -731,7 +731,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-[10px] text-gray-700 font-bold uppercase flex items-center gap-1.5">
                       <Crosshair className="w-3.5 h-3.5 text-orange-500" />
-                      Posición del Sujeto
+                      Subject Position
                     </label>
                     <div className="flex items-center gap-1.5">
                       <span className="text-[10px] font-mono font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-200 shadow-2xs">
@@ -798,7 +798,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                         document.addEventListener('mousemove', updateFP);
                         document.addEventListener('mouseup', stopDrag);
                       }}
-                      title="Haz clic o arrastra para posicionar dónde quieres el sujeto"
+                      title="Click or drag to position where you want the subject"
                     >
                       {/* Grid lines for reference */}
                       <div className="absolute inset-0 pointer-events-none">
@@ -823,11 +823,11 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
                     <div className="text-[10px] text-gray-500 leading-tight space-y-1.5">
                       <p>
-                        Indica dónde quieres que aparezca el <strong className="text-gray-700">sujeto</strong> en la composición.
+                        Indicate where you want the <strong className="text-gray-700">subject</strong> to appear in the composition.
                       </p>
                       <p>
-                        El sujeto se detecta <strong className="text-orange-700">automáticamente</strong> al subir cada imagen.
-                        La imagen hará zoom si es necesario para cubrir el lienzo.
+                        The subject is detected <strong className="text-orange-700">automatically</strong> when uploading each image.
+                        The image will zoom if necessary to cover the canvas.
                       </p>
                     </div>
                   </div>
@@ -870,7 +870,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 <div>
                   <div className="flex justify-between mb-1">
                     <label className="text-[10px] text-gray-500 font-semibold uppercase">
-                      Tamaño de Fuente (Base 1080px)
+                      Font Size (Base 1080px)
                     </label>
                     <span className="font-mono text-gray-700 font-medium">{layerPosition.fontSize || 42}px</span>
                   </div>
@@ -891,7 +891,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 {/* Font Family Selector */}
                 <div>
                   <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                    Tipografía
+                    Typography
                   </label>
                   <select
                     value={layerPosition.fontFamily || 'Inter'}
@@ -1013,7 +1013,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
                   <div>
                     <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                      Alineación
+                      Alignment
                     </label>
                     <div className="flex items-center gap-1 bg-white p-1 rounded border border-gray-200 justify-around shadow-xs">
                       <button
@@ -1147,9 +1147,9 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-center p-4 border border-dashed border-gray-200 rounded-lg text-gray-400 bg-gray-50/40">
             <Sliders className="w-6 h-6 text-gray-300 mb-2" />
-            <p className="font-semibold text-gray-600">Ninguna capa seleccionada</p>
+            <p className="font-semibold text-gray-600">No layer selected</p>
             <p className="text-[10px] text-gray-400 mt-1 leading-relaxed">
-              Haz clic sobre cualquier capa en el canvas o en la pestaña inferior para editar sus propiedades en el formato activo.
+              Click on any layer in the canvas or in the bottom tab to edit its properties for the active format.
             </p>
           </div>
         )}

@@ -274,14 +274,14 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                     onSelectVariationIndex(Math.min(variations.length - 1, currentVariationIndex + 1))
                   }
                   className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent text-gray-700 transition-colors"
-                  title="Next variación"
+                  title="Next variation"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
           ) : (
-            <span className="text-xs text-amber-600 font-medium">0 variaciones (revisar carpetas)</span>
+            <span className="text-xs text-amber-600 font-medium">0 variations (check folders)</span>
           )}
 
           {/* Zoom Controls */}
@@ -313,7 +313,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                 ? 'bg-blue-50 border-blue-200 text-blue-600'
                 : 'bg-white border-gray-200 text-gray-400 hover:text-gray-600'
             }`}
-            title={showRulers ? 'Ocultar reglas' : 'Mostrar reglas'}
+            title={showRulers ? 'Hide guides' : 'Show guides'}
           >
             <Ruler className="w-3.5 h-3.5" />
           </button>
@@ -325,7 +325,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
         <div className="bg-blue-50 border-b border-blue-100 px-4 py-1.5 flex items-center justify-between text-xs text-blue-900">
           <div className="flex items-center gap-2 truncate">
             <Sparkles className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span className="font-semibold text-blue-700">Resolución Condicional:</span>
+            <span className="font-semibold text-blue-700">Conditional Resolution:</span>
             <span className="text-blue-900/90 truncate">{currentVariation.branchDescription}</span>
           </div>
 
@@ -333,7 +333,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
           {(Object.values(currentVariation.resolvedLayers) as ResolvedLayerValue[]).some((l) => l.contrastCorrected) && (
             <span className="flex items-center gap-1 bg-blue-100/80 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">
               <ArrowRightLeft className="w-3 h-3" />
-              Contraste ajustado automáticamente
+              Contrast automatically adjusted
             </span>
           )}
         </div>
@@ -636,7 +636,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                       left: `${(pos.focalPoint?.x ?? 0.5) * 100}%`,
                       top: `${(pos.focalPoint?.y ?? 0.5) * 100}%`,
                     }}
-                    title={`Posición del sujeto: ${Math.round((pos.focalPoint?.x ?? 0.5) * 100)}%, ${Math.round((pos.focalPoint?.y ?? 0.5) * 100)}%`}
+                    title={`Subject position: ${Math.round((pos.focalPoint?.x ?? 0.5) * 100)}%, ${Math.round((pos.focalPoint?.y ?? 0.5) * 100)}%`}
                   >
                     <div className="w-3 h-3 rounded-full border-2 border-orange-500 bg-orange-400/30 shadow-md ring-1 ring-orange-300 flex items-center justify-center">
                       <div className="w-1 h-1 rounded-full bg-orange-600" />

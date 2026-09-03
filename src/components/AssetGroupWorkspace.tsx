@@ -143,7 +143,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   ) => {
     if (!files || files.length === 0) return;
     setIsUploading(true);
-    setUploadFeedback(`Procesando archivo(s) de texto...`);
+    setUploadFeedback(`Processing text file(s)...`);
 
     try {
       const phrases = await readTextFiles(files);
@@ -161,15 +161,15 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             },
           },
         });
-        setUploadFeedback(`¡${phrases.length} frases importadas correctamente!`);
+        setUploadFeedback(`${phrases.length} phrases imported successfully!`);
         setTimeout(() => setUploadFeedback(null), 4000);
       } else {
-        setUploadFeedback('No se encontraron frases en el archivo .txt');
+        setUploadFeedback('No phrases found in the .txt file');
         setTimeout(() => setUploadFeedback(null), 3000);
       }
     } catch (err) {
-      console.error('Error al importar archivo de texto:', err);
-      setUploadFeedback('Error al leer el archivo .txt');
+      console.error('Error importing text file:', err);
+      setUploadFeedback('Error reading the .txt file');
       setTimeout(() => setUploadFeedback(null), 4000);
     } finally {
       setIsUploading(false);
@@ -310,7 +310,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             <button
               onClick={onNewAssetGroup}
               className="p-1.5 rounded-lg bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 text-gray-500 hover:text-blue-600 transition-all cursor-pointer"
-              title="Crear nuevo grupo de recursos"
+              title="Create new asset group"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
@@ -318,7 +318,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             <button
               onClick={() => onDuplicateAssetGroup(assetGroup.id)}
               className="p-1.5 rounded-lg bg-gray-50 hover:bg-emerald-50 border border-gray-200 hover:border-emerald-200 text-gray-500 hover:text-emerald-600 transition-all cursor-pointer"
-              title="Duplicar grupo de recursos actual"
+              title="Duplicate current asset group"
             >
               <Copy className="w-3.5 h-3.5" />
             </button>
@@ -339,7 +339,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
         {/* Fixed Folders Sidebar */}
         <div className="w-56 bg-white border border-gray-200 rounded-xl p-2 space-y-0.5 shadow-xs overflow-y-auto">
           <div className="px-2.5 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center justify-between">
-            <span>Carpetas</span>
+            <span>Folders</span>
             <span className="text-[9px] text-blue-500 font-medium">Drag here</span>
           </div>
 
@@ -427,7 +427,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 <div className="flex items-center gap-2">
                   <label className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 cursor-pointer font-medium text-xs transition-colors shadow-2xs">
                     <Upload className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Subir archivo(s) .txt</span>
+                    <span>Upload .txt file(s)</span>
                     <input
                       type="file"
                       accept=".txt,text/plain"
@@ -458,7 +458,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
               <div>
                 <label className="text-[10px] font-bold uppercase text-gray-500 block mb-1.5">
-                  Contenido del archivo .txt (separado por comas)
+                  Text file content (comma separated)
                 </label>
                 <textarea
                   rows={4}
@@ -490,7 +490,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                   </div>
                 ) : (
                   <p className="text-xs text-gray-400 italic">
-                    Escribe texto separado por comas arriba o sube un archivo .txt para generar variations.
+                    Write comma-separated text above or upload a .txt file to generate variations.
                   </p>
                 )}
               </div>
@@ -577,7 +577,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                       value={uploadTonePreference}
                       onChange={(e) => setUploadTonePreference(e.target.value as Tone | 'auto')}
                       className="text-xs font-semibold text-gray-800 bg-transparent outline-none cursor-pointer"
-                      title="Auto-detecta el tono analizando la luminosidad del archivo o fija un tono para el lote"
+                      title="Auto-detect tone by analyzing file luminosity or set a tone for the batch"
                     >
                       <option value="auto">✨ Auto-detectar (Luminancia)</option>
                       <option value="dark">🌙 Tono Oscuro (Dark)</option>
@@ -607,7 +607,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-2">
                   <input
                     type="text"
-                    placeholder="Nombre del recurso (ej. Logo Blanco)"
+                    placeholder="Asset name (e.g. White Logo)"
                     value={newAssetName}
                     onChange={(e) => setNewAssetName(e.target.value)}
                     className="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-800 outline-none focus:border-blue-500 text-xs sm:col-span-2"
@@ -645,7 +645,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
               {/* Files in folder list */}
               <div className="space-y-3">
                 <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
-                  Archivos en esta carpeta (
+                  Files in this folder (
                   {(assetGroup.folders[activeTab as keyof typeof assetGroup.folders] as AssetItem[]).length}
                   )
                 </div>
@@ -861,7 +861,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                 )
                               }
                               className="p-1.5 rounded text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                              title="Eliminar archivo"
+                              title="Delete file"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -900,8 +900,8 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               </div>
 
                               {[
-                                { key: 'square' as keyof RatioImages, label: 'Cuadrado (1:1)', icon: Square, desc: 'Feed Instagram' },
-                                { key: 'portrait' as keyof RatioImages, label: 'Retrato (9:16 / 4:5)', icon: Smartphone, desc: 'Stories, Reels' },
+                                { key: 'square' as keyof RatioImages, label: 'Square (1:1)', icon: Square, desc: 'Feed Instagram' },
+                                { key: 'portrait' as keyof RatioImages, label: 'Portrait (9:16 / 4:5)', icon: Smartphone, desc: 'Stories, Reels' },
                                 { key: 'landscape' as keyof RatioImages, label: 'Landscape (16:9)', icon: Monitor, desc: 'Twitter, Web' },
                               ].map((ratio) => {
                                 const currentUrl = item.ratioUrls?.[ratio.key];
@@ -939,7 +939,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                     <div className="flex items-center gap-1 shrink-0">
                                       <label className="px-2 py-1 rounded bg-white hover:bg-blue-50 text-blue-600 border border-gray-200 hover:border-blue-300 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors">
                                         <Upload className="w-2.5 h-2.5" />
-                                        <span>{currentUrl ? 'Cambiar' : 'Subir'}</span>
+                                        <span>{currentUrl ? 'Change' : 'Subir'}</span>
                                         <input
                                           type="file"
                                           accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif"
@@ -970,7 +970,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                             )
                                           }
                                           className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                                          title="Eliminar imagen de este ratio"
+                                          title="Delete image for this ratio"
                                         >
                                           <Trash2 className="w-3 h-3" />
                                         </button>

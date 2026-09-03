@@ -80,7 +80,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
           <div>
             <div className="font-bold text-red-900">Dependencia Circular Detectada</div>
             <div className="text-[11px] text-red-700">
-              No se permiten ciclos en condiciones: {cycleInfo.cyclePath}. Corrige la regla para calcular variaciones.
+              Cycles not allowed in conditions: {cycleInfo.cyclePath}. Fix the rule to calculate variations.
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                     {layer.name}
                   </span>
                   <span className="font-mono text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
-                    {layer.folderType} ({currentCount} {isTextLayer ? 'variantes de texto' : 'archivos'})
+                    {layer.folderType} ({currentCount} {isTextLayer ? 'text variants' : 'files'})
                   </span>
                 </div>
 
@@ -161,7 +161,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       }`}
                     >
                       <FolderSync className="w-3 h-3" />
-                      Por Carpeta
+                      By Folder
                     </button>
 
                     <button
@@ -173,7 +173,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       }`}
                     >
                       <ArrowRightLeft className="w-3 h-3" />
-                      Por Contraste
+                      By Contrast
                     </button>
                   </div>
                 )}
@@ -198,7 +198,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-gray-900 text-xs flex items-center gap-1.5">
                           <Type className="w-3.5 h-3.5 text-blue-600" />
-                          1. Dinamización de Content
+                          1. Content Dynamization
                         </span>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -212,7 +212,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                             className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                           />
                           <span className={`text-[11px] font-bold ${textSettings.dynamicContent ? 'text-blue-600' : 'text-gray-400'}`}>
-                            {textSettings.dynamicContent ? 'Activado' : 'Fijo (1ª frase)'}
+                            {textSettings.dynamicContent ? 'Enabled' : 'Fixed (1st phrase)'}
                           </span>
                         </label>
                       </div>
@@ -220,7 +220,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       <p className="text-[11px] text-gray-500 leading-relaxed">
                         {textSettings.dynamicContent ? (
                           <span>
-                            Usa las frases del archivo <strong className="text-gray-800">{layer.folderType}.txt</strong>. Genera <strong>{currentCount} variaciones</strong> de texto.
+                            Uses phrases from file <strong className="text-gray-800">{layer.folderType}.txt</strong>. Generates <strong>{currentCount} variations</strong> of text.
                           </span>
                         ) : (
                           <span>
@@ -249,7 +249,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                             className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                           />
                           <span className={`text-[11px] font-bold ${textSettings.contrastColorEnabled ? 'text-blue-600' : 'text-gray-400'}`}>
-                            {textSettings.contrastColorEnabled ? 'Activado' : 'Desactivado'}
+                            {textSettings.contrastColorEnabled ? 'Enabled' : 'Disabled'}
                           </span>
                         </label>
                       </div>
@@ -339,7 +339,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                     <div className="text-[11px] text-gray-600 bg-gray-50 p-2.5 rounded border border-gray-200 flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-gray-400" />
                       <span>
-                        Generates a variation for each of the <strong>{currentCount}</strong> files in folder <code>{layer.folderType}</code> (multiplies combinations).
+                        Generatestes a variation for each of the <strong>{currentCount}</strong> files in folder <code>{layer.folderType}</code> (multiplies combinations).
                       </span>
                     </div>
                   )}

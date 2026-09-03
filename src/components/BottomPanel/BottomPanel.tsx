@@ -106,7 +106,7 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             )}
           </button>
 
-          {/* 3. Exportación */}
+          {/* 3. Export */}
           <button
             id="tab-btn-export"
             onClick={() => setActiveTab('export')}
@@ -117,7 +117,7 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             }`}
           >
             <Download className="w-3.5 h-3.5" />
-            <span>3. Exportación</span>
+            <span>3. Export</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-100/70 text-blue-700 font-mono font-bold">
               {report.totalVariationsCount} vars
             </span>
@@ -133,9 +133,9 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             </span>
           ) : (
             <span>
-              {report.totalVariationsCount} variaciones × {template.activeAspectRatios.length} formatos ={' '}
+              {report.totalVariationsCount} variations × {template.activeAspectRatios.length} formats ={' '}
               <strong className="text-blue-900 font-mono font-semibold">
-                {report.totalVariationsCount * template.activeAspectRatios.length} archivos
+                {report.totalVariationsCount * template.activeAspectRatios.length} files
               </strong>
             </span>
           )}

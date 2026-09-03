@@ -40,7 +40,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
   if (layers.length === 0) {
     return (
       <div className="h-full flex items-center justify-center text-gray-400 text-xs">
-        No hay capas en este template. Añade capas desde el panel izquierdo.
+        No layers in this template. Add layers from the left panel.
       </div>
     );
   }
@@ -131,8 +131,8 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                     }`}
                   >
                     {layer.dynamizationType === 'by_contrast'
-                      ? 'Por Contraste'
-                      : 'Por Carpeta'}
+                      ? 'By Contrast'
+                      : 'By Folder'}
                     {layer.conditionalRule ? ' + Condition' : ''}
                   </span>
                 </div>
@@ -145,7 +145,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                 disabled={isTop}
                 onClick={() => onMoveLayer(layer.id, 'up')}
                 className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 disabled:opacity-20 transition-colors"
-                title="Subir en orden de apilado"
+                title="Move up in stacking order"
               >
                 <ArrowUp className="w-3.5 h-3.5" />
               </button>
@@ -165,7 +165,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
               {onUpdateAssetGroup && assetGroup && (
                 <label
                   className="p-1 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition-colors cursor-pointer"
-                  title={`Subir varias imágenes o archivos a ${layer.folderType}`}
+                  title={`Upload multiple images or files to ${layer.folderType}`}
                 >
                   <Upload className="w-3.5 h-3.5" />
                   <input
@@ -223,7 +223,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
               <button
                 onClick={() => onToggleVisibility(layer.id)}
                 className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
-                title={layer.visible ? 'Ocultar capa' : 'Mostrar capa'}
+                title={layer.visible ? 'Hide layer' : 'Show layer'}
               >
                 {layer.visible ? (
                   <Eye className="w-3.5 h-3.5 text-gray-600" />
@@ -236,7 +236,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
               <button
                 onClick={() => onDeleteLayer(layer.id)}
                 className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
-                title="Eliminar capa"
+                title="Delete layer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

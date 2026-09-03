@@ -101,7 +101,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
-        {/* 1. Project Selector (Debería dejarme elegir el proyecto) */}
+        {/* 1. Project Selector (Project selector) */}
         <div className="relative">
           <button
             id="project-selector-btn"
@@ -111,11 +111,11 @@ export const Header: React.FC<HeaderProps> = ({
               setShowAssetGroupMenu(false);
             }}
             className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-900 border border-gray-200 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
-            title="Cambiar proyecto o marca"
+            title="Switch project or brand"
           >
             <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
             <span className="max-w-[140px] truncate">
-              {currentProject ? currentProject.name : 'Seleccionar Proyecto'}
+              {currentProject ? currentProject.name : 'Select Project'}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
           </button>
@@ -145,7 +145,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <div className="truncate pr-2">
                         <div className="truncate">{proj.name}</div>
                         <div className="text-[10px] text-gray-400 font-normal truncate">
-                          {proj.templates.length} plantillas · {proj.assetGroups.length} grupos
+                          {proj.templates.length} templates · {proj.assetGroups.length} groups
                         </div>
                       </div>
                       {isSelected && <Check className="w-4 h-4 text-blue-600 shrink-0" />}
@@ -163,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
                   className="w-full text-left px-2.5 py-1.5 rounded text-xs text-blue-600 hover:bg-blue-50 flex items-center gap-2 font-medium cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Crear Nuevo Proyecto</span>
+                  <span>Create New Project</span>
                 </button>
                 <button
                   onClick={() => {
@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
                   className="w-full text-left px-2.5 py-1.5 rounded text-xs text-gray-600 hover:bg-gray-100 flex items-center gap-2 font-medium cursor-pointer"
                 >
                   <Settings className="w-3.5 h-3.5 text-gray-500" />
-                  <span>Gestionar todos los proyectos</span>
+                  <span>Manage all projects</span>
                 </button>
               </div>
             </div>
@@ -322,7 +322,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Linked Asset Group */}
             <div className="relative flex items-center gap-1.5">
-              <span className="text-[11px] text-gray-400 hidden md:inline">Alimentado por:</span>
+              <span className="text-[11px] text-gray-400 hidden md:inline">Powered by:</span>
               <button
                 onClick={() => {
                   setShowAssetGroupMenu(!showAssetGroupMenu);

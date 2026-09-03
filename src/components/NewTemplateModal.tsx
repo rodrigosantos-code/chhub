@@ -187,9 +187,9 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
                     <div className="font-bold text-xs">{r}</div>
                     <div className="text-[10px] text-gray-500">
                       {r === '1:1'
-                        ? 'Cuadrado Feed'
+                        ? 'Square Feed'
                         : r === '4:5'
-                        ? 'Retrato Feed'
+                        ? 'Portrait Feed'
                         : r === '9:16'
                         ? 'Stories / Reels'
                         : 'Horizontal'}

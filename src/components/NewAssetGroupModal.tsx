@@ -72,7 +72,7 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
 
         <div className="space-y-3">
           <p className="text-[11px] text-gray-500 leading-relaxed">
-            Un Asset Group representa una colección o campaña de la marca (ej. "Colección Otoño", "Black Friday"). Contiene las 7 carpetas fijas de recursos.
+            An Asset Group represents a brand collection or campaign (e.g. "Fall Collection", "Black Friday"). Contains the fixed resource folders.
           </p>
 
           <div>
@@ -81,7 +81,7 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
             </label>
             <input
               type="text"
-              placeholder="ej. Colección Otoño/Invierno"
+              placeholder="e.g. Fall/Winter Collection"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-gray-800 outline-none focus:border-blue-500 text-xs"

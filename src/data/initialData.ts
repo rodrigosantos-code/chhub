@@ -46,7 +46,7 @@ export function createEmptyTemplate(name = 'Template 1'): MasterTemplate {
   };
 }
 
-export function createEmptyProject(name = 'Mi Marca', description = 'Proyecto de marca'): Project {
+export function createEmptyProject(name = 'My Brand', description = 'Brand project'): Project {
   return {
     id: `proj_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     name,
@@ -57,5 +57,5 @@ export function createEmptyProject(name = 'Mi Marca', description = 'Proyecto de
 }
 
 export const INITIAL_EMPTY_PROJECTS: Project[] = [
-  createEmptyProject('Mi Marca', 'Proyecto inicial de marca'),
+  createEmptyProject('My Brand', 'Initial brand project'),
 ];

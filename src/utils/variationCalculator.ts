@@ -239,7 +239,7 @@ export function calculateVariationReport(
     if (logoLayersCount > 0) parts.push(`logos filtrados por tono opuesto al fondo`);
     branchDesc = `Variaciones base (${parts.join(', ')})`;
   } else {
-    branchDesc = 'Todas las capas son fijas o dinamizadas por carpeta';
+    branchDesc = 'All layers are fixed or dynamized by folder';
   }
 
   return {

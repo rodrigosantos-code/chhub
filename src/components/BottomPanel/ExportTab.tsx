@@ -94,7 +94,7 @@ export const ExportTab: React.FC<ExportTabProps> = ({
         <div className="bg-red-50 border border-red-200 text-red-800 p-3 rounded-lg flex items-start gap-2.5">
           <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
           <div>
-            <div className="font-bold text-red-900">Error de dinamización</div>
+            <div className="font-bold text-red-900">Dynamization error</div>
             <ul className="list-disc list-inside text-[11px] text-red-700 mt-1 space-y-0.5">
               {report.errors.map((err, i) => (
                 <li key={i}>{err}</li>
@@ -109,23 +109,23 @@ export const ExportTab: React.FC<ExportTabProps> = ({
         <div>
           <div className="text-[10px] uppercase font-bold text-blue-600 tracking-wider flex items-center gap-1.5 mb-1">
             <Calculator className="w-3.5 h-3.5" />
-            Cálculo Oficial de Exportación (Sección 9)
+            Official Export Calculation (Section 9)
           </div>
 
           <div className="text-2xl font-black text-gray-900 font-mono tracking-tight flex items-baseline gap-2">
-            <span>{numVariations} variaciones</span>
+            <span>{numVariations} variations</span>
             <span className="text-gray-400 text-base font-normal">×</span>
-            <span className="text-gray-700 text-base font-semibold">{numFormats} formatos</span>
+            <span className="text-gray-700 text-base font-semibold">{numFormats} formats</span>
             <span className="text-gray-400 text-base font-normal">=</span>
-            <span className="text-blue-600 text-xl font-bold">{totalFiles} archivos finales</span>
+            <span className="text-blue-600 text-xl font-bold">{totalFiles} final files</span>
           </div>
 
           <p className="text-[11px] text-gray-600 mt-1">
-            Exportación organizada <strong className="text-gray-900 font-semibold">por ratios</strong>: una carpeta para cada relación de aspecto (Cuadrado, Retrato, Landscape), conteniendo todas las variaciones generadas.
+            Export organized <strong className="text-gray-900 font-semibold">by ratios</strong>: a folder for each aspect ratio (Square, Portrait, Landscape), containing all generated variations.
           </p>
 
           <div className="flex flex-wrap items-center gap-1.5 mt-2">
-            <span className="text-[10px] text-gray-500 font-medium">Estructura de carpetas:</span>
+            <span className="text-[10px] text-gray-500 font-medium">Folder structure:</span>
             {template.activeAspectRatios.map((ratioKey) => {
               const meta = ASPECT_RATIOS[ratioKey];
               const folderName = getRatioFolderName(ratioKey, template.activeAspectRatios);
@@ -156,7 +156,7 @@ export const ExportTab: React.FC<ExportTabProps> = ({
           {exportComplete && (
             <div className="text-[11px] text-green-700 flex items-center gap-1 mt-1 justify-end font-medium">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>¡Archivo ZIP descargado con éxito!</span>
+              <span>ZIP file downloaded successfully!</span>
             </div>
           )}
         </div>
@@ -168,7 +168,7 @@ export const ExportTab: React.FC<ExportTabProps> = ({
           <div className="flex justify-between text-xs text-blue-700 font-medium">
             <span>{exportProgress.message}</span>
             <span className="font-mono">
-              {exportProgress.current} / {exportProgress.total} archivos
+              {exportProgress.current} / {exportProgress.total} files
             </span>
           </div>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -207,7 +207,7 @@ export const ExportTab: React.FC<ExportTabProps> = ({
             <span className="w-4 h-4 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center text-[10px] font-bold border border-gray-200">
               2
             </span>
-            <span>Fase 2 — Resolución de Ramas Condicionales</span>
+            <span>Phase 2 — Conditional Branch Resolution</span>
           </div>
           <p className="text-[11px] text-gray-500">
             Suma de productos por rama condicional resuelta deterministamente tras evaluar contraste:
@@ -231,10 +231,10 @@ export const ExportTab: React.FC<ExportTabProps> = ({
         <div className="flex items-center justify-between mb-2">
           <span className="font-bold text-gray-700 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
             <Grid className="w-3.5 h-3.5 text-blue-600" />
-            Galería de Variaciones Generadas ({variations.length})
+            Generated Variations Gallery ({variations.length})
           </span>
           <span className="text-[10px] text-gray-400">
-            Haz clic en una miniatura para verla en el canvas interactivo
+            Click on a thumbnail to view it in the interactive canvas
           </span>
         </div>
 

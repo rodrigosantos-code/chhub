@@ -22,10 +22,10 @@ export interface AspectRatioMeta {
 }
 
 export const ASPECT_RATIOS: Record<AspectRatioKey, AspectRatioMeta> = {
-  '1:1': { key: '1:1', label: '1:1 Cuadrado', width: 1080, height: 1080, description: 'Feed Instagram / Facebook' },
-  '4:5': { key: '4:5', label: '4:5 Retrato', width: 1080, height: 1350, description: 'Feed Vertical Instagram' },
-  '9:16': { key: '9:16', label: '9:16 Historia / Reel', width: 1080, height: 1920, description: 'Stories, Reels, TikTok' },
-  '16:9': { key: '16:9', label: '16:9 Horizontal', width: 1920, height: 1080, description: 'Twitter, LinkedIn, Web' },
+  '1:1': { key: '1:1', label: '1:1 Square', width: 1080, height: 1080, description: 'Feed Instagram / Facebook' },
+  '4:5': { key: '4:5', label: '4:5 Portrait', width: 1080, height: 1350, description: 'Feed Vertical Instagram' },
+  '9:16': { key: '9:16', label: '9:16 Story / Reel', width: 1080, height: 1920, description: 'Stories, Reels, TikTok' },
+  '16:9': { key: '16:9', label: '16:9 Landscape', width: 1920, height: 1080, description: 'Twitter, LinkedIn, Web' },
 };
 
 export type Tone = 'light' | 'dark';
@@ -42,9 +42,9 @@ export type AnchorPoint =
   | 'bottom-right';
 
 export interface RatioImages {
-  square?: string;    // Modo Cuadrado (1:1)
-  portrait?: string;  // Modo Retrato (9:16, 4:5)
-  landscape?: string; // Modo Landscape (16:9)
+  square?: string;    // Square mode (1:1)
+  portrait?: string;  // Portrait mode (9:16, 4:5)
+  landscape?: string; // Landscape mode (16:9)
   [key: string]: string | undefined;
 }
 

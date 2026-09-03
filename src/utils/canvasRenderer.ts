@@ -495,7 +495,7 @@ export async function exportAllVariationsZip(
     }
   }
 
-  onProgress?.(totalFiles, totalFiles, 'Empaquetando archivo ZIP...');
+  onProgress?.(totalFiles, totalFiles, 'Packaging ZIP file...');
   const content = await zip.generateAsync({ type: 'blob' }, (metadata) => {
     onProgress?.(totalFiles, totalFiles, `Comprimiendo (${Math.round(metadata.percent)}%)...`);
   });
