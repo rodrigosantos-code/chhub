@@ -445,7 +445,17 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
       {/* 3. Selected Layer Position Controls for Active Ratio (Section 4.3) */}
       <div className="p-4 flex-1">
-        {selectedLayer && layerPosition ? (
+        {selectedLayer && layerPosition ? (() => {
+          // Helper: update a property across ALL ratios (for font, weight, color)
+          const updateAllRatios = (updates: Record<string, any>) => {
+            if (!onUpdateLayer) return;
+            const newPositions = { ...selectedLayer.positionsByRatio };
+            for (const ratioKey of Object.keys(newPositions) as AspectRatioKey[]) {
+              newPositions[ratioKey] = { ...newPositions[ratioKey], ...updates };
+            }
+            onUpdateLayer(selectedLayer.id, { positionsByRatio: newPositions });
+          };
+          return (
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="font-bold text-gray-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
@@ -1047,9 +1057,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   <select
                     value={layerPosition.fontFamily || 'Inter'}
                     onChange={(e) =>
-                      onUpdateLayerPosition(selectedLayer.id, selectedRatio, {
-                        fontFamily: e.target.value,
-                      })
+                      updateAllRatios({ fontFamily: e.target.value })
                     }
                     className="w-full text-xs px-2 py-1.5 rounded border border-gray-200 bg-white text-gray-800 font-medium shadow-xs cursor-pointer focus:ring-1 focus:ring-blue-400 focus:border-blue-400"
                     style={{ fontFamily: layerPosition.fontFamily || 'Inter' }}
@@ -1150,9 +1158,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                         type="color"
                         value={layerPosition.textColor || '#0F172A'}
                         onChange={(e) =>
-                          onUpdateLayerPosition(selectedLayer.id, selectedRatio, {
-                            textColor: e.target.value,
-                          })
+                          updateAllRatios({ textColor: e.target.value })
                         }
                         className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
                       />
@@ -1218,7 +1224,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                       <button
                         key={opt.value}
                         onClick={() =>
-                          onUpdateLayerPosition(selectedLayer.id, selectedRatio, { fontWeight: opt.value })
+                          updateAllRatios({ fontWeight: opt.value })
                         }
                         className={`flex-1 px-1.5 py-0.5 rounded text-[10px] transition-colors cursor-pointer ${
                           (layerPosition.fontWeight || 'bold') === opt.value
@@ -1295,7 +1301,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
               </div>
             )}
           </div>
-        ) : (
+          );
+        })() : (
           <div className="h-full flex flex-col items-center justify-center text-center p-4 border border-dashed border-gray-200 rounded-lg text-gray-400 bg-gray-50/40">
             <Sliders className="w-6 h-6 text-gray-300 mb-2" />
             <p className="font-semibold text-gray-600">No layer selected</p>
