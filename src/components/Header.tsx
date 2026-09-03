@@ -242,11 +242,16 @@ export const Header: React.FC<HeaderProps> = ({
                     {currentProject.templates.map((t) => (
                       <div
                         key={t.id}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-gray-50 transition-colors cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 flex items-center gap-2 hover:bg-gray-50 transition-colors cursor-pointer ${
                           t.id === activeTemplate.id
                             ? 'text-blue-600 font-bold bg-blue-50/60'
                             : 'text-gray-700'
                         }`}
+                        onClick={() => {
+                          if (renamingTemplateId) return;
+                          onSelectTemplate(t.id);
+                          if (t.id !== activeTemplate.id) setShowTemplateMenu(false);
+                        }}
                       >
                         {renamingTemplateId === t.id ? (
                           <input
@@ -270,21 +275,30 @@ export const Header: React.FC<HeaderProps> = ({
                             onClick={(e) => e.stopPropagation()}
                           />
                         ) : (
-                          <span
-                            className="truncate flex-1"
-                            onClick={() => {
-                              onSelectTemplate(t.id);
-                              setShowTemplateMenu(false);
-                            }}
-                            onDoubleClick={(e) => {
-                              e.stopPropagation();
-                              setRenamingTemplateId(t.id);
-                              setRenameValue(t.name);
-                            }}
-                            title="Doble clic para renombrar"
-                          >
-                            {t.name}
-                          </span>
+                          <>
+                            <span
+                              className="truncate flex-1"
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingTemplateId(t.id);
+                                setRenameValue(t.name);
+                              }}
+                            >
+                              {t.name}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setRenamingTemplateId(t.id);
+                                setRenameValue(t.name);
+                              }}
+                              className="opacity-0 group-hover:opacity-100 hover:text-blue-600 text-gray-400 p-0.5 rounded transition-all cursor-pointer"
+                              title="Renombrar"
+                              style={{ opacity: 1 }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                            </button>
+                          </>
                         )}
                         {t.id === activeTemplate.id && <Check className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />}
                       </div>
