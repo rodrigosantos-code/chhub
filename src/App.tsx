@@ -52,6 +52,8 @@ export default function App() {
                 ...ag.folders,
                 logo_3: ag.folders.logo_3 ?? [],
                 product_image_3: ag.folders.product_image_3 ?? [],
+                texto_3: ag.folders.texto_3 ?? { fileName: 'texto_3.txt', content: '', variations: [] },
+                texto_4: ag.folders.texto_4 ?? { fileName: 'texto_4.txt', content: '', variations: [] },
               },
             })),
             templates: proj.templates.map((tpl) => ({
