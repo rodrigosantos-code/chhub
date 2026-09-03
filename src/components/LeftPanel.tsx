@@ -16,6 +16,7 @@ import {
   Link2,
   ChevronDown,
   ChevronRight,
+  Pentagon,
 } from 'lucide-react';
 import {
   ASPECT_RATIOS,
@@ -27,6 +28,8 @@ import {
   TemplateLayer,
   TextDynamizationSettings,
   AnchorPoint,
+  ShapeConfig,
+  ShapeType,
 } from '../types';
 
 const ANCHOR_POINTS: { key: AnchorPoint; label: string; tooltip: string }[] = [
@@ -74,13 +77,14 @@ interface LeftPanelProps {
     layerId: string,
     updates: Partial<TextDynamizationSettings>
   ) => void;
+  onUpdateLayer?: (layerId: string, updates: Partial<TemplateLayer>) => void;
   onUpdateAssetGroup?: (updatedGroup: AssetGroup) => void;
 }
 
 const FIXED_FOLDER_DEFS: {
   type: FolderType;
   title: string;
-  category: 'background' | 'logo' | 'product' | 'text';
+  category: 'background' | 'logo' | 'product' | 'text' | 'form';
   desc: string;
 }[] = [
   { type: 'background', title: 'Background', category: 'background', desc: 'Background images' },
@@ -92,8 +96,11 @@ const FIXED_FOLDER_DEFS: {
   { type: 'product_image_3', title: 'Overlay 3', category: 'product', desc: 'Third overlay image' },
   { type: 'texto_1', title: 'Text 1 (Headline)', category: 'text', desc: 'Text file with phrases' },
   { type: 'texto_2', title: 'Text 2 (Subtitle)', category: 'text', desc: 'Secondary text file' },
-  { type: 'texto_3', title: 'Texto 3', category: 'text', desc: 'Third text field' },
-  { type: 'texto_4', title: 'Texto 4', category: 'text', desc: 'Fourth text field' },
+  { type: 'texto_3', title: 'Text 3', category: 'text', desc: 'Third text field' },
+  { type: 'texto_4', title: 'Text 4', category: 'text', desc: 'Fourth text field' },
+  { type: 'form_1', title: 'Form 1', category: 'form', desc: 'Shape (rectangle, circle, etc.)' },
+  { type: 'form_2', title: 'Form 2', category: 'form', desc: 'Shape (rectangle, circle, etc.)' },
+  { type: 'form_3', title: 'Form 3', category: 'form', desc: 'Shape (rectangle, circle, etc.)' },
 ];
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -108,6 +115,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
   onUpdateLayerPosition,
   onDeleteLayer,
   onUpdateTextDynamization,
+  onUpdateLayer,
   onUpdateAssetGroup,
 }) => {
   const [dragOverSlot, setDragOverSlot] = useState<FolderType | null>(null);
@@ -118,6 +126,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     logo: true,
     product: true,
     text: true,
+    form: true,
   });
   const [objectsPanelOpen, setObjectsPanelOpen] = useState(true);
 
@@ -128,10 +137,10 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
   const handleSlotMultiUpload = async (
     slotType: FolderType,
-    category: 'background' | 'logo' | 'product' | 'text',
+    category: 'background' | 'logo' | 'product' | 'text' | 'form',
     files: FileList | File[] | null
   ) => {
-    if (!files || files.length === 0 || !onUpdateAssetGroup) return;
+    if (!files || files.length === 0 || category === 'form' || !onUpdateAssetGroup) return;
 
     if (category === 'text') {
       const phrases = await readTextFiles(files);
@@ -268,16 +277,19 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
           { key: 'background', label: 'Background', color: 'amber' },
           { key: 'logo', label: 'Logos', color: 'blue' },
           { key: 'product', label: 'Overlays', color: 'violet' },
-          { key: 'text', label: 'Textos', color: 'emerald' },
+          { key: 'text', label: 'Texts', color: 'emerald' },
+          { key: 'form', label: 'Forms', color: 'pink' },
         ].map((group) => {
           const groupSlots = FIXED_FOLDER_DEFS.filter((s) => s.category === group.key);
-          const totalCount = groupSlots.reduce((acc, s) => acc + getFolderItems(assetGroup, s.type).count, 0);
+          const isFormGroup = group.key === 'form';
+          const totalCount = isFormGroup ? 0 : groupSlots.reduce((acc, s) => acc + getFolderItems(assetGroup, s.type).count, 0);
           const isExpanded = expandedCategories[group.key] ?? true;
           const colorMap: Record<string, { dot: string; text: string; bg: string; border: string }> = {
             amber: { dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
             blue: { dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
             violet: { dot: 'bg-violet-400', text: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
             emerald: { dot: 'bg-emerald-400', text: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
+            pink: { dot: 'bg-pink-400', text: 'text-pink-700', bg: 'bg-pink-50', border: 'border-pink-200' },
           };
           const cc = colorMap[group.color];
 
@@ -323,6 +335,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                     ? 'bg-white hover:bg-blue-50/40 border-gray-200 hover:border-blue-300 border-l-[3px] border-l-blue-400'
                     : slot.category === 'product'
                     ? 'bg-white hover:bg-violet-50/40 border-gray-200 hover:border-violet-300 border-l-[3px] border-l-violet-400'
+                    : slot.category === 'form'
+                    ? 'bg-white hover:bg-pink-50/40 border-gray-200 hover:border-pink-300 border-l-[3px] border-l-pink-400'
                     : 'bg-white hover:bg-emerald-50/40 border-gray-200 hover:border-emerald-300 border-l-[3px] border-l-emerald-400'
                 }`}
               >
@@ -335,14 +349,22 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                     const firstAsset = folderInfo.items?.[0];
 
                     // Category color mapping
-                    const categoryColors = {
+                    const categoryColors: Record<string, { bg: string; border: string; text: string; hoverBg: string; hoverText: string }> = {
                       background: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-600', hoverBg: 'group-hover:bg-amber-100', hoverText: 'group-hover:text-amber-700' },
                       logo: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600', hoverBg: 'group-hover:bg-blue-100', hoverText: 'group-hover:text-blue-700' },
                       product: { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-500', hoverBg: 'group-hover:bg-violet-100', hoverText: 'group-hover:text-violet-700' },
                       text: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-600', hoverBg: 'group-hover:bg-emerald-100', hoverText: 'group-hover:text-emerald-700' },
+                      form: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-600', hoverBg: 'group-hover:bg-pink-100', hoverText: 'group-hover:text-pink-700' },
                     };
                     const cc = categoryColors[slot.category];
 
+                    if (slot.category === 'form') {
+                      return (
+                        <div className={`w-7 h-7 rounded-md ${cc.bg} flex items-center justify-center ${cc.text} ${cc.hoverBg} ${cc.hoverText} border ${cc.border} transition-colors shrink-0`}>
+                          <Pentagon className="w-3.5 h-3.5" />
+                        </div>
+                      );
+                    }
                     if (slot.category === 'text') {
                       return (
                         <div className={`w-7 h-7 rounded-md ${cc.bg} flex items-center justify-center ${cc.text} ${cc.hoverBg} ${cc.hoverText} border ${cc.border} transition-colors shrink-0`}>
@@ -370,31 +392,35 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 </button>
 
                 <div className="flex items-center gap-1 shrink-0">
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
-                      count > 0 ? 'bg-gray-100 text-gray-600' : 'bg-red-50 text-red-600 border border-red-200'
-                    }`}
-                  >
-                    {count}
-                  </span>
+                  {slot.category !== 'form' && (
+                    <>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                          count > 0 ? 'bg-gray-100 text-gray-600' : 'bg-red-50 text-red-600 border border-red-200'
+                        }`}
+                      >
+                        {count}
+                      </span>
 
-                  {/* Batch Upload Button for this slot */}
-                  <label
-                    className="w-5 h-5 rounded hover:bg-blue-100 hover:text-blue-600 flex items-center justify-center text-gray-400 cursor-pointer transition-colors"
-                    title={`Upload multiple images or files to ${slot.title}`}
-                  >
-                    <Upload className="w-3 h-3" />
-                    <input
-                      type="file"
-                      multiple
-                      accept={slot.category === 'text' ? '.txt,text/plain' : 'image/png,image/jpeg,image/svg+xml,image/webp,image/gif'}
-                      className="hidden"
-                      onChange={(e) => {
-                        handleSlotMultiUpload(slot.type, slot.category, e.target.files);
-                        e.target.value = '';
-                      }}
-                    />
-                  </label>
+                      {/* Batch Upload Button for this slot */}
+                      <label
+                        className="w-5 h-5 rounded hover:bg-blue-100 hover:text-blue-600 flex items-center justify-center text-gray-400 cursor-pointer transition-colors"
+                        title={`Upload multiple images or files to ${slot.title}`}
+                      >
+                        <Upload className="w-3 h-3" />
+                        <input
+                          type="file"
+                          multiple
+                          accept={slot.category === 'text' ? '.txt,text/plain' : 'image/png,image/jpeg,image/svg+xml,image/webp,image/gif'}
+                          className="hidden"
+                          onChange={(e) => {
+                            handleSlotMultiUpload(slot.type, slot.category, e.target.files);
+                            e.target.value = '';
+                          }}
+                        />
+                      </label>
+                    </>
+                  )}
 
                   {/* Add Layer to Canvas Button */}
                   <button
@@ -865,6 +891,131 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 </div>
               );
             })()}
+
+            {/* ===== FORM (Shape) CONFIG ===== */}
+            {selectedLayer.folderType.startsWith('form') && selectedLayer.shapeConfig && (() => {
+              const sc = selectedLayer.shapeConfig;
+              const updateShape = (patch: Partial<ShapeConfig>) => {
+                onUpdateLayer?.(selectedLayer.id, {
+                  shapeConfig: { ...sc, ...patch },
+                });
+              };
+              return (
+                <div className="space-y-3 pt-1 border-t border-gray-200">
+                  <label className="text-[10px] text-pink-600 font-bold uppercase tracking-wider">Shape Config</label>
+
+                  {/* Shape Type */}
+                  <div>
+                    <label className="text-[10px] text-gray-500 font-semibold uppercase mb-1 block">Shape</label>
+                    <div className="flex gap-1 flex-wrap">
+                      {(['rectangle', 'circle', 'ellipse', 'triangle', 'line'] as ShapeType[]).map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => updateShape({ shapeType: s })}
+                          className={`px-2 py-1 rounded text-[10px] font-medium capitalize cursor-pointer transition-colors ${
+                            sc.shapeType === s
+                              ? 'bg-pink-500 text-white'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Fill Color */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-[10px] text-gray-500 font-semibold uppercase w-16">Fill</label>
+                    <input
+                      type="color"
+                      value={sc.fillColor}
+                      onChange={(e) => updateShape({ fillColor: e.target.value })}
+                      className="w-6 h-6 rounded border border-gray-300 cursor-pointer"
+                    />
+                    <span className="text-[10px] font-mono text-gray-500">{sc.fillColor}</span>
+                  </div>
+
+                  {/* Stroke */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-[10px] text-gray-500 font-semibold uppercase w-16">Stroke</label>
+                    <input
+                      type="color"
+                      value={sc.strokeColor === 'transparent' ? '#000000' : sc.strokeColor}
+                      onChange={(e) => updateShape({ strokeColor: e.target.value })}
+                      className="w-6 h-6 rounded border border-gray-300 cursor-pointer"
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      max="20"
+                      value={sc.strokeWidth}
+                      onChange={(e) => updateShape({ strokeWidth: Number(e.target.value) })}
+                      className="w-14 px-1.5 py-0.5 text-[10px] rounded border border-gray-300"
+                    />
+                    <span className="text-[10px] text-gray-400">px</span>
+                  </div>
+
+                  {/* Border Radius (rectangle only) */}
+                  {sc.shapeType === 'rectangle' && (
+                    <div className="flex items-center gap-2">
+                      <label className="text-[10px] text-gray-500 font-semibold uppercase w-16">Radius</label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={sc.borderRadius}
+                        onChange={(e) => updateShape({ borderRadius: Number(e.target.value) })}
+                        className="flex-1 h-1 accent-pink-500"
+                      />
+                      <span className="text-[10px] font-mono text-gray-500 w-8 text-right">{sc.borderRadius}px</span>
+                    </div>
+                  )}
+
+                  {/* Opacity */}
+                  <div className="flex items-center gap-2">
+                    <label className="text-[10px] text-gray-500 font-semibold uppercase w-16">Opacity</label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={Math.round(sc.opacity * 100)}
+                      onChange={(e) => updateShape({ opacity: Number(e.target.value) / 100 })}
+                      className="flex-1 h-1 accent-pink-500"
+                    />
+                    <span className="text-[10px] font-mono text-gray-500 w-8 text-right">{Math.round(sc.opacity * 100)}%</span>
+                  </div>
+
+                  {/* Contrast Colors */}
+                  <div className="pt-2 border-t border-gray-100">
+                    <label className="text-[10px] text-pink-600 font-bold uppercase tracking-wider mb-2 block">Contrast Colors</label>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-gray-500 w-20">On dark bg:</span>
+                        <input
+                          type="color"
+                          value={sc.darkBgColor}
+                          onChange={(e) => updateShape({ darkBgColor: e.target.value })}
+                          className="w-6 h-6 rounded border border-gray-300 cursor-pointer"
+                        />
+                        <span className="text-[10px] font-mono text-gray-500">{sc.darkBgColor}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-gray-500 w-20">On light bg:</span>
+                        <input
+                          type="color"
+                          value={sc.lightBgColor}
+                          onChange={(e) => updateShape({ lightBgColor: e.target.value })}
+                          className="w-6 h-6 rounded border border-gray-300 cursor-pointer"
+                        />
+                        <span className="text-[10px] font-mono text-gray-500">{sc.lightBgColor}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {(selectedLayer.folderType.startsWith('texto')) && (
               <div className="space-y-3 pt-1 border-t border-gray-200">
                 <div>

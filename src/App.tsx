@@ -418,20 +418,24 @@ export default function App() {
       product_image_3: 'Overlay 3',
       texto_1: 'Text 1 (Headline)',
       texto_2: 'Text 2 (Subtitle)',
-      texto_3: 'Texto 3',
-      texto_4: 'Texto 4',
+      texto_3: 'Text 3',
+      texto_4: 'Text 4',
+      form_1: 'Form 1',
+      form_2: 'Form 2',
+      form_3: 'Form 3',
     };
 
     const isText = folderType.startsWith('texto');
     const isLogo = folderType.startsWith('logo');
     const isBg = folderType === 'background';
+    const isForm = folderType.startsWith('form');
 
     const defaultPositions: Record<AspectRatioKey, any> = {
       '1:1': {
-        x: isBg ? 0 : 20,
-        y: isBg ? 0 : isText ? 75 : 25,
-        width: isBg ? 100 : 60,
-        height: isBg ? 100 : isText ? 15 : 50,
+        x: isBg ? 0 : isForm ? 10 : 20,
+        y: isBg ? 0 : isText ? 75 : isForm ? 80 : 25,
+        width: isBg ? 100 : isForm ? 80 : 60,
+        height: isBg ? 100 : isText ? 15 : isForm ? 12 : 50,
         anchorPoint: 'center',
         scale: isLogo ? 100 : undefined,
         opacity: 1,
@@ -442,10 +446,10 @@ export default function App() {
         objectFit: isBg ? 'cover' : 'contain',
       },
       '4:5': {
-        x: isBg ? 0 : 18,
-        y: isBg ? 0 : isText ? 75 : 25,
-        width: isBg ? 100 : 64,
-        height: isBg ? 100 : isText ? 15 : 50,
+        x: isBg ? 0 : isForm ? 10 : 18,
+        y: isBg ? 0 : isText ? 75 : isForm ? 82 : 25,
+        width: isBg ? 100 : isForm ? 80 : 64,
+        height: isBg ? 100 : isText ? 15 : isForm ? 10 : 50,
         anchorPoint: 'center',
         scale: isLogo ? 100 : undefined,
         opacity: 1,
@@ -456,10 +460,10 @@ export default function App() {
         objectFit: isBg ? 'cover' : 'contain',
       },
       '9:16': {
-        x: isBg ? 0 : 15,
-        y: isBg ? 0 : isText ? 76 : 28,
-        width: isBg ? 100 : 70,
-        height: isBg ? 100 : isText ? 15 : 44,
+        x: isBg ? 0 : isForm ? 8 : 15,
+        y: isBg ? 0 : isText ? 76 : isForm ? 84 : 28,
+        width: isBg ? 100 : isForm ? 84 : 70,
+        height: isBg ? 100 : isText ? 15 : isForm ? 8 : 44,
         anchorPoint: 'center',
         scale: isLogo ? 100 : undefined,
         opacity: 1,
@@ -470,10 +474,10 @@ export default function App() {
         objectFit: isBg ? 'cover' : 'contain',
       },
       '16:9': {
-        x: isBg ? 0 : 25,
-        y: isBg ? 0 : isText ? 50 : 15,
-        width: isBg ? 100 : 50,
-        height: isBg ? 100 : isText ? 25 : 70,
+        x: isBg ? 0 : isForm ? 15 : 25,
+        y: isBg ? 0 : isText ? 50 : isForm ? 80 : 15,
+        width: isBg ? 100 : isForm ? 70 : 50,
+        height: isBg ? 100 : isText ? 25 : isForm ? 14 : 70,
         anchorPoint: 'center',
         scale: isLogo ? 100 : undefined,
         opacity: 1,
@@ -489,12 +493,24 @@ export default function App() {
       id: `layer_${Date.now()}`,
       name: layerNames[folderType],
       folderType,
-      dynamizationType: isText ? 'by_folder' : folderType.startsWith('logo') ? 'by_contrast' : 'by_folder',
+      dynamizationType: isForm ? 'by_contrast' : isText ? 'by_folder' : folderType.startsWith('logo') ? 'by_contrast' : 'by_folder',
       textDynamization: isText
         ? {
             dynamicContent: true,
             contrastColorEnabled: true,
             contrastTextColor: '#FFFFFF',
+          }
+        : undefined,
+      shapeConfig: isForm
+        ? {
+            shapeType: 'rectangle',
+            fillColor: '#FFFFFF',
+            strokeColor: 'transparent',
+            strokeWidth: 0,
+            borderRadius: 0,
+            opacity: 1,
+            darkBgColor: '#FFFFFF',
+            lightBgColor: '#0F172A',
           }
         : undefined,
       visible: true,
@@ -531,6 +547,16 @@ export default function App() {
           },
         };
       }),
+    }));
+  };
+
+  // Update Layer properties (e.g. shapeConfig)
+  const handleUpdateLayer = (layerId: string, updates: Partial<TemplateLayer>) => {
+    updateActiveTemplate((t) => ({
+      ...t,
+      layers: t.layers.map((l) =>
+        l.id === layerId ? { ...l, ...updates } : l
+      ),
     }));
   };
 
@@ -739,6 +765,7 @@ export default function App() {
               onToggleActiveRatio={handleToggleActiveRatio}
               onAddLayer={handleAddLayer}
               onUpdateLayerPosition={handleUpdateLayerPosition}
+              onUpdateLayer={handleUpdateLayer}
               onDeleteLayer={handleDeleteLayer}
               onUpdateTextDynamization={handleUpdateTextDynamization}
               onUpdateAssetGroup={handleUpdateAssetGroup}
@@ -756,6 +783,7 @@ export default function App() {
               onSelectRatio={setSelectedRatio}
               onSelectLayer={setSelectedLayerId}
               onUpdateLayerPosition={handleUpdateLayerPosition}
+              onUpdateLayer={handleUpdateLayer}
             />
           </div>
 

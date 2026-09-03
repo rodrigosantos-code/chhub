@@ -9,7 +9,10 @@ export type FolderType =
   | 'texto_1'
   | 'texto_2'
   | 'texto_3'
-  | 'texto_4';
+  | 'texto_4'
+  | 'form_1'
+  | 'form_2'
+  | 'form_3';
 
 export type AspectRatioKey = '1:1' | '4:5' | '9:16' | '16:9';
 
@@ -121,6 +124,20 @@ export interface TextDynamizationSettings {
   contrastTextColor: string; // Color al que cambiar por contraste (ej. '#FFFFFF')
 }
 
+export type ShapeType = 'rectangle' | 'circle' | 'ellipse' | 'line' | 'triangle';
+
+export interface ShapeConfig {
+  shapeType: ShapeType;
+  fillColor: string;
+  strokeColor: string;
+  strokeWidth: number;
+  borderRadius: number; // only for rectangle
+  opacity: number; // 0-1
+  // Contrast dynamization colors
+  darkBgColor: string;  // color to use when background is dark
+  lightBgColor: string; // color to use when background is light
+}
+
 export interface TemplateLayer {
   id: string;
   name: string;
@@ -128,6 +145,7 @@ export interface TemplateLayer {
   dynamizationType: DynamizationType;
   conditionalRule?: ConditionalRule;
   textDynamization?: TextDynamizationSettings;
+  shapeConfig?: ShapeConfig;
   visible: boolean;
   positionsByRatio: Record<AspectRatioKey, LayerRatioSettings>;
 }
@@ -157,7 +175,8 @@ export interface ResolvedLayerValue {
   contrastCorrected: boolean;
   originalAssetItem?: AssetItem;
   resolvedTextColor?: string;
-  negativeFillColor?: string; // When set, renderer should colorize the asset with this fill color
+  negativeFillColor?: string;
+  resolvedShapeColor?: string; // Resolved fill color for form layers after contrast
 }
 
 export interface GeneratedVariation {

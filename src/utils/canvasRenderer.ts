@@ -155,6 +155,79 @@ export async function renderVariationOnCanvas(
     const layerW = (pos.width / 100) * baseW;
     const layerH = (pos.height / 100) * baseH;
 
+    // 0. Form (Shape) Layer
+    if (layer.folderType.startsWith('form') && layer.shapeConfig) {
+      const shape = layer.shapeConfig;
+      const fillColor = resolved.resolvedShapeColor || shape.fillColor;
+      const opacity = (pos.opacity ?? 1) * (shape.opacity ?? 1);
+
+      ctx.save();
+      ctx.globalAlpha = opacity;
+      ctx.fillStyle = fillColor;
+
+      if (shape.strokeWidth > 0 && shape.strokeColor !== 'transparent') {
+        ctx.strokeStyle = shape.strokeColor;
+        ctx.lineWidth = shape.strokeWidth;
+      }
+
+      switch (shape.shapeType) {
+        case 'rectangle': {
+          const r = shape.borderRadius || 0;
+          if (r > 0) {
+            ctx.beginPath();
+            ctx.roundRect(layerX, layerY, layerW, layerH, r);
+            ctx.fill();
+            if (shape.strokeWidth > 0) ctx.stroke();
+          } else {
+            ctx.fillRect(layerX, layerY, layerW, layerH);
+            if (shape.strokeWidth > 0) ctx.strokeRect(layerX, layerY, layerW, layerH);
+          }
+          break;
+        }
+        case 'circle': {
+          const radius = Math.min(layerW, layerH) / 2;
+          const cx = layerX + layerW / 2;
+          const cy = layerY + layerH / 2;
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+          ctx.fill();
+          if (shape.strokeWidth > 0) ctx.stroke();
+          break;
+        }
+        case 'ellipse': {
+          const cx = layerX + layerW / 2;
+          const cy = layerY + layerH / 2;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, layerW / 2, layerH / 2, 0, 0, Math.PI * 2);
+          ctx.fill();
+          if (shape.strokeWidth > 0) ctx.stroke();
+          break;
+        }
+        case 'triangle': {
+          ctx.beginPath();
+          ctx.moveTo(layerX + layerW / 2, layerY);
+          ctx.lineTo(layerX + layerW, layerY + layerH);
+          ctx.lineTo(layerX, layerY + layerH);
+          ctx.closePath();
+          ctx.fill();
+          if (shape.strokeWidth > 0) ctx.stroke();
+          break;
+        }
+        case 'line': {
+          ctx.beginPath();
+          ctx.moveTo(layerX, layerY + layerH / 2);
+          ctx.lineTo(layerX + layerW, layerY + layerH / 2);
+          ctx.lineWidth = shape.strokeWidth || 2;
+          ctx.strokeStyle = fillColor;
+          ctx.stroke();
+          break;
+        }
+      }
+
+      ctx.restore();
+      continue;
+    }
+
     // 1. Text Layer
     if (layer.folderType.startsWith('texto') || resolved.textValue) {
       const text = resolved.textValue || '';

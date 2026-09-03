@@ -45,6 +45,11 @@ export function getFolderItems(
       const vars = assetGroup.folders.texto_4.variations.filter((v) => v.trim().length > 0);
       return { items: [], count: vars.length, textStrings: vars };
     }
+    case 'form_1':
+    case 'form_2':
+    case 'form_3':
+      // Forms don't have folder data — they are self-contained shapes
+      return { items: [], count: 1 };
   }
 }
 
@@ -325,16 +330,21 @@ export function generateAllVariations(
   ): LayerCandidate[] {
     const info = getFolderItems(assetGroup, layer.folderType);
 
+    // Form layers — always 1 candidate, no asset dependency
+    if (layer.folderType.startsWith('form')) {
+      return [{ layer }];
+    }
+
     // Text layers
     if (layer.folderType.startsWith('texto')) {
       if (layer.textDynamization?.dynamicContent === false) {
-        const singleText = info.textStrings?.[0] || 'Texto';
+        const singleText = info.textStrings?.[0] || 'Text';
         return [{ layer, text: singleText }];
       }
       if (info.textStrings && info.textStrings.length > 0) {
         return info.textStrings.map((t) => ({ layer, text: t }));
       }
-      return [{ layer, text: 'Texto' }];
+      return [{ layer, text: 'Text' }];
     }
 
     // Image layers
@@ -478,6 +488,20 @@ export function generateAllVariations(
               contrastCorrected: wasCorrected,
             };
           }
+        }
+      }
+
+      // Resolve form layer colors by contrast
+      for (const layer of visibleLayers) {
+        if (layer.folderType.startsWith('form') && layer.shapeConfig) {
+          const shapeConf = layer.shapeConfig;
+          const resolvedColor = bgTone === 'dark' ? shapeConf.darkBgColor : shapeConf.lightBgColor;
+          resolved[layer.id] = {
+            layerId: layer.id,
+            folderUsed: layer.folderType,
+            contrastCorrected: resolvedColor !== shapeConf.fillColor,
+            resolvedShapeColor: resolvedColor,
+          };
         }
       }
 
