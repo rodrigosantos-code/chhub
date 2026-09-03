@@ -1,0 +1,6 @@
+{
+  "name": "CHstudio",
+  "description": "Plataforma de generación masiva de publicaciones dinámicas organizadas por proyectos de marca, plantillas master y grupos de recursos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
