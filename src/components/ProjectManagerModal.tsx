@@ -71,7 +71,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-sm text-gray-900">
-                  Proyectos de Marcas
+                  Brand Projects
                 </span>
                 <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">
                   CHhub
@@ -104,7 +104,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                   className="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Nuevo Proyecto</span>
+                  <span>New Project</span>
                 </button>
               )}
             </div>
@@ -116,7 +116,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                 className="p-3 bg-blue-50/50 border border-blue-200 rounded-lg space-y-3"
               >
                 <div className="font-bold text-gray-900 text-xs">
-                  Crear Nuevo Proyecto de Marca
+                  Crear New Project de Marca
                 </div>
                 <div>
                   <label className="text-[10px] font-semibold text-gray-600 block mb-1 uppercase">
@@ -241,7 +241,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
                           )}
                         </div>
                         <div className="text-[11px] text-gray-500 truncate">
-                          {p.description || 'Sin descripción'}
+                          {p.description || 'No description'}
                         </div>
                         <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-400">
                           <span className="flex items-center gap-1">
@@ -312,7 +312,7 @@ export const ProjectManagerModal: React.FC<ProjectManagerModalProps> = ({
             onClick={onClose}
             className="px-4 py-1.5 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium text-xs transition-colors cursor-pointer"
           >
-            Cerrar
+            Close
           </button>
         </div>
       </div>

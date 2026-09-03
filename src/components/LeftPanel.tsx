@@ -83,17 +83,17 @@ const FIXED_FOLDER_DEFS: {
   category: 'background' | 'logo' | 'product' | 'text';
   desc: string;
 }[] = [
-  { type: 'background', title: 'Fondo (Background)', category: 'background', desc: 'Imágenes de fondo' },
-  { type: 'logo_1', title: 'Logo 1 (Logotipo)', category: 'logo', desc: 'Variantes de logotipo principal' },
-  { type: 'logo_2', title: 'Logo 2 (Símbolo)', category: 'logo', desc: 'Variantes de isotipo o símbolo' },
-  { type: 'logo_3', title: 'Logo 3', category: 'logo', desc: 'Tercer logotipo o variante' },
-  { type: 'product_image_1', title: 'Overlay 1', category: 'product', desc: 'Primera imagen overlay (producto, gráfico, etc.)' },
-  { type: 'product_image_2', title: 'Overlay 2', category: 'product', desc: 'Segunda imagen overlay' },
-  { type: 'product_image_3', title: 'Overlay 3', category: 'product', desc: 'Tercera imagen overlay' },
-  { type: 'texto_1', title: 'Texto 1 (Titular)', category: 'text', desc: 'Archivo .txt con frases' },
-  { type: 'texto_2', title: 'Texto 2 (Subtítulo)', category: 'text', desc: 'Archivo .txt secundario' },
-  { type: 'texto_3', title: 'Texto 3', category: 'text', desc: 'Tercer campo de texto' },
-  { type: 'texto_4', title: 'Texto 4', category: 'text', desc: 'Cuarto campo de texto' },
+  { type: 'background', title: 'Fondo (Background)', category: 'background', desc: 'Background images' },
+  { type: 'logo_1', title: 'Logo 1 (Logotype)', category: 'logo', desc: 'Primary logotype variants' },
+  { type: 'logo_2', title: 'Logo 2 (Symbol)', category: 'logo', desc: 'Isotype or symbol variants' },
+  { type: 'logo_3', title: 'Logo 3', category: 'logo', desc: 'Third logotype or variant' },
+  { type: 'product_image_1', title: 'Overlay 1', category: 'product', desc: 'First overlay image (product, graphic, etc.)' },
+  { type: 'product_image_2', title: 'Overlay 2', category: 'product', desc: 'Second overlay image' },
+  { type: 'product_image_3', title: 'Overlay 3', category: 'product', desc: 'Third overlay image' },
+  { type: 'texto_1', title: 'Text 1 (Headline)', category: 'text', desc: 'Text file with phrases' },
+  { type: 'texto_2', title: 'Text 2 (Subtitle)', category: 'text', desc: 'Secondary text file' },
+  { type: 'texto_3', title: 'Texto 3', category: 'text', desc: 'Third text field' },
+  { type: 'texto_4', title: 'Texto 4', category: 'text', desc: 'Fourth text field' },
 ];
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -119,6 +119,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     product: true,
     text: true,
   });
+  const [objectsPanelOpen, setObjectsPanelOpen] = useState(true);
 
   const selectedLayer = template.layers.find((l) => l.id === selectedLayerId);
   const layerPosition = selectedLayer
@@ -241,13 +242,20 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
       {/* 2. Add Objects / Fixed Folders (Section 3 & 4.1) */}
       <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center justify-between mb-3">
+        <button
+          onClick={() => setObjectsPanelOpen(!objectsPanelOpen)}
+          className="w-full flex items-center justify-between mb-1 cursor-pointer hover:opacity-80 transition-opacity"
+        >
           <span className="font-semibold text-gray-700 uppercase tracking-wider text-[11px] flex items-center gap-2">
+            {objectsPanelOpen ? <ChevronDown className="w-3.5 h-3.5 text-gray-400" /> : <ChevronRight className="w-3.5 h-3.5 text-gray-400" />}
             <Plus className="w-4 h-4 text-blue-600" />
-            Añadir Objetos al Lienzo
+            Add Objects to Canvas
           </span>
           <span className="text-[10px] text-gray-400 font-mono">{FIXED_FOLDER_DEFS.length} slots</span>
-        </div>
+        </button>
+
+        {objectsPanelOpen && (
+        <div className="mt-2">
 
         {uploadFeedback && (
           <div className="mb-2 p-1.5 rounded bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-semibold text-center animate-fade-in">
@@ -392,7 +400,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   <button
                     onClick={() => onAddLayer(slot.type)}
                     className="w-5 h-5 rounded bg-gray-100 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center text-gray-400 transition-colors cursor-pointer"
-                    title="Añadir capa al lienzo"
+                    title="Add layer to canvas"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
@@ -405,6 +413,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             </div>
           );
         })}
+        </div>
+        )}
       </div>
 
       {/* 3. Selected Layer Position Controls for Active Ratio (Section 4.3) */}
@@ -414,12 +424,12 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             <div className="flex items-center justify-between mb-3">
               <span className="font-bold text-gray-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                 <Sliders className="w-3.5 h-3.5 text-blue-600" />
-                Ajuste: {selectedLayer.name}
+                Adjust: {selectedLayer.name}
               </span>
               <button
                 onClick={() => onDeleteLayer(selectedLayer.id)}
                 className="text-gray-400 hover:text-red-500 p-1 transition-colors"
-                title="Eliminar capa del template"
+                title="Delete layer from template"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -427,7 +437,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
             <div className="bg-blue-50/60 p-2.5 rounded-lg border border-blue-100 mb-3 text-[11px]">
               <div className="flex justify-between text-gray-600 mb-1">
-                <span>Formato actual ajustado:</span>
+                <span>Current adjusted format:</span>
                 <span className="font-mono font-bold text-blue-600">{selectedRatio}</span>
               </div>
               <p className="text-[10px] text-gray-500">
@@ -459,7 +469,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <div>
                     <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                      X — Anclaje (%)
+                      X — Anchor (%)
                     </label>
                     <input
                       type="number"
@@ -472,7 +482,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
                   <div>
                     <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                      Y — Anclaje (%)
+                      Y — Anchor (%)
                     </label>
                     <input
                       type="number"
@@ -485,7 +495,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
                   <div>
                     <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                      Ancho (%)
+                      Width (%)
                     </label>
                     <input
                       type="number"
@@ -510,7 +520,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
 
                   <div className="relative">
                     <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                      Alto (%)
+                      Height (%)
                     </label>
                     <input
                       type="number"
@@ -540,7 +550,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                           ? 'bg-blue-600 text-white'
                           : 'bg-gray-200 text-gray-400 hover:bg-gray-300'
                       }`}
-                      title={linkedWH ? 'Desvincular ancho/alto' : 'Vincular ancho/alto (escala uniforme)'}
+                      title={linkedWH ? 'Unlink width/height' : 'Link width/height (uniform scale)'}
                     >
                       <Link2 className="w-2.5 h-2.5" />
                     </button>
@@ -553,7 +563,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             {!selectedLayer.folderType.startsWith('texto') && (
               <div className="mb-3">
                 <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                  Ajuste de Imagen (Object-Fit)
+                  Image Fit (Object-Fit)
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
                   <button
@@ -566,7 +576,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    Contain (Contener)
+                    Contain
                   </button>
                   <button
                     onClick={() =>
@@ -660,7 +670,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-[10px] text-gray-700 font-bold uppercase flex items-center gap-1.5">
                     <Crosshair className="w-3.5 h-3.5 text-blue-600" />
-                    Punto de Anclaje
+                    Anchor Point
                   </label>
                   <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 shadow-2xs">
                     {ANCHOR_LABELS[layerPosition.anchorPoint || 'center']}
@@ -681,7 +691,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                               anchorPoint: ap.key,
                             })
                           }
-                          title={`Punto de anclaje: ${ap.tooltip}`}
+                          title={`Anchor point: ${ap.tooltip}`}
                           className={`w-6 h-6 rounded flex items-center justify-center transition-all cursor-pointer ${
                             isSelected
                               ? 'bg-blue-600 text-white shadow-xs scale-105 ring-1 ring-blue-400'
@@ -982,7 +992,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] text-gray-500 font-semibold uppercase block mb-1">
-                      Color de Texto
+                      Text Color
                     </label>
                     <div className="flex items-center gap-2 bg-white p-1 rounded border border-gray-200 shadow-xs">
                       <input

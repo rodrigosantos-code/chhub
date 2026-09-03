@@ -251,7 +251,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
           {variations.length > 0 ? (
             <div className="flex items-center gap-2 bg-white px-2.5 py-1 rounded-lg border border-gray-200 shadow-xs">
               <span className="text-[11px] text-gray-500 font-medium">
-                Variación{' '}
+                Variation{' '}
                 <span className="text-blue-600 font-mono font-bold">
                   #{currentVariationIndex + 1}
                 </span>{' '}
@@ -263,7 +263,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                   disabled={currentVariationIndex === 0}
                   onClick={() => onSelectVariationIndex(Math.max(0, currentVariationIndex - 1))}
                   className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent text-gray-700 transition-colors"
-                  title="Variación anterior"
+                  title="Variation anterior"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
@@ -274,7 +274,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                     onSelectVariationIndex(Math.min(variations.length - 1, currentVariationIndex + 1))
                   }
                   className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent text-gray-700 transition-colors"
-                  title="Siguiente variación"
+                  title="Next variación"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -544,10 +544,10 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                 <Layers className="w-6 h-6" />
               </div>
               <div className="font-bold text-gray-900 text-sm mb-1">
-                Lienzo en Blanco ({meta.label})
+                Blank Canvas ({meta.label})
               </div>
               <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
-                Añade capas desde el panel izquierdo (Fondos, Logos, Productos o Textos) para comenzar a componer tu diseño.
+                Add layers from the left panel (Backgrounds, Logos, Products or Texts) to start composing your design.
               </p>
             </div>
           )}
@@ -585,7 +585,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                     <span>{layer.name}</span>
                     {layer.folderType.startsWith('logo') && pos.scale && pos.scale !== 100 && (
                       <span className="bg-blue-800/80 px-1 py-0.2 rounded text-[9px] font-mono">
-                        Escala: {pos.scale}%
+                        Scale: {pos.scale}%
                       </span>
                     )}
                     <span className="text-blue-200 font-mono text-[9px]">
@@ -612,7 +612,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                           ? '100%'
                           : '50%',
                     }}
-                    title={`Punto de anclaje: ${pos.anchorPoint || 'center'}`}
+                    title={`Anchor point: ${pos.anchorPoint || 'center'}`}
                   >
                     <div className="w-3.5 h-3.5 rounded-full border-2 border-white bg-blue-600 shadow-md ring-1 ring-blue-400 flex items-center justify-center">
                       <div className="w-1 h-1 rounded-full bg-white" />

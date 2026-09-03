@@ -188,12 +188,12 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
             [folderKey]: [...assetGroup.folders[folderKey], ...newItems],
           },
         });
-        setUploadFeedback(`¡${newItems.length} imágenes añadidas!`);
+        setUploadFeedback(`${newItems.length} images added!`);
         setTimeout(() => setUploadFeedback(null), 3500);
       }
     } catch (err) {
-      console.error('Error al subir imágenes:', err);
-      setUploadFeedback('Error al procesar imágenes');
+      console.error('Error uploading images:', err);
+      setUploadFeedback('Error processing images');
       setTimeout(() => setUploadFeedback(null), 3000);
     } finally {
       setIsUploading(false);
@@ -242,14 +242,14 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm text-gray-900">
-                Gestión de Recursos: {assetGroup.name}
+                Asset Management: {assetGroup.name}
               </span>
               <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">
                 7 Carpetas Fijas
               </span>
             </div>
             <p className="text-[11px] text-gray-500 mt-0.5">
-              Configura archivos por carpeta y vincula versiones contrarias (clara ↔ oscura) para dinamización por contraste.
+              Configure files per folder and link opposite versions (light ↔ dark) for contrast dynamization.
             </p>
           </div>
 
@@ -314,7 +314,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-blue-600" />
                     <span className="font-bold text-gray-800">
-                      Archivo único: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
+                      Single file: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -333,7 +333,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                       />
                     </label>
                     <span className="text-[11px] text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded">
-                      {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variaciones
+                      {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variations
                     </span>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                 )}
 
                 <div className="bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-[11px] text-gray-600">
-                  Introduce las variantes de texto separadas por comas o importa archivos <code>.txt</code>. Cada línea o frase generará una variación dinámica.
+                  Enter text variants separated by commas or import files <code>.txt</code>. Each line or phrase will generate a dynamic variation.
                 </div>
 
                 <textarea
@@ -362,7 +362,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                 {/* Parsed Variation Badges */}
                 <div>
                   <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1.5">
-                    Variantes generadas:
+                    Generated variants:
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.map((v, i) => (
@@ -406,13 +406,13 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                     ) : (
                       <Upload className="w-4 h-4 text-blue-600" />
                     )}
-                    <span>Subir varias imágenes a la vez a <code>{activeTab}</code></span>
+                    <span>Upload multiple images at once to <code>{activeTab}</code></span>
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center gap-2">
                     <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow-xs transition-colors">
                       <Upload className="w-3.5 h-3.5" />
-                      <span>Seleccionar varias imágenes...</span>
+                      <span>Select multiple images...</span>
                       <input
                         type="file"
                         accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif"
@@ -451,7 +451,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   <summary className="font-semibold text-gray-700 text-xs flex items-center justify-between cursor-pointer list-none">
                     <span className="flex items-center gap-1.5">
                       <Plus className="w-3.5 h-3.5 text-blue-600" />
-                      <span>O añadir por URL o nombre personalizado</span>
+                      <span>Or add by URL or custom name</span>
                     </span>
                     <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▾</span>
                   </summary>
@@ -498,7 +498,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                         className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1 cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>Añadir</span>
+                        <span>Add</span>
                       </button>
                     </div>
                   </div>
@@ -578,7 +578,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                                         Contrario: <strong>{oppositeItem.name}</strong> ({oppositeItem.tone})
                                       </span>
                                     ) : (
-                                      <span className="text-gray-400">Sin opción contraria</span>
+                                      <span className="text-gray-400">No opposite option</span>
                                     )}
                                   </div>
                                 )}
@@ -633,7 +633,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                 <span className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
                   <ArrowRightLeft className="w-4 h-4 text-blue-600" />
-                  Asociar Opción Contraria
+                  Associate Opposite Option
                 </span>
                 <button
                   onClick={() => setPairingModalItem(null)}
@@ -644,9 +644,9 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
               </div>
 
               <div className="text-[11px] text-gray-600">
-                Selecciona la versión contraria para{' '}
+                Select the opposite version for{' '}
                 <strong className="text-gray-900">"{pairingModalItem.name}"</strong> (
-                {pairingModalItem.tone === 'dark' ? 'Versión Oscura' : 'Versión Clara'}). Al aplicarse dinamización por contraste, se sustituirá automáticamente según el tono del fondo.
+                {pairingModalItem.tone === 'dark' ? 'Dark Version' : 'Light Version'}). When contrast dynamization is applied, it will be automatically substituted based on the background tone.
               </div>
 
               <div className="space-y-1.5 max-h-48 overflow-y-auto">
@@ -660,7 +660,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   }
                   className="w-full text-left p-2 rounded bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-500 text-xs cursor-pointer"
                 >
-                  Ninguno (sin opción contraria)
+                  None (no opposite option)
                 </button>
 
                 {(assetGroup.folders[activeTab as keyof typeof assetGroup.folders] as AssetItem[])
@@ -695,7 +695,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   onClick={() => setPairingModalItem(null)}
                   className="px-3 py-1.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs cursor-pointer"
                 >
-                  Cerrar
+                  Close
                 </button>
               </div>
             </div>

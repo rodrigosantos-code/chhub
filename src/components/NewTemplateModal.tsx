@@ -146,7 +146,7 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
             </label>
             <input
               type="text"
-              placeholder="ej. Campaña Ofertas Flash"
+              placeholder="e.g. Flash Sale Campaign"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-gray-800 outline-none focus:border-blue-500 text-xs"
@@ -155,11 +155,11 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
 
           <div>
             <label className="text-[10px] font-semibold uppercase text-gray-500 block mb-1">
-              Descripción (opcional)
+              Description (opcional)
             </label>
             <input
               type="text"
-              placeholder="ej. Diseño publicitario con copy de impacto"
+              placeholder="e.g. Advertising design with impactful copy"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-gray-800 outline-none focus:border-blue-500 text-xs"
@@ -168,7 +168,7 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
 
           <div>
             <label className="text-[10px] font-semibold uppercase text-gray-500 block mb-1">
-              Aspect Ratios Activos (Máximo 3)
+              Active Aspect Ratios (Maximum 3)
             </label>
             <div className="grid grid-cols-2 gap-2">
               {(['1:1', '4:5', '9:16', '16:9'] as AspectRatioKey[]).map((r) => {
@@ -206,7 +206,7 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
             onClick={onClose}
             className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs cursor-pointer"
           >
-            Cancelar
+            Cancel
           </button>
           <button
             disabled={!name.trim()}

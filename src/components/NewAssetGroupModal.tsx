@@ -40,13 +40,13 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
         product_image_3: [],
         texto_1: {
           fileName: 'titulares.txt',
-          content: 'Gran Ocasión, Selección Especial, Lanzamiento',
-          variations: ['Gran Ocasión', 'Selección Especial', 'Lanzamiento'],
+          content: 'Big Occasion, Special Selection, Launch',
+          variations: ['Big Occasion', 'Special Selection', 'Launch'],
         },
         texto_2: {
           fileName: 'subtitulos.txt',
-          content: 'Disponible por tiempo limitado',
-          variations: ['Disponible por tiempo limitado'],
+          content: 'Available for a limited time',
+          variations: ['Available for a limited time'],
         },
         texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
         texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
@@ -94,7 +94,7 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
             onClick={onClose}
             className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs cursor-pointer"
           >
-            Cancelar
+            Cancel
           </button>
           <button
             disabled={!name.trim()}

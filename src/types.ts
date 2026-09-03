@@ -55,14 +55,14 @@ export interface AssetItem {
   tone: Tone;
   previewColor?: string;
   oppositeId?: string; // ID of the opposite (light/dark) asset
-  ratioUrls?: RatioImages; // Imágenes específicas por ratio (Square, Retrato, Landscape)
-  focalPoint?: { x: number; y: number }; // Punto de interés (0-1), por defecto centro. Per-asset, no per-layer.
+  ratioUrls?: RatioImages; // Specific images per ratio (Square, Portrait, Landscape)
+  focalPoint?: { x: number; y: number }; // Focal point (0-1), default center. Per-asset, not per-layer.
   negativeFillColor?: string; // If set, contrast correction renders this asset as a solid-color silhouette instead of swapping to oppositeId
 }
 
 export interface TextFolderData {
   fileName: string; // e.g. "titulares.txt"
-  content: string;  // comma-separated values: "Oferta verano, Nuevo stock, Últimas unidades"
+  content: string;  // comma-separated values: "Summer sale, New stock, Last units"
   variations: string[]; // parsed variations
 }
 
@@ -99,8 +99,8 @@ export interface LayerRatioSettings {
   width: number; // percentage 0-100
   height: number; // percentage 0-100
   anchorPoint?: AnchorPoint; // Punto de anclaje (por defecto 'center')
-  scale?: number; // Porcentaje de escala (100 = tamaño de serie)
-  focalPoint?: { x: number; y: number }; // Punto de interés de la imagen (0-1), por defecto centro (0.5, 0.5). Afecta al recorte en modo cover.
+  scale?: number; // Scale percentage (100 = base size)
+  focalPoint?: { x: number; y: number }; // Image focal point (0-1), default center (0.5, 0.5). Affects cropping in cover mode.
   fontSize?: number; // base font size in px for 1080px width
   fontFamily?: string; // Google Font name (default: 'Inter')
   fontWeight?: 'normal' | 'medium' | 'bold' | 'black';
@@ -116,7 +116,7 @@ export interface LayerRatioSettings {
 }
 
 export interface TextDynamizationSettings {
-  dynamicContent: boolean; // Recorre las frases del archivo .txt si es true; si es false, texto estático
+  dynamicContent: boolean; // Cycles through phrases from .txt file if true; if false, static text
   contrastColorEnabled: boolean; // Activa cambio de color por contraste con el fondo
   contrastTextColor: string; // Color al que cambiar por contraste (ej. '#FFFFFF')
 }

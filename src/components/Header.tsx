@@ -236,7 +236,7 @@ export const Header: React.FC<HeaderProps> = ({
               {showTemplateMenu && (
                 <div className="absolute left-0 mt-1.5 w-64 bg-white border border-gray-200 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
                   <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider border-b border-gray-100">
-                    Plantillas del Proyecto
+                    Project Templates
                   </div>
                   <div className="max-h-56 overflow-y-auto py-1">
                     {currentProject.templates.map((t) => (
@@ -293,7 +293,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 setRenameValue(t.name);
                               }}
                               className="opacity-0 group-hover:opacity-100 hover:text-blue-600 text-gray-400 p-0.5 rounded transition-all cursor-pointer"
-                              title="Renombrar"
+                              title="Rename"
                               style={{ opacity: 1 }}
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
@@ -313,7 +313,7 @@ export const Header: React.FC<HeaderProps> = ({
                       className="w-full text-left px-2.5 py-1.5 rounded text-xs text-blue-600 hover:bg-blue-50 flex items-center gap-2 font-medium cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Nueva Plantilla</span>
+                      <span>New Template</span>
                     </button>
                   </div>
                 </div>
@@ -347,7 +347,7 @@ export const Header: React.FC<HeaderProps> = ({
               {showAssetGroupMenu && (
                 <div className="absolute left-0 mt-1.5 w-64 bg-white border border-gray-200 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
                   <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider border-b border-gray-100">
-                    Grupos de Recursos
+                    Asset Groups
                   </div>
                   <div className="max-h-56 overflow-y-auto py-1">
                     {currentProject.assetGroups.map((ag) => (
@@ -407,7 +407,7 @@ export const Header: React.FC<HeaderProps> = ({
               {showAssetGroupMenu && (
                 <div className="absolute left-0 mt-1.5 w-64 bg-white border border-gray-200 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
                   <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider border-b border-gray-100">
-                    Grupos de Recursos
+                    Asset Groups
                   </div>
                   <div className="max-h-56 overflow-y-auto py-1">
                     {currentProject.assetGroups.map((ag) => (
@@ -451,7 +451,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 text-xs font-medium flex items-center gap-1 shadow-xs cursor-pointer"
             >
               <Plus className="w-3 h-3 text-blue-600" />
-              <span>Nuevo Grupo</span>
+              <span>New Group</span>
             </button>
           </div>
         )}
@@ -465,7 +465,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onUndo}
             disabled={!canUndo}
             className="p-1.5 rounded-md hover:bg-white hover:shadow-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all cursor-pointer disabled:cursor-default"
-            title="Deshacer (Ctrl+Z / ⌘Z)"
+            title="Undo (Ctrl+Z / ⌘Z)"
           >
             <Undo2 className="w-3.5 h-3.5" />
           </button>
@@ -473,7 +473,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onRedo}
             disabled={!canRedo}
             className="p-1.5 rounded-md hover:bg-white hover:shadow-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all cursor-pointer disabled:cursor-default"
-            title="Rehacer (Ctrl+Shift+Z / ⌘⇧Z)"
+            title="Redo (Ctrl+Shift+Z / ⌘⇧Z)"
           >
             <Redo2 className="w-3.5 h-3.5" />
           </button>

@@ -40,7 +40,7 @@ export function createEmptyTemplate(name = 'Template 1'): MasterTemplate {
   return {
     id: `tpl_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     name,
-    description: 'Plantilla publicitaria dinámica',
+    description: 'Dynamic advertising template',
     activeAspectRatios: ['1:1'],
     layers: [],
   };

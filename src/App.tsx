@@ -342,14 +342,14 @@ export default function App() {
   const handleAddLayer = (folderType: FolderType) => {
     const layerNames: Record<FolderType, string> = {
       background: 'Fondo',
-      logo_1: 'Logotipo 1',
-      logo_2: 'Logotipo 2 (Isotipo)',
-      logo_3: 'Logotipo 3',
+      logo_1: 'Logotype 1',
+      logo_2: 'Logotype 2 (Isotype)',
+      logo_3: 'Logotype 3',
       product_image_1: 'Overlay 1',
       product_image_2: 'Overlay 2',
       product_image_3: 'Overlay 3',
-      texto_1: 'Texto 1 (Titular)',
-      texto_2: 'Texto 2 (Subtítulo)',
+      texto_1: 'Text 1 (Headline)',
+      texto_2: 'Text 2 (Subtitle)',
       texto_3: 'Texto 3',
       texto_4: 'Texto 4',
     };
@@ -698,7 +698,7 @@ export default function App() {
             <div className="w-10 h-0.5 rounded-full bg-gray-300 group-hover:bg-blue-400 transition-colors" />
           </div>
 
-          {/* Bottom Panel: 3 Tabs (Capas, Dinamización, Exportación) */}
+          {/* Bottom Panel: 3 Tabs (Layers, Dynamization, Export) */}
           <BottomPanel
             template={activeTemplate}
             assetGroup={activeAssetGroup}

@@ -44,8 +44,8 @@ const FIXED_FOLDER_TABS: { key: FolderType; label: string; shortLabel: string; i
   { key: 'product_image_1', label: 'Overlay 1', shortLabel: 'O1', isText: false },
   { key: 'product_image_2', label: 'Overlay 2', shortLabel: 'O2', isText: false },
   { key: 'product_image_3', label: 'Overlay 3', shortLabel: 'O3', isText: false },
-  { key: 'texto_1', label: 'Titulares', shortLabel: 'T1', isText: true },
-  { key: 'texto_2', label: 'Subtítulos', shortLabel: 'T2', isText: true },
+  { key: 'texto_1', label: 'Headlines', shortLabel: 'T1', isText: true },
+  { key: 'texto_2', label: 'Subtitles', shortLabel: 'T2', isText: true },
 ];
 
 export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
@@ -121,15 +121,15 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             [folderKey]: [...assetGroup.folders[folderKey], ...newItems],
           },
         });
-        setUploadFeedback(`¡${newItems.length} imagen(es) añadidas a ${folderKey}!`);
+        setUploadFeedback(`${newItems.length} image(s) added to ${folderKey}!`);
         setTimeout(() => setUploadFeedback(null), 4000);
       } else {
-        setUploadFeedback('No se detectaron archivos de imagen válidos.');
+        setUploadFeedback('No valid image files detected.');
         setTimeout(() => setUploadFeedback(null), 3000);
       }
     } catch (err) {
-      console.error('Error al subir múltiples imágenes:', err);
-      setUploadFeedback('Ocurrió un error al procesar las imágenes.');
+      console.error('Error uploading multiple images:', err);
+      setUploadFeedback('An error occurred while processing images.');
       setTimeout(() => setUploadFeedback(null), 4000);
     } finally {
       setIsUploading(false);
@@ -340,7 +340,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
         <div className="w-56 bg-white border border-gray-200 rounded-xl p-2 space-y-0.5 shadow-xs overflow-y-auto">
           <div className="px-2.5 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center justify-between">
             <span>Carpetas</span>
-            <span className="text-[9px] text-blue-500 font-medium">Arrastra aquí</span>
+            <span className="text-[9px] text-blue-500 font-medium">Drag here</span>
           </div>
 
           {FIXED_FOLDER_TABS.map((tab) => {
@@ -421,7 +421,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 <div className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-blue-600" />
                   <span className="font-bold text-sm text-gray-900">
-                    Archivo de Texto: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
+                    Text File: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -440,7 +440,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     />
                   </label>
                   <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2.5 py-1 rounded">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variaciones
+                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variations
                   </span>
                 </div>
               </div>
@@ -453,7 +453,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
               )}
 
               <div className="bg-blue-50/50 border border-blue-100 p-3 rounded-lg text-xs text-gray-700 leading-relaxed">
-                Introduce las variantes de texto separadas por comas o sube uno o varios archivos <code>.txt</code>. Cada frase generará una variante dinámica automáticamente.
+                Enter text variants separated by commas or upload one or more <code>.txt</code>. Each phrase will automatically generate a dynamic variant.
               </div>
 
               <div>
@@ -466,7 +466,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                   onChange={(e) =>
                     handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.value)
                   }
-                  placeholder="ej. Oferta de verano, Nueva colección 2026, 20% de descuento en tienda..."
+                  placeholder="e.g. Summer sale, New collection 2026, 20% off in store..."
                   className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 font-sans text-xs focus:border-blue-500 outline-none leading-relaxed"
                 />
               </div>
@@ -474,7 +474,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
               {/* Badges */}
               <div>
                 <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">
-                  Variantes generadas ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length}):
+                  Generated variants ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length}):
                 </div>
                 {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
@@ -490,7 +490,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                   </div>
                 ) : (
                   <p className="text-xs text-gray-400 italic">
-                    Escribe texto separado por comas arriba o sube un archivo .txt para generar variaciones.
+                    Escribe texto separado por comas arriba o sube un archivo .txt para generar variations.
                   </p>
                 )}
               </div>
@@ -536,20 +536,20 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
                 <div>
                   <div className="font-bold text-gray-900 text-xs flex items-center justify-center gap-1.5">
-                    <span>Subir varias imágenes a la vez a</span>
+                    <span>Upload multiple images at once to</span>
                     <code className="font-mono text-blue-700 bg-blue-100/60 px-1.5 py-0.5 rounded font-bold">
                       {activeTab}
                     </code>
                   </div>
                   <div className="text-[11px] text-gray-500 mt-0.5 max-w-md">
-                    Arrastra múltiples imágenes (PNG, JPG, SVG, WebP) aquí o pulsa el botón para seleccionarlas todas juntas.
+                    Drag multiple images (PNG, JPG, SVG, WebP) here or click the button to select them all at once.
                   </div>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-2.5 mt-1">
                   <label className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 cursor-pointer shadow-xs transition-colors">
                     <Upload className="w-4 h-4" />
-                    <span>Seleccionar varias imágenes...</span>
+                    <span>Select multiple images...</span>
                     <input
                       type="file"
                       multiple
@@ -599,7 +599,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 <summary className="font-semibold text-gray-700 text-xs flex items-center justify-between cursor-pointer list-none">
                   <span className="flex items-center gap-1.5">
                     <Plus className="w-3.5 h-3.5 text-blue-600" />
-                    <span>O añadir imagen individualmente por URL o nombre personalizado</span>
+                    <span>Or add image individually by URL or custom name</span>
                   </span>
                   <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▾</span>
                 </summary>
@@ -637,7 +637,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40 shadow-xs"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>Añadir</span>
+                    <span>Add</span>
                   </button>
                 </div>
               </details>
@@ -652,7 +652,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
                 {(assetGroup.folders[activeTab as keyof typeof assetGroup.folders] as AssetItem[]).length === 0 ? (
                   <div className="p-8 border-2 border-dashed border-gray-200 rounded-xl text-center text-gray-400 text-xs">
-                    No hay archivos en la carpeta <code>{activeTab}</code>. Sube una imagen o añade un recurso arriba para comenzar.
+                    No files in folder <code>{activeTab}</code>. Upload an image or add an asset above to get started.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -750,7 +750,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                         Contrario: {oppositeItem.name}
                                       </span>
                                     ) : (
-                                      <span className="text-gray-400">Sin versión contraria</span>
+                                      <span className="text-gray-400">No opposite version</span>
                                     )}
                                   </span>
                                 )}
@@ -772,7 +772,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                     ? 'bg-blue-50 text-blue-700 border-blue-300'
                                     : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300'
                                 }`}
-                                title="Gestionar imágenes por ratio (Square, Retrato, Landscape)"
+                                title="Manage images per ratio (Square, Portrait, Landscape)"
                               >
                                 <ImagePlus className="w-3 h-3 text-blue-600" />
                                 <span className="hidden sm:inline">Ratios</span>
@@ -792,7 +792,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                     ? 'bg-green-50 text-green-700 border-green-300'
                                     : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300'
                                 }`}
-                                title="Vincular con versión contraria (clara u oscura)"
+                                title="Link with opposite version (light or dark)"
                               >
                                 <ArrowRightLeft className="w-3 h-3 text-blue-600" />
                                 <span className="hidden sm:inline">Vincular</span>
@@ -820,7 +820,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                       ? 'bg-purple-50 text-purple-700 border-purple-300'
                                       : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300'
                                   }`}
-                                  title="Crear negativo con color sólido (alternativa a vincular)"
+                                  title="Create negative with solid color (alternative to linking)"
                                 >
                                   <span className="w-3 h-3 rounded-sm border border-gray-300" style={{
                                     background: item.negativeFillColor || '#ccc',
@@ -879,7 +879,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                     ? 'text-orange-600 bg-orange-50'
                                     : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'
                                 }`}
-                                title="Editar punto de interés detectado"
+                                title="Edit detected focal point"
                               >
                                 <Crosshair className="w-3.5 h-3.5" />
                               </button>
@@ -893,7 +893,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                             <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
                               <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
                                 <ImagePlus className="w-3 h-3 text-blue-600" />
-                                Imágenes por Ratio
+                                Images per Ratio
                                 <span className="text-[9px] text-gray-400 font-normal normal-case">
                                   (se usa la principal si no se asigna)
                                 </span>
@@ -1054,7 +1054,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               <div className="flex items-center justify-between mb-2">
                                 <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
                                   <Crosshair className="w-3 h-3 text-orange-500" />
-                                  Punto de Interés
+                                  Focal Point
                                 </div>
                                 <div className="flex items-center gap-1.5">
                                   <span className="text-[10px] font-mono font-bold text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200">
@@ -1091,7 +1091,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                   document.addEventListener('mousemove', onMove);
                                   document.addEventListener('mouseup', onUp);
                                 }}
-                                title="Haz clic o arrastra para colocar el punto de interés"
+                                title="Click or drag to place the focal point"
                               >
                                 <img
                                   src={item.url}
@@ -1127,7 +1127,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               </div>
 
                               <p className="text-[10px] text-gray-400 mt-1.5 text-center italic">
-                                Haz clic o arrastra sobre la imagen para corregir la posición del sujeto.
+                                Click or drag on the image to correct the subject position.
                               </p>
                             </div>
                           );
@@ -1150,7 +1150,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             <div className="flex items-center justify-between border-b border-gray-200 pb-2">
               <span className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
                 <ArrowRightLeft className="w-4 h-4 text-blue-600" />
-                Asociar Opción Contraria
+                Associate Opposite Option
               </span>
               <button
                 onClick={() => setPairingModalItem(null)}
@@ -1161,9 +1161,9 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             </div>
 
             <div className="text-[11px] text-gray-600 leading-relaxed">
-              Selecciona la versión contraria para{' '}
+              Select the opposite version for{' '}
               <strong className="text-gray-900">"{pairingModalItem.name}"</strong> (
-              {pairingModalItem.tone === 'dark' ? 'Versión Oscura' : 'Versión Clara'}). Al aplicarse dinamización por contraste, se sustituirá automáticamente según el tono del fondo.
+              {pairingModalItem.tone === 'dark' ? 'Dark Version' : 'Light Version'}). When contrast dynamization is applied, it will be automatically substituted based on the background tone.
             </div>
 
             <div className="space-y-1.5 max-h-56 overflow-y-auto pt-1">
@@ -1182,7 +1182,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 }}
                 className="w-full text-left p-2 rounded bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-500 text-xs cursor-pointer"
               >
-                Ninguno (sin opción contraria)
+                None (no opposite option)
               </button>
 
               {(

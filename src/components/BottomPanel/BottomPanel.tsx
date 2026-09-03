@@ -72,7 +72,7 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
       {/* 3 Tabs Navigation Bar (Section 4.1) */}
       <div className="flex items-center justify-between border-b border-gray-100 px-5 bg-white">
         <div className="flex items-center gap-1">
-          {/* 1. Capas */}
+          {/* 1. Layers */}
           <button
             id="tab-btn-layers"
             onClick={() => setActiveTab('layers')}
@@ -83,13 +83,13 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            <span>1. Capas</span>
+            <span>1. Layers</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-gray-100 text-gray-600 font-mono">
               {template.layers.length}
             </span>
           </button>
 
-          {/* 2. Dinamización */}
+          {/* 2. Dynamization */}
           <button
             id="tab-btn-dynamization"
             onClick={() => setActiveTab('dynamization')}
@@ -100,7 +100,7 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>2. Dinamización</span>
+            <span>2. Dynamization</span>
             {report.errors.length > 0 && (
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             )}

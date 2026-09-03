@@ -42,13 +42,13 @@ interface DynamizationTabProps {
 const FOLDER_OPTIONS: { value: FolderType; label: string }[] = [
   { value: 'background', label: 'background (Fondo)' },
   { value: 'logo_1', label: 'logo_1 (Logotipo)' },
-  { value: 'logo_2', label: 'logo_2 (Símbolo)' },
+  { value: 'logo_2', label: 'logo_2 (Symbol)' },
   { value: 'logo_3', label: 'logo_3 (Logo 3)' },
   { value: 'product_image_1', label: 'product_image_1 (Overlay 1)' },
   { value: 'product_image_2', label: 'product_image_2 (Overlay 2)' },
   { value: 'product_image_3', label: 'product_image_3 (Overlay 3)' },
   { value: 'texto_1', label: 'texto_1 (Titular .txt)' },
-  { value: 'texto_2', label: 'texto_2 (Subtítulo .txt)' },
+  { value: 'texto_2', label: 'texto_2 (Subtitle .txt)' },
 ];
 
 const PRESET_CONTRAST_COLORS = [
@@ -91,13 +91,13 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
         <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
         <div className="text-[11px] leading-relaxed text-gray-700 space-y-1">
           <div className="font-semibold text-gray-900">
-            Reglas de Dinamización y Contraste de CHhub:
+            CHhub Dynamization & Contrast Rules:
           </div>
           <p>
-            • <strong>Dinamización por Contraste (Logos e Imágenes):</strong> La elección va siempre ligada al contraste con el fondo. Si hay un logo negro y otro blanco, solo 1 puede ir con cada fondo, no los dos (no multiplica combinaciones).
+            • <strong>Contrast Dynamization (Logos & Images):</strong> The choice is always linked to the background contrast. If there is a black and a white logo, only 1 can go with each background, not both (does not multiply combinations).
           </p>
           <p>
-            • <strong>Dinamización de Textos:</strong> Tienen dos opciones independientes: <strong>Contenido</strong> (multiplica por las frases del archivo .txt o texto fijo) y <strong>Color</strong> (siempre por contraste, activable y con elección del color al que cambiar).
+            • <strong>Text Dynamization:</strong> They have two independent options: <strong>Content</strong> (multiplies by phrases from .txt file or static text) y <strong>Color</strong> (always by contrast, toggleable with choice of target color).
           </p>
         </div>
       </div>
@@ -184,7 +184,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                 <div className="text-[11px] text-gray-600 bg-gray-50 p-2.5 rounded border border-gray-200 flex items-center gap-2">
                   <CheckCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                   <span>
-                    <strong>Capa base de Fondo:</strong> Define el tono claro u oscuro ({currentCount} fondos cargados). Las capas de logos y textos configuradas por contraste se adaptarán automáticamente al tono de cada fondo.
+                    <strong>Base Background Layer:</strong> Defines the light or dark tone ({currentCount} backgrounds loaded). Logo and text layers configured by contrast will automatically adapt to the tone of each background.
                   </span>
                 </div>
               )}
@@ -193,12 +193,12 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
               {isTextLayer && (
                 <div className="space-y-3 bg-gray-50/70 p-3 rounded-lg border border-gray-200">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {/* Option 1: Contenido */}
+                    {/* Option 1: Content */}
                     <div className="bg-white p-3 rounded-md border border-gray-200 shadow-2xs space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-gray-900 text-xs flex items-center gap-1.5">
                           <Type className="w-3.5 h-3.5 text-blue-600" />
-                          1. Dinamización de Contenido
+                          1. Dinamización de Content
                         </span>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -224,7 +224,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           </span>
                         ) : (
                           <span>
-                            Texto estático: usa la primera frase del archivo sin multiplicar el número de variaciones.
+                            Static text: uses the first phrase from the file without multiplying the number of variations.
                           </span>
                         )}
                       </p>
@@ -235,7 +235,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-gray-900 text-xs flex items-center gap-1.5">
                           <Palette className="w-3.5 h-3.5 text-blue-600" />
-                          2. Dinamización de Color (por Contraste)
+                          2. Color Dynamization (by Contrast)
                         </span>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
@@ -286,7 +286,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
 
                           {/* Quick color swatches */}
                           <div className="flex items-center gap-1 pt-0.5">
-                            <span className="text-[10px] text-gray-400 mr-1">Rápidos:</span>
+                            <span className="text-[10px] text-gray-400 mr-1">Quick:</span>
                             {PRESET_CONTRAST_COLORS.map((preset) => (
                               <button
                                 key={preset.value}
@@ -324,7 +324,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                         </div>
                       ) : (
                         <p className="text-[11px] text-gray-400 italic">
-                          El texto se mantendrá en su color base original (<span className="font-mono text-gray-600">{baseTextColor}</span>) sin adaptarse al contraste del fondo.
+                          The text will remain in its original base color (<span className="font-mono text-gray-600">{baseTextColor}</span>) without adapting to the background contrast.
                         </p>
                       )}
                     </div>
@@ -339,7 +339,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                     <div className="text-[11px] text-gray-600 bg-gray-50 p-2.5 rounded border border-gray-200 flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-gray-400" />
                       <span>
-                        Genera una variación por cada uno de los <strong>{currentCount}</strong> archivos de la carpeta <code>{layer.folderType}</code> (multiplica combinaciones).
+                        Generates a variation for each of the <strong>{currentCount}</strong> files in folder <code>{layer.folderType}</code> (multiplies combinations).
                       </span>
                     </div>
                   )}
@@ -348,7 +348,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                     <div className="text-[11px] text-blue-900 bg-blue-50/70 p-2.5 rounded-lg border border-blue-200 flex items-center gap-2">
                       <ArrowRightLeft className="w-4 h-4 text-blue-600 shrink-0" />
                       <span>
-                        <strong>Por Contraste:</strong> Selecciona automáticamente la versión clara u oscura según el tono del fondo. No multiplica variaciones.
+                        <strong>By Contrast:</strong> Automatically selects the light or dark version based on the background tone. Does not multiply variations.
                       </span>
                     </div>
                   )}
@@ -376,7 +376,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       <span className="flex items-center gap-1.5">
                         <GitBranch className={`w-3.5 h-3.5 ${layer.conditionalRule ? 'text-purple-600' : 'text-gray-400'}`} />
                         <span className={layer.conditionalRule ? 'text-purple-700 font-bold' : 'text-gray-500'}>
-                          Condición (if / else)
+                          Condition (if / else)
                         </span>
                       </span>
                       <span className={`text-[10px] px-1.5 py-0.5 rounded ${
@@ -417,7 +417,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           {/* Condition */}
                           <div>
                             <label className="text-[10px] uppercase text-gray-500 font-semibold block mb-1">
-                              Resultó en:
+                              Resolved to:
                             </label>
                             <select
                               value={layer.conditionalRule.condition || 'resolved_tone_is_dark'}
@@ -429,8 +429,8 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                               }
                               className="w-full bg-white border border-gray-300 rounded px-2 py-1 text-gray-800 outline-none focus:border-purple-500"
                             >
-                              <option value="resolved_tone_is_dark">Versión Oscura (Dark)</option>
-                              <option value="resolved_tone_is_light">Versión Clara (Light)</option>
+                              <option value="resolved_tone_is_dark">Dark Version</option>
+                              <option value="resolved_tone_is_light">Light Version</option>
                             </select>
                           </div>
 

@@ -175,7 +175,7 @@ export function calculateVariationReport(
   for (const layer of baseLayers) {
     const { count } = getFolderItems(assetGroup, layer.folderType);
     if (count === 0) {
-      errors.push(`La carpeta '${layer.folderType}' vinculada a '${layer.name}' está vacía (0 archivos).`);
+      errors.push(`The folder '${layer.folderType}' linked to '${layer.name}' is empty (0 files).`);
     }
   }
 
@@ -185,10 +185,10 @@ export function calculateVariationReport(
       const countTrue = getFolderItems(assetGroup, folderIfTrue).count;
       const countFalse = getFolderItems(assetGroup, folderIfFalse).count;
       if (countTrue === 0) {
-        errors.push(`La rama positiva '${folderIfTrue}' de la capa condicional '${layer.name}' está vacía (0 archivos).`);
+        errors.push(`The positive branch '${folderIfTrue}' of the conditional layer '${layer.name}' is empty (0 files).`);
       }
       if (countFalse === 0) {
-        errors.push(`La rama negativa '${folderIfFalse}' de la capa condicional '${layer.name}' está vacía (0 archivos).`);
+        errors.push(`The negative branch '${folderIfFalse}' of the conditional layer '${layer.name}' is empty (0 files).`);
       }
     }
   }

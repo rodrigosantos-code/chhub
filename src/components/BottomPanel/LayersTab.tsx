@@ -133,7 +133,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                     {layer.dynamizationType === 'by_contrast'
                       ? 'Por Contraste'
                       : 'Por Carpeta'}
-                    {layer.conditionalRule ? ' + Condición' : ''}
+                    {layer.conditionalRule ? ' + Condition' : ''}
                   </span>
                 </div>
               </div>
