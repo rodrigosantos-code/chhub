@@ -268,7 +268,13 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 className={`w-full p-2.5 rounded-lg border transition-all flex items-center justify-between group ${
                   isDragging
                     ? 'bg-blue-100 border-2 border-dashed border-blue-500 scale-[1.02]'
-                    : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-gray-300'
+                    : slot.category === 'background'
+                    ? 'bg-white hover:bg-amber-50/40 border-gray-200 hover:border-amber-300 border-l-[3px] border-l-amber-400'
+                    : slot.category === 'logo'
+                    ? 'bg-white hover:bg-blue-50/40 border-gray-200 hover:border-blue-300 border-l-[3px] border-l-blue-400'
+                    : slot.category === 'product'
+                    ? 'bg-white hover:bg-violet-50/40 border-gray-200 hover:border-violet-300 border-l-[3px] border-l-violet-400'
+                    : 'bg-white hover:bg-emerald-50/40 border-gray-200 hover:border-emerald-300 border-l-[3px] border-l-emerald-400'
                 }`}
               >
                 <button
@@ -278,22 +284,32 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   {(() => {
                     const folderInfo = getFolderItems(assetGroup, slot.type);
                     const firstAsset = folderInfo.items?.[0];
+
+                    // Category color mapping
+                    const categoryColors = {
+                      background: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-600', hoverBg: 'group-hover:bg-amber-100', hoverText: 'group-hover:text-amber-700' },
+                      logo: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600', hoverBg: 'group-hover:bg-blue-100', hoverText: 'group-hover:text-blue-700' },
+                      product: { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-500', hoverBg: 'group-hover:bg-violet-100', hoverText: 'group-hover:text-violet-700' },
+                      text: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-600', hoverBg: 'group-hover:bg-emerald-100', hoverText: 'group-hover:text-emerald-700' },
+                    };
+                    const cc = categoryColors[slot.category];
+
                     if (slot.category === 'text') {
                       return (
-                        <div className="w-7 h-7 rounded-md bg-gray-100 flex items-center justify-center text-gray-500 group-hover:text-blue-600 group-hover:bg-blue-50 border border-gray-200 transition-colors shrink-0">
+                        <div className={`w-7 h-7 rounded-md ${cc.bg} flex items-center justify-center ${cc.text} ${cc.hoverBg} ${cc.hoverText} border ${cc.border} transition-colors shrink-0`}>
                           <Type className="w-3.5 h-3.5" />
                         </div>
                       );
                     }
                     if (firstAsset?.url) {
                       return (
-                        <div className="w-7 h-7 rounded-md bg-gray-50 border border-gray-200 overflow-hidden shrink-0">
+                        <div className={`w-7 h-7 rounded-md bg-gray-50 border ${cc.border} overflow-hidden shrink-0 ring-1 ring-inset ring-${slot.category === 'background' ? 'amber' : slot.category === 'logo' ? 'blue' : 'violet'}-100`}>
                           <img src={firstAsset.url} alt={firstAsset.name} className="w-full h-full object-cover" />
                         </div>
                       );
                     }
                     return (
-                      <div className="w-7 h-7 rounded-md bg-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-600 group-hover:bg-blue-50 border border-dashed border-gray-300 transition-colors shrink-0">
+                      <div className={`w-7 h-7 rounded-md ${cc.bg} flex items-center justify-center ${cc.text} ${cc.hoverBg} ${cc.hoverText} border border-dashed ${cc.border} transition-colors shrink-0`}>
                         <ImageIcon className="w-3.5 h-3.5" />
                       </div>
                     );
