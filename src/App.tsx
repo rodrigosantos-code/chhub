@@ -164,6 +164,21 @@ export default function App() {
     }
   }, [activeProjectId]);
 
+  // Manual save to cloud
+  const handleManualSave = useCallback(async () => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    try {
+      setCloudStatus('saving');
+      await saveAllProjects(projects);
+      await syncDeletedProjects(projects.map((p) => p.id));
+      setCloudStatus('saved');
+      setTimeout(() => setCloudStatus('idle'), 2000);
+    } catch {
+      setCloudStatus('error');
+      setTimeout(() => setCloudStatus('idle'), 3000);
+    }
+  }, [projects]);
+
   // Global keyboard shortcuts for Undo/Redo
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -747,6 +762,8 @@ export default function App() {
         canRedo={canRedo}
         onUndo={undo}
         onRedo={redo}
+        onSave={handleManualSave}
+        cloudStatus={cloudStatus}
       />
 
       {/* Workspace according to active mode */}
