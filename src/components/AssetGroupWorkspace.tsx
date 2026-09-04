@@ -956,6 +956,48 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                           </div>
                         </div>
 
+                        {/* Ratio status indicators for backgrounds */}
+                        {activeTab === 'background' && (
+                          <div className="flex items-center gap-1.5 mt-2 px-1">
+                            <span className="text-[9px] text-gray-400 font-semibold uppercase mr-0.5">Ratios:</span>
+                            {([
+                              { key: 'square' as RatioImageKey, label: '1:1' },
+                              { key: 'portrait_4_5' as RatioImageKey, label: '4:5' },
+                              { key: 'portrait_9_16' as RatioImageKey, label: '9:16' },
+                              { key: 'landscape' as RatioImageKey, label: '16:9' },
+                            ]).map((r) => {
+                              const hasImage = !!item.ratioUrls?.[r.key];
+                              const hasCrop = !!item.ratioCropData?.[r.key];
+                              return (
+                                <span
+                                  key={r.key}
+                                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold border ${
+                                    hasImage
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                      : hasCrop
+                                      ? 'bg-amber-50 text-amber-600 border-amber-200'
+                                      : 'bg-gray-50 text-gray-400 border-gray-200'
+                                  }`}
+                                  title={
+                                    hasImage
+                                      ? `${r.label}: Custom image assigned`
+                                      : hasCrop
+                                      ? `${r.label}: Crop set (uses general image)`
+                                      : `${r.label}: Using general image`
+                                  }
+                                >
+                                  {r.label}
+                                  {hasImage ? (
+                                    <Check className="w-2 h-2" />
+                                  ) : hasCrop ? (
+                                    <Crop className="w-2 h-2" />
+                                  ) : null}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
+
                         {expandedRatioItemId === item.id &&
                           (activeTab === 'background' || activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (
                             <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
