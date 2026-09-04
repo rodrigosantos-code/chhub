@@ -23,8 +23,10 @@ import {
   Image as ImageIcon,
   Crosshair,
 } from 'lucide-react';
-import { AssetItem, AssetGroup, FolderType, Tone, RatioImages } from '../types';
+import { Crop } from 'lucide-react';
+import { AssetItem, AssetGroup, FolderType, Tone, RatioImages, RatioImageKey, CropData } from '../types';
 import { readMultipleImageFiles, readTextFiles } from '../utils/fileUploader';
+import { CropEditorModal } from './CropEditorModal';
 
 interface AssetGroupWorkspaceProps {
   assetGroup: AssetGroup;
@@ -65,6 +67,12 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   const [expandedRatioItemId, setExpandedRatioItemId] = useState<string | null>(null);
   const [expandedFocalItemId, setExpandedFocalItemId] = useState<string | null>(null);
   const [focalImgDims, setFocalImgDims] = useState<{ w: number; h: number } | null>(null);
+  const [cropEditorState, setCropEditorState] = useState<{
+    item: AssetItem;
+    folderKey: string;
+    forRatio?: RatioImageKey;
+    imageUrl: string;
+  } | null>(null);
 
   // Multi-upload state
   const [isUploading, setIsUploading] = useState(false);
@@ -266,6 +274,47 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
           return { ...it, ratioUrls: newRatioUrls };
         }),
       },
+    });
+  };
+
+  // Handle crop save from CropEditorModal
+  const handleCropSave = (
+    cropData: CropData,
+    fp: { x: number; y: number },
+    target: 'general' | RatioImageKey,
+    itemId: string,
+    folderKey: string
+  ) => {
+    const folder = assetGroup.folders[folderKey as keyof typeof assetGroup.folders];
+    if (!Array.isArray(folder)) return;
+
+    const updated = (folder as AssetItem[]).map((a) => {
+      if (a.id !== itemId) return a;
+
+      if (target === 'general') {
+        return {
+          ...a,
+          cropData: cropData,
+          focalPoint: fp,
+        };
+      } else {
+        return {
+          ...a,
+          ratioCropData: {
+            ...(a.ratioCropData || {}),
+            [target]: cropData,
+          },
+          ratioFocalPoints: {
+            ...(a.ratioFocalPoints || {}),
+            [target]: fp,
+          },
+        };
+      }
+    });
+
+    onUpdateAssetGroup({
+      ...assetGroup,
+      folders: { ...assetGroup.folders, [folderKey]: updated },
     });
   };
 
@@ -784,6 +833,26 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               </button>
                             )}
 
+                            {/* Crop button for backgrounds */}
+                            {activeTab === 'background' && (
+                              <button
+                                onClick={() => setCropEditorState({
+                                  item,
+                                  folderKey: activeTab,
+                                  imageUrl: item.url,
+                                })}
+                                className={`px-2 py-1 rounded text-[11px] font-medium flex items-center gap-1 border cursor-pointer transition-colors ${
+                                  item.cropData
+                                    ? 'bg-amber-50 text-amber-700 border-amber-300'
+                                    : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-300'
+                                }`}
+                                title="Crop & focal point"
+                              >
+                                <Crop className="w-3 h-3 text-amber-600" />
+                                <span className="hidden sm:inline">Crop</span>
+                              </button>
+                            )}
+
                             {activeTab !== 'background' && (
                               <button
                                 onClick={() => setPairingModalItem(item)}
@@ -887,22 +956,22 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                           </div>
                         </div>
 
-                        {/* Expandable Ratio Images Section (product images only) */}
                         {expandedRatioItemId === item.id &&
-                          (activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (
+                          (activeTab === 'background' || activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (
                             <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
                               <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
                                 <ImagePlus className="w-3 h-3 text-blue-600" />
                                 Images per Ratio
                                 <span className="text-[9px] text-gray-400 font-normal normal-case">
-                                  (se usa la principal si no se asigna)
+                                  (uses general if not assigned)
                                 </span>
                               </div>
 
                               {[
-                                { key: 'square' as keyof RatioImages, label: 'Square (1:1)', icon: Square, desc: 'Feed Instagram' },
-                                { key: 'portrait' as keyof RatioImages, label: 'Portrait (9:16 / 4:5)', icon: Smartphone, desc: 'Stories, Reels' },
-                                { key: 'landscape' as keyof RatioImages, label: 'Landscape (16:9)', icon: Monitor, desc: 'Twitter, Web' },
+                                { key: 'square' as RatioImageKey, label: 'Square (1:1)', icon: Square, desc: 'Feed Instagram' },
+                                { key: 'portrait_4_5' as RatioImageKey, label: 'Portrait (4:5)', icon: Smartphone, desc: 'Instagram Feed' },
+                                { key: 'portrait_9_16' as RatioImageKey, label: 'Portrait (9:16)', icon: Smartphone, desc: 'Stories, Reels' },
+                                { key: 'landscape' as RatioImageKey, label: 'Landscape (16:9)', icon: Monitor, desc: 'Twitter, Web' },
                               ].map((ratio) => {
                                 const currentUrl = item.ratioUrls?.[ratio.key];
                                 const RatioIcon = ratio.icon;
@@ -931,7 +1000,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                         {ratio.label}
                                       </div>
                                       <div className="text-[10px] text-gray-400">
-                                        {currentUrl ? 'Imagen asignada ✓' : ratio.desc}
+                                        {currentUrl ? 'Image assigned ✓' : ratio.desc}
                                       </div>
                                     </div>
 
@@ -948,29 +1017,58 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                             const file = e.target.files?.[0];
                                             if (file) {
                                               const dataUrl = await readFileToDataUrl(file);
-                                              handleUpdateRatioImage(
-                                                activeTab as 'product_image_1' | 'product_image_2' | 'product_image_3',
-                                                item.id,
-                                                ratio.key,
-                                                dataUrl
-                                              );
+                                              // For backgrounds, store directly in ratioUrls
+                                              const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                              const folder = assetGroup.folders[folderKey] as AssetItem[];
+                                              const updated = folder.map((a) => {
+                                                if (a.id !== item.id) return a;
+                                                return {
+                                                  ...a,
+                                                  ratioUrls: { ...(a.ratioUrls || {}), [ratio.key]: dataUrl },
+                                                };
+                                              });
+                                              onUpdateAssetGroup({
+                                                ...assetGroup,
+                                                folders: { ...assetGroup.folders, [folderKey]: updated },
+                                              });
                                             }
                                             e.target.value = '';
                                           }}
                                         />
                                       </label>
+                                      {/* Crop button for ratio image */}
                                       {currentUrl && (
                                         <button
-                                          onClick={() =>
-                                            handleUpdateRatioImage(
-                                              activeTab as 'product_image_1' | 'product_image_2' | 'product_image_3',
-                                              item.id,
-                                              ratio.key,
-                                              undefined
-                                            )
-                                          }
+                                          onClick={() => setCropEditorState({
+                                            item,
+                                            folderKey: activeTab,
+                                            forRatio: ratio.key,
+                                            imageUrl: currentUrl,
+                                          })}
+                                          className="p-1 rounded text-amber-500 hover:text-amber-700 hover:bg-amber-50 transition-colors cursor-pointer"
+                                          title={`Crop for ${ratio.label}`}
+                                        >
+                                          <Crop className="w-3 h-3" />
+                                        </button>
+                                      )}
+                                      {currentUrl && (
+                                        <button
+                                          onClick={() => {
+                                            const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                            const folder = assetGroup.folders[folderKey] as AssetItem[];
+                                            const updated = folder.map((a) => {
+                                              if (a.id !== item.id) return a;
+                                              const newRatioUrls = { ...(a.ratioUrls || {}) };
+                                              delete newRatioUrls[ratio.key];
+                                              return { ...a, ratioUrls: newRatioUrls };
+                                            });
+                                            onUpdateAssetGroup({
+                                              ...assetGroup,
+                                              folders: { ...assetGroup.folders, [folderKey]: updated },
+                                            });
+                                          }}
                                           className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                                          title="Delete image for this ratio"
+                                          title="Remove image for this ratio"
                                         >
                                           <Trash2 className="w-3 h-3" />
                                         </button>
@@ -1235,6 +1333,35 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Crop Editor Modal */}
+      {cropEditorState && (
+        <CropEditorModal
+          imageUrl={cropEditorState.imageUrl}
+          imageName={cropEditorState.item.name}
+          initialCrop={
+            cropEditorState.forRatio
+              ? cropEditorState.item.ratioCropData?.[cropEditorState.forRatio]
+              : cropEditorState.item.cropData
+          }
+          initialFocalPoint={
+            cropEditorState.forRatio
+              ? cropEditorState.item.ratioFocalPoints?.[cropEditorState.forRatio]
+              : cropEditorState.item.focalPoint
+          }
+          forRatio={cropEditorState.forRatio}
+          onSave={(cropData, fp, target) => {
+            handleCropSave(
+              cropData,
+              fp,
+              target,
+              cropEditorState.item.id,
+              cropEditorState.folderKey
+            );
+          }}
+          onClose={() => setCropEditorState(null)}
+        />
       )}
     </div>
   );

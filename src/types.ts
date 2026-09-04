@@ -45,10 +45,22 @@ export type AnchorPoint =
   | 'bottom-right';
 
 export interface RatioImages {
-  square?: string;    // Square mode (1:1)
-  portrait?: string;  // Portrait mode (9:16, 4:5)
-  landscape?: string; // Landscape mode (16:9)
+  square?: string;         // 1:1
+  portrait_4_5?: string;   // 4:5
+  portrait_9_16?: string;  // 9:16
+  landscape?: string;      // 16:9
+  // Legacy compatibility
+  portrait?: string;       // Old shared portrait field
   [key: string]: string | undefined;
+}
+
+export type RatioImageKey = 'square' | 'portrait_4_5' | 'portrait_9_16' | 'landscape';
+
+export interface CropData {
+  x: number;      // crop region X offset (0-1 of original image)
+  y: number;      // crop region Y offset (0-1 of original image)
+  width: number;  // crop region width (0-1)
+  height: number; // crop region height (0-1)
 }
 
 export interface AssetItem {
@@ -57,10 +69,16 @@ export interface AssetItem {
   url: string;
   tone: Tone;
   previewColor?: string;
-  oppositeId?: string; // ID of the opposite (light/dark) asset
-  ratioUrls?: RatioImages; // Specific images per ratio (Square, Portrait, Landscape)
-  focalPoint?: { x: number; y: number }; // Focal point (0-1), default center. Per-asset, not per-layer.
-  negativeFillColor?: string; // If set, contrast correction renders this asset as a solid-color silhouette instead of swapping to oppositeId
+  oppositeId?: string;
+  ratioUrls?: RatioImages;
+  focalPoint?: { x: number; y: number };
+  negativeFillColor?: string;
+  // Per-ratio focal points (override general focalPoint)
+  ratioFocalPoints?: Partial<Record<RatioImageKey, { x: number; y: number }>>;
+  // Crop data for the general image
+  cropData?: CropData;
+  // Per-ratio crop data
+  ratioCropData?: Partial<Record<RatioImageKey, CropData>>;
 }
 
 export interface TextFolderData {

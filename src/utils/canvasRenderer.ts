@@ -7,7 +7,36 @@ import {
   GeneratedVariation,
   MasterTemplate,
   AnchorPoint,
+  RatioImageKey,
+  CropData,
 } from '../types';
+
+/** Maps an aspect ratio key to the corresponding RatioImageKey for per-ratio lookups */
+function ratioToImageKey(ratioKey: AspectRatioKey): RatioImageKey {
+  switch (ratioKey) {
+    case '1:1': return 'square';
+    case '4:5': return 'portrait_4_5';
+    case '9:16': return 'portrait_9_16';
+    case '16:9': return 'landscape';
+  }
+}
+
+/** Get the effective focal point for an asset at a given ratio */
+function getEffectiveFocalPoint(asset: AssetItem, ratioKey: AspectRatioKey): { x: number; y: number } {
+  const rk = ratioToImageKey(ratioKey);
+  return asset.ratioFocalPoints?.[rk] || asset.focalPoint || { x: 0.5, y: 0.5 };
+}
+
+/** Get the effective crop data for an asset at a given ratio */
+function getEffectiveCropData(asset: AssetItem, ratioKey: AspectRatioKey): CropData | undefined {
+  const rk = ratioToImageKey(ratioKey);
+  // If there's a ratio-specific image, use ratio crop; otherwise use general crop
+  const hasRatioImage = !!asset.ratioUrls?.[rk] || !!asset.ratioUrls?.[ratioKey];
+  if (hasRatioImage) {
+    return asset.ratioCropData?.[rk];
+  }
+  return asset.ratioCropData?.[rk] || asset.cropData;
+}
 
 /**
  * Maps anchor point to horizontal and vertical alignment
@@ -51,8 +80,11 @@ export function getAssetUrlForRatio(asset: AssetItem, ratioKey: AspectRatioKey):
   if (ratioKey === '1:1') {
     return asset.ratioUrls['1:1'] || asset.ratioUrls.square || asset.url;
   }
-  if (ratioKey === '9:16' || ratioKey === '4:5') {
-    return asset.ratioUrls[ratioKey] || asset.ratioUrls.portrait || asset.url;
+  if (ratioKey === '4:5') {
+    return asset.ratioUrls.portrait_4_5 || asset.ratioUrls['4:5'] || asset.ratioUrls.portrait || asset.url;
+  }
+  if (ratioKey === '9:16') {
+    return asset.ratioUrls.portrait_9_16 || asset.ratioUrls['9:16'] || asset.ratioUrls.portrait || asset.url;
   }
   if (ratioKey === '16:9') {
     return asset.ratioUrls['16:9'] || asset.ratioUrls.landscape || asset.url;
@@ -339,12 +371,17 @@ export async function renderVariationOnCanvas(
           const anchor = getAnchorAlignment(pos.anchorPoint || 'center');
 
           if (fit === 'cover') {
-            const nw = img.naturalWidth;
-            const nh = img.naturalHeight;
+            // Apply crop data if present
+            const crop = getEffectiveCropData(asset, ratioKey);
+            const srcX = crop ? crop.x * img.naturalWidth : 0;
+            const srcY = crop ? crop.y * img.naturalHeight : 0;
+            const nw = crop ? crop.width * img.naturalWidth : img.naturalWidth;
+            const nh = crop ? crop.height * img.naturalHeight : img.naturalHeight;
 
-            // Asset focal point: where the subject IS in the source image (auto-detected)
-            const afx = asset.focalPoint?.x ?? 0.5;
-            const afy = asset.focalPoint?.y ?? 0.5;
+            // Asset focal point: where the subject IS in the source image
+            const fp = getEffectiveFocalPoint(asset, ratioKey);
+            const afx = fp.x;
+            const afy = fp.y;
             // Layer focal point: where the user WANTS the subject in the composition
             const lfx = pos.focalPoint?.x ?? 0.5;
             const lfy = pos.focalPoint?.y ?? 0.5;
@@ -353,11 +390,6 @@ export async function renderVariationOnCanvas(
             const baseScale = Math.max(layerW / nw, layerH / nh);
 
             // Step 2: Find the minimum scale that still covers after focal alignment.
-            // We need: drawX <= layerX  AND  drawX + nw*scale >= layerX + layerW
-            //   drawX = layerX + lfx*layerW - afx*nw*scale
-            //   => lfx*layerW <= afx*nw*scale          => scale >= (lfx*layerW) / (afx*nw)
-            //   => (1-lfx)*layerW <= (1-afx)*nw*scale  => scale >= ((1-lfx)*layerW) / ((1-afx)*nw)
-            // Same for Y axis.
             const scaleConstraints = [baseScale];
             if (afx > 0.001) scaleConstraints.push((lfx * layerW) / (afx * nw));
             if (afx < 0.999) scaleConstraints.push(((1 - lfx) * layerW) / ((1 - afx) * nw));
@@ -372,7 +404,7 @@ export async function renderVariationOnCanvas(
             let drawX = layerX + lfx * layerW - afx * drawW;
             let drawY = layerY + lfy * layerH - afy * drawH;
 
-            // Safety clamp (shouldn't be needed, but prevents sub-pixel gaps)
+            // Safety clamp
             drawX = Math.min(layerX, Math.max(layerX + layerW - drawW, drawX));
             drawY = Math.min(layerY, Math.max(layerY + layerH - drawH, drawY));
 
@@ -381,7 +413,7 @@ export async function renderVariationOnCanvas(
             ctx.beginPath();
             ctx.rect(layerX, layerY, layerW, layerH);
             ctx.clip();
-            ctx.drawImage(img, 0, 0, nw, nh, drawX, drawY, drawW, drawH);
+            ctx.drawImage(img, srcX, srcY, nw, nh, drawX, drawY, drawW, drawH);
             ctx.restore();
           } else {
             // contain
