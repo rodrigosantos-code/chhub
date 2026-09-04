@@ -1,4 +1,5 @@
 import { AssetItem, Tone } from '../types';
+import { processImageFile } from './imageConverter';
 
 /**
  * Calculates luminance of an image data URL, ignoring transparent pixels.
@@ -145,7 +146,8 @@ export async function readMultipleImageFiles(
   tonePreference: Tone | 'auto' = 'auto'
 ): Promise<AssetItem[]> {
   const fileArray = Array.from(files).filter((file) =>
-    file.type.startsWith('image/') || /\.(png|jpe?g|svg|webp|gif|avif)$/i.test(file.name)
+    file.type.startsWith('image/') ||
+    /\.(png|jpe?g|svg|webp|gif|avif|heic|heif|tiff?|bmp)$/i.test(file.name)
   );
 
   if (fileArray.length === 0) return [];
@@ -156,12 +158,8 @@ export async function readMultipleImageFiles(
   for (let i = 0; i < fileArray.length; i++) {
     const file = fileArray[i];
     try {
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target?.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Convert/compress image (HEIC→JPEG, PNG→JPEG, resize large images)
+      const dataUrl = await processImageFile(file);
 
       // Detect tone and focal point in parallel
       const [detectedTone, focalPoint] = await Promise.all([

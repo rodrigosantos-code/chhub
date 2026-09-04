@@ -27,6 +27,7 @@ import { Crop } from 'lucide-react';
 import { AssetItem, AssetGroup, FolderType, Tone, RatioImages, RatioImageKey, CropData } from '../types';
 import { readMultipleImageFiles, readTextFiles } from '../utils/fileUploader';
 import { CropEditorModal } from './CropEditorModal';
+import { processImageFile } from '../utils/imageConverter';
 
 interface AssetGroupWorkspaceProps {
   assetGroup: AssetGroup;
@@ -319,14 +320,9 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
     });
   };
 
-  // Read a single file to data URL
+  // Read a single file to data URL (with conversion/compression)
   const readFileToDataUrl = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+    return processImageFile(file);
   };
 
   return (
@@ -603,7 +599,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     <input
                       type="file"
                       multiple
-                      accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif"
+                      accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif,image/heic,image/heif,image/tiff,.heic,.heif,.tiff,.tif,.bmp"
                       className="hidden"
                       onChange={(e) => {
                         handleMultiFileUpload(
@@ -1043,7 +1039,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                             {isCustom ? 'Change' : 'Upload'}
                                             <input
                                               type="file"
-                                              accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif"
+                                              accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif,image/heic,image/heif,image/tiff,.heic,.heif,.tiff,.tif,.bmp"
                                               className="hidden"
                                               onChange={async (e) => {
                                                 const file = e.target.files?.[0];
@@ -1192,7 +1188,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                         <span>{currentUrl ? 'Change' : 'Upload'}</span>
                                         <input
                                           type="file"
-                                          accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif"
+                                          accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif,image/heic,image/heif,image/tiff,.heic,.heif,.tiff,.tif,.bmp"
                                           className="hidden"
                                           onChange={async (e) => {
                                             const file = e.target.files?.[0];
