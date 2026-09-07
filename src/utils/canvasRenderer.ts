@@ -615,3 +615,87 @@ export async function exportAllVariationsZip(
 
   return content;
 }
+
+/**
+ * Export variations organized by platform folders.
+ * Each platform folder contains subfolders per ratio, with rendered images.
+ */
+export async function exportByPlatformZip(
+  template: MasterTemplate,
+  assetGroup: AssetGroup,
+  variations: GeneratedVariation[],
+  projectName: string,
+  /** Map of platform name → list of ratio keys to render for that platform */
+  platformRatios: Record<string, AspectRatioKey[]>,
+  onProgress?: (current: number, total: number, message: string) => void
+): Promise<Blob> {
+  const zip = new JSZip();
+
+  // Calculate total files
+  let totalFiles = 0;
+  for (const ratios of Object.values(platformRatios)) {
+    totalFiles += ratios.length * variations.length;
+  }
+  let processed = 0;
+
+  const safeProject = projectName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+  const safeAssetGroup = assetGroup.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+
+  const ratioLabel = (key: AspectRatioKey): string => {
+    switch (key) {
+      case '1:1': return 'square';
+      case '4:5': return 'portrait_4x5';
+      case '9:16': return 'story_9x16';
+      case '16:9': return 'landscape';
+      case '1.91:1': return 'ad_banner_191x1';
+      case '4:1': return 'logo_banner_4x1';
+      default: return String(key).replace(':', 'x');
+    }
+  };
+
+  const getBgTone = (variation: GeneratedVariation): string => {
+    const bgLayer = template.layers.find((l) => l.folderType === 'background');
+    if (bgLayer) {
+      const resolved = variation.resolvedLayers[bgLayer.id];
+      if (resolved?.resolvedTone) return resolved.resolvedTone;
+    }
+    return 'light';
+  };
+
+  for (const [platformName, ratios] of Object.entries(platformRatios)) {
+    if (ratios.length === 0) continue;
+
+    const safePlatform = platformName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+    const platformFolder = zip.folder(safePlatform);
+
+    for (const ratioKey of ratios) {
+      const meta = ASPECT_RATIOS[ratioKey];
+      if (!meta) continue;
+
+      const rLabel = ratioLabel(ratioKey);
+      const ratioFolder = platformFolder?.folder(rLabel);
+
+      for (const variation of variations) {
+        processed++;
+        onProgress?.(
+          processed,
+          totalFiles,
+          `${platformName} — ${rLabel} — Var #${variation.index}`
+        );
+
+        const blob = await renderVariationToBlob(variation, template, ratioKey, meta.width);
+        const tone = getBgTone(variation);
+        const idx = String(variation.index).padStart(3, '0');
+        const fileName = `${safeProject}_${safeAssetGroup}_${tone}_${rLabel}_${idx}.png`;
+        ratioFolder?.file(fileName, blob);
+      }
+    }
+  }
+
+  onProgress?.(totalFiles, totalFiles, 'Packaging ZIP file...');
+  const content = await zip.generateAsync({ type: 'blob' }, (metadata) => {
+    onProgress?.(totalFiles, totalFiles, `Compressing (${Math.round(metadata.percent)}%)...`);
+  });
+
+  return content;
+}

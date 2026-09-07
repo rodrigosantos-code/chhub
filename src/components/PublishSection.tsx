@@ -18,9 +18,11 @@ import {
   Monitor,
   Smartphone,
   RefreshCw,
+  Download,
 } from 'lucide-react';
 import { Project, AssetGroup, MasterTemplate, AspectRatioKey } from '../types';
-import { calculateVariationReport } from '../utils/variationCalculator';
+import { calculateVariationReport, generateAllVariations } from '../utils/variationCalculator';
+import { exportByPlatformZip } from '../utils/canvasRenderer';
 
 // ─── Platform Definitions ──────────────────────────────────────────────
 
@@ -218,40 +220,131 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
     });
   };
 
-  // Simulate publish
+  // Real publish: export ZIP with platform folders
   const handlePublish = async (platformId: string) => {
     const platform = PLATFORMS.find((p) => p.id === platformId);
     if (!platform || selectedAssetGroupIds.size === 0 || !selectedTemplate) return;
 
+    // Build ratios-to-send for this single platform
+    const ratiosToSend = platform.ratios
+      .filter((r) => r.mappedAppRatio && selectedTemplate.activeAspectRatios.includes(r.mappedAppRatio))
+      .map((r) => r.mappedAppRatio!);
+    if (ratiosToSend.length === 0) return;
+
     setPublishingPlatform(platformId);
+    setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent: 0, message: 'Starting export...' } }));
 
-    // Simulate render phase
-    setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent: 0, message: 'Rendering variations...' } }));
-    for (let i = 0; i <= 60; i += 15) {
-      await new Promise((r) => setTimeout(r, 300));
-      setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent: i, message: `Rendering variations... ${i}%` } }));
+    try {
+      const selectedAGs = project.assetGroups.filter((ag) => selectedAssetGroupIds.has(ag.id));
+      const platformRatiosMap: Record<string, AspectRatioKey[]> = {
+        [platform.name]: ratiosToSend,
+      };
+
+      for (const ag of selectedAGs) {
+        const variations = generateAllVariations(selectedTemplate, ag);
+
+        const zipBlob = await exportByPlatformZip(
+          selectedTemplate,
+          ag,
+          variations,
+          project.name,
+          platformRatiosMap,
+          (current, total, message) => {
+            const percent = Math.round((current / total) * 100);
+            setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent, message } }));
+          }
+        );
+
+        // Download ZIP
+        const url = URL.createObjectURL(zipBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        const safeName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const safePlatform = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        link.download = `${safeName}_${safeAg}_${safePlatform}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'done', percent: 100, message: 'Exported successfully!' } }));
+      setPublishingPlatform(null);
+
+      setTimeout(() => {
+        setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'idle', percent: 0, message: '' } }));
+      }, 3000);
+    } catch (err) {
+      setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'error', percent: 0, message: (err as Error).message } }));
+      setPublishingPlatform(null);
     }
+  };
 
-    // Simulate upload phase
-    setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'uploading', percent: 70, message: 'Uploading assets to platform...' } }));
-    await new Promise((r) => setTimeout(r, 800));
-    setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'uploading', percent: 85, message: 'Creating ad groups...' } }));
-    await new Promise((r) => setTimeout(r, 600));
-    setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'uploading', percent: 95, message: 'Finalizing campaign...' } }));
-    await new Promise((r) => setTimeout(r, 400));
+  // Publish All: export ZIP with all platform folders in one file
+  const handlePublishAll = async () => {
+    if (selectedAssetGroupIds.size === 0 || !selectedTemplate) return;
 
-    // Done
-    setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'done', percent: 100, message: 'Published successfully!' } }));
-    setConnections((prev) => ({
-      ...prev,
-      [platformId]: { ...prev[platformId], lastPublished: new Date().toLocaleString() },
-    }));
-    setPublishingPlatform(null);
+    setPublishingPlatform('_all');
+    setPublishProgress((prev) => ({ ...prev, _all: { status: 'rendering', percent: 0, message: 'Starting export...' } }));
 
-    // Clear after 3s
-    setTimeout(() => {
-      setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'idle', percent: 0, message: '' } }));
-    }, 3000);
+    try {
+      // Build platform→ratios map for all connected platforms
+      const platformRatiosMap: Record<string, AspectRatioKey[]> = {};
+      for (const platform of PLATFORMS) {
+        const ratios = platform.ratios
+          .filter((r) => r.mappedAppRatio && selectedTemplate.activeAspectRatios.includes(r.mappedAppRatio))
+          .map((r) => r.mappedAppRatio!);
+        if (ratios.length > 0) {
+          platformRatiosMap[platform.name] = ratios;
+        }
+      }
+
+      if (Object.keys(platformRatiosMap).length === 0) {
+        setPublishProgress((prev) => ({ ...prev, _all: { status: 'error', percent: 0, message: 'No matching ratios' } }));
+        setPublishingPlatform(null);
+        return;
+      }
+
+      const selectedAGs = project.assetGroups.filter((ag) => selectedAssetGroupIds.has(ag.id));
+
+      for (const ag of selectedAGs) {
+        const variations = generateAllVariations(selectedTemplate, ag);
+
+        const zipBlob = await exportByPlatformZip(
+          selectedTemplate,
+          ag,
+          variations,
+          project.name,
+          platformRatiosMap,
+          (current, total, message) => {
+            const percent = Math.round((current / total) * 100);
+            setPublishProgress((prev) => ({ ...prev, _all: { status: 'rendering', percent, message } }));
+          }
+        );
+
+        const url = URL.createObjectURL(zipBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        const safeName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+        link.download = `${safeName}_${safeAg}_all_platforms.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      setPublishProgress((prev) => ({ ...prev, _all: { status: 'done', percent: 100, message: 'Exported successfully!' } }));
+      setPublishingPlatform(null);
+
+      setTimeout(() => {
+        setPublishProgress((prev) => ({ ...prev, _all: { status: 'idle', percent: 0, message: '' } }));
+      }, 3000);
+    } catch (err) {
+      setPublishProgress((prev) => ({ ...prev, _all: { status: 'error', percent: 0, message: (err as Error).message } }));
+      setPublishingPlatform(null);
+    }
   };
 
   const toggleAssetGroup = (id: string) => {
@@ -355,6 +448,43 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
                   })}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Publish All Button */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <div className="text-sm font-bold text-gray-900">Publish All Platforms</div>
+                <div className="text-[10px] text-gray-400 mt-0.5">
+                  Export one ZIP with folders for each platform, containing only the ratios each one requires
+                </div>
+              </div>
+              {publishProgress._all?.status === 'rendering' ? (
+                <div className="flex items-center gap-2 min-w-[200px]">
+                  <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all duration-300"
+                      style={{ width: `${publishProgress._all?.percent || 0}%` }}
+                    />
+                  </div>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-gray-400" />
+                </div>
+              ) : publishProgress._all?.status === 'done' ? (
+                <div className="flex items-center gap-1.5 text-emerald-600 text-xs font-bold">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Exported!
+                </div>
+              ) : (
+                <button
+                  onClick={handlePublishAll}
+                  disabled={selectedAssetGroupIds.size === 0 || !selectedTemplate || publishingPlatform !== null}
+                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Export All Platforms
+                </button>
+              )}
             </div>
           </div>
 
@@ -573,17 +703,15 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
                           ) : (
                             <button
                               onClick={() => handlePublish(platform.id)}
-                              disabled={!isConnected || selectedAssetGroupIds.size === 0 || !selectedTemplate || isPublishing || ratiosToSend.length === 0}
+                              disabled={selectedAssetGroupIds.size === 0 || !selectedTemplate || publishingPlatform !== null || ratiosToSend.length === 0}
                               className="w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                             >
-                              <Send className="w-3.5 h-3.5" />
-                              {!isConnected
-                                ? 'Connect first'
-                                : selectedAssetGroupIds.size === 0
+                              <Download className="w-3.5 h-3.5" />
+                              {selectedAssetGroupIds.size === 0
                                 ? 'Select asset groups'
                                 : ratiosToSend.length === 0
                                 ? 'No matching ratios'
-                                : `Publish ${ratiosToSend.length} ratio${ratiosToSend.length !== 1 ? 's' : ''} × ${selectedAssetGroupIds.size} group${selectedAssetGroupIds.size !== 1 ? 's' : ''}`}
+                                : `Export ${ratiosToSend.length} ratio${ratiosToSend.length !== 1 ? 's' : ''} × ${selectedAssetGroupIds.size} group${selectedAssetGroupIds.size !== 1 ? 's' : ''}`}
                             </button>
                           )}
                         </div>
