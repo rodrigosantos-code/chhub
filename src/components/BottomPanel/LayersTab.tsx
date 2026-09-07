@@ -127,10 +127,14 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                         ? 'bg-purple-50 text-purple-700 border border-purple-200'
                         : layer.dynamizationType === 'by_contrast'
                         ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : layer.dynamizationType === 'none'
+                        ? 'bg-gray-200 text-gray-500'
                         : 'bg-gray-100 text-gray-600'
                     }`}
                   >
-                    {layer.dynamizationType === 'by_contrast'
+                    {layer.dynamizationType === 'none'
+                      ? 'Static'
+                      : layer.dynamizationType === 'by_contrast'
                       ? 'By Contrast'
                       : 'By Folder'}
                     {layer.conditionalRule ? ' + Condition' : ''}

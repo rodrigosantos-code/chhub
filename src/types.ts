@@ -111,7 +111,7 @@ export interface AssetGroup {
   };
 }
 
-export type DynamizationType = 'by_folder' | 'by_contrast';
+export type DynamizationType = 'none' | 'by_folder' | 'by_contrast';
 
 export interface ConditionalRule {
   dependsOnLayerId: string;

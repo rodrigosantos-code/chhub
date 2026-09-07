@@ -335,6 +335,16 @@ export function generateAllVariations(
       return [{ layer }];
     }
 
+    // 'none' dynamization — always 1 candidate (static)
+    if (layer.dynamizationType === 'none') {
+      if (layer.folderType.startsWith('texto')) {
+        const singleText = info.textStrings?.[0] || 'Text';
+        return [{ layer, text: singleText }];
+      }
+      const firstItem = info.items[0];
+      return firstItem ? [{ layer, item: firstItem }] : [{ layer }];
+    }
+
     // Text layers
     if (layer.folderType.startsWith('texto')) {
       if (layer.textDynamization?.dynamicContent === false) {
@@ -491,17 +501,27 @@ export function generateAllVariations(
         }
       }
 
-      // Resolve form layer colors by contrast
+      // Resolve form layer colors by contrast (only if dynamizationType is 'by_contrast')
       for (const layer of visibleLayers) {
         if (layer.folderType.startsWith('form') && layer.shapeConfig) {
-          const shapeConf = layer.shapeConfig;
-          const resolvedColor = bgTone === 'dark' ? shapeConf.darkBgColor : shapeConf.lightBgColor;
-          resolved[layer.id] = {
-            layerId: layer.id,
-            folderUsed: layer.folderType,
-            contrastCorrected: resolvedColor !== shapeConf.fillColor,
-            resolvedShapeColor: resolvedColor,
-          };
+          if (layer.dynamizationType === 'by_contrast') {
+            const shapeConf = layer.shapeConfig;
+            const resolvedColor = bgTone === 'dark' ? shapeConf.darkBgColor : shapeConf.lightBgColor;
+            resolved[layer.id] = {
+              layerId: layer.id,
+              folderUsed: layer.folderType,
+              contrastCorrected: resolvedColor !== shapeConf.fillColor,
+              resolvedShapeColor: resolvedColor,
+            };
+          } else {
+            // 'none' or any other: use fillColor as-is
+            resolved[layer.id] = {
+              layerId: layer.id,
+              folderUsed: layer.folderType,
+              contrastCorrected: false,
+              resolvedShapeColor: layer.shapeConfig.fillColor,
+            };
+          }
         }
       }
 

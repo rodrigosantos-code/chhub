@@ -122,13 +122,13 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
   const [linkedWH, setLinkedWH] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
-    background: true,
-    logo: true,
-    product: true,
-    text: true,
-    form: true,
+    background: false,
+    logo: false,
+    product: false,
+    text: false,
+    form: false,
   });
-  const [objectsPanelOpen, setObjectsPanelOpen] = useState(true);
+  const [objectsPanelOpen, setObjectsPanelOpen] = useState(false);
 
   const selectedLayer = template.layers.find((l) => l.id === selectedLayerId);
   const layerPosition = selectedLayer
