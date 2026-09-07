@@ -9,11 +9,9 @@ import {
   Type,
   Palette,
   Package,
-  Download,
-  Trash2,
+  Settings,
   Edit3,
   LayoutGrid,
-  Sparkles,
 } from 'lucide-react';
 import { Project, MasterTemplate, AssetGroup, ASPECT_RATIOS } from '../types';
 
@@ -24,7 +22,7 @@ interface HomeDashboardProps {
   onOpenTemplate: (projectId: string, templateId: string) => void;
   onOpenAssetGroup: (projectId: string, assetGroupId: string) => void;
   onNewProject: () => void;
-  onOpenBulkExport: (projectId: string) => void;
+  onManageBrand: (projectId: string) => void;
   onOpenProjectManager: () => void;
 }
 
@@ -35,7 +33,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
   onOpenTemplate,
   onOpenAssetGroup,
   onNewProject,
-  onOpenBulkExport,
+  onManageBrand,
   onOpenProjectManager,
 }) => {
   const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
@@ -221,12 +219,11 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     {/* Bottom actions */}
                     <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
                       <button
-                        onClick={() => onOpenBulkExport(project.id)}
-                        disabled={project.templates.length === 0 || project.assetGroups.length === 0}
-                        className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+                        onClick={() => onManageBrand(project.id)}
+                        className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[11px] font-semibold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
                       >
-                        <Download className="w-3.5 h-3.5" />
-                        Bulk Export
+                        <Settings className="w-3.5 h-3.5" />
+                        Manage Brand
                       </button>
                     </div>
                   </div>

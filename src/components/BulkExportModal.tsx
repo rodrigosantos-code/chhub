@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import {
-  X,
   Download,
   Layers,
   Package,
@@ -182,29 +181,23 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
   const allDone = isExporting && completedCount === previewStats.combos.length;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-[760px] max-h-[85vh] flex flex-col overflow-hidden border border-gray-200">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-violet-50 to-purple-50">
-          <div>
-            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              <Download className="w-5 h-5 text-violet-600" />
-              Bulk Export — {project.name}
-            </h2>
-            <p className="text-[11px] text-gray-500 mt-0.5">
-              Select templates and asset groups to export in mass
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <div className="flex-1 flex flex-col h-full bg-gradient-to-br from-slate-50 to-gray-100 overflow-hidden">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur border-b border-gray-200 px-8 py-5 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2.5">
+            <Download className="w-5 h-5 text-violet-600" />
+            Bulk Export — {project.name}
+          </h1>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Select templates and asset groups to export in mass
+          </p>
         </div>
+      </div>
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto p-6">
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto p-8">
+        <div className="max-w-4xl mx-auto">
           {!isExporting ? (
             <div className="grid grid-cols-2 gap-6">
               {/* Templates column */}
@@ -347,58 +340,52 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
             </div>
           )}
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-          {!isExporting ? (
-            <>
-              {/* Preview stats */}
-              <div className="text-[11px] text-gray-500">
-                {previewStats.comboCount > 0 ? (
-                  <span>
-                    <strong className="text-gray-700">{previewStats.comboCount}</strong> combination{previewStats.comboCount !== 1 ? 's' : ''} •{' '}
-                    <strong className="text-gray-700">{previewStats.totalVariations}</strong> variations •{' '}
-                    <strong className="text-gray-700">{previewStats.totalFiles}</strong> total files
-                  </span>
-                ) : (
-                  <span className="text-gray-400">Select at least 1 template and 1 asset group</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={onClose}
-                  className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleBulkExport}
-                  disabled={previewStats.comboCount === 0}
-                  className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  Export {previewStats.comboCount} ZIP{previewStats.comboCount !== 1 ? 's' : ''}
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="text-[11px] text-gray-500">
-                {allDone ? (
-                  <span className="text-emerald-600 font-semibold">✓ All exports complete!</span>
-                ) : (
-                  <span>Please wait while files are being generated...</span>
-                )}
-              </div>
+      {/* Footer */}
+      <div className="px-8 py-4 border-t border-gray-200 bg-white/80 backdrop-blur flex items-center justify-between">
+        {!isExporting ? (
+          <>
+            {/* Preview stats */}
+            <div className="text-[11px] text-gray-500">
+              {previewStats.comboCount > 0 ? (
+                <span>
+                  <strong className="text-gray-700">{previewStats.comboCount}</strong> combination{previewStats.comboCount !== 1 ? 's' : ''} •{' '}
+                  <strong className="text-gray-700">{previewStats.totalVariations}</strong> variations •{' '}
+                  <strong className="text-gray-700">{previewStats.totalFiles}</strong> total files
+                </span>
+              ) : (
+                <span className="text-gray-400">Select at least 1 template and 1 asset group</span>
+              )}
+            </div>
+            <button
+              onClick={handleBulkExport}
+              disabled={previewStats.comboCount === 0}
+              className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Export {previewStats.comboCount} ZIP{previewStats.comboCount !== 1 ? 's' : ''}
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="text-[11px] text-gray-500">
+              {allDone ? (
+                <span className="text-emerald-600 font-semibold">✓ All exports complete!</span>
+              ) : (
+                <span>Please wait while files are being generated...</span>
+              )}
+            </div>
+            {allDone && (
               <button
-                onClick={onClose}
-                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-100 cursor-pointer transition-colors"
+                onClick={() => { setIsExporting(false); setJobs([]); setCompletedCount(0); }}
+                className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium cursor-pointer transition-colors"
               >
-                {allDone ? 'Close' : 'Close (exports will stop)'}
+                Export again
               </button>
-            </>
-          )}
-        </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

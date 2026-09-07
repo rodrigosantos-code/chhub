@@ -801,7 +801,10 @@ export default function App() {
             setActiveMode('asset_groups');
           }}
           onNewProject={() => setIsProjectManagerOpen(true)}
-          onOpenBulkExport={(projId) => setBulkExportProjectId(projId)}
+          onManageBrand={(projId) => {
+            handleSelectProject(projId);
+            setActiveMode('templates');
+          }}
           onOpenProjectManager={() => setIsProjectManagerOpen(true)}
         />
       ) : activeMode === 'templates' ? (
@@ -881,13 +884,11 @@ export default function App() {
           onBackToEditor={() => setActiveMode('templates')}
         />
       ) : activeMode === 'bulk_export' ? (
-        /* Inline Bulk Export */
-        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 overflow-hidden">
-          <BulkExportModal
-            project={currentProject}
-            onClose={() => setActiveMode('templates')}
-          />
-        </div>
+        /* Inline Bulk Export Section */
+        <BulkExportModal
+          project={currentProject}
+          onClose={() => setActiveMode('templates')}
+        />
       ) : null}
 
       {/* Modals */}
@@ -921,17 +922,6 @@ export default function App() {
         onClose={() => setIsNewAssetGroupOpen(false)}
         onCreateAssetGroup={handleCreateAssetGroup}
       />
-
-      {/* Bulk Export Modal */}
-      {bulkExportProjectId && (() => {
-        const exportProject = projects.find((p) => p.id === bulkExportProjectId);
-        return exportProject ? (
-          <BulkExportModal
-            project={exportProject}
-            onClose={() => setBulkExportProjectId(null)}
-          />
-        ) : null;
-      })()}
 
       {/* Cloud status */}
       {cloudStatus !== 'idle' && (
