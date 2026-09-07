@@ -960,6 +960,8 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                             { key: 'portrait_4_5' as RatioImageKey, label: '4:5' },
                             { key: 'portrait_9_16' as RatioImageKey, label: '9:16' },
                             { key: 'landscape' as RatioImageKey, label: '16:9' },
+                            { key: 'ad_banner' as RatioImageKey, label: '1.91:1' },
+                            { key: 'logo_banner' as RatioImageKey, label: '4:1' },
                           ];
                           const expandedKey = expandedRatioPreview?.[item.id] || null;
 
