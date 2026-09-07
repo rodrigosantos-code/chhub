@@ -33,6 +33,7 @@ import { NewAssetGroupModal } from './components/NewAssetGroupModal';
 import { ProjectManagerModal } from './components/ProjectManagerModal';
 import { HomeDashboard } from './components/HomeDashboard';
 import { BulkExportModal } from './components/BulkExportModal';
+import { PublishSection } from './components/PublishSection';
 import { fetchProjects, saveAllProjects, syncDeletedProjects } from './lib/projectsDB';
 
 const STORAGE_PROJECTS_KEY = 'chhub_projects_v3';
@@ -221,8 +222,8 @@ export default function App() {
     return projects.find((p) => p.id === activeProjectId) || projects[0] || INITIAL_EMPTY_PROJECTS[0];
   }, [projects, activeProjectId]);
 
-  // Active Mode: 'home' (Dashboard) vs 'templates' (Canvas & Layers) vs 'asset_groups' vs 'bulk_export'
-  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups' | 'bulk_export'>('home');
+  // Active Mode: 'home' | 'templates' | 'asset_groups' | 'bulk_export' | 'publish'
+  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups' | 'bulk_export' | 'publish'>('home');
   const [bulkExportProjectId, setBulkExportProjectId] = useState<string | null>(null);
 
   // Resizable bottom panel
@@ -889,6 +890,9 @@ export default function App() {
           project={currentProject}
           onClose={() => setActiveMode('templates')}
         />
+      ) : activeMode === 'publish' ? (
+        /* Publish Section */
+        <PublishSection project={currentProject} />
       ) : null}
 
       {/* Modals */}
