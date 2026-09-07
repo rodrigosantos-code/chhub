@@ -231,16 +231,18 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
               <button
                 key={rKey}
                 onClick={() => onSelectRatio(rKey)}
-                className={`px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${
+                className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1 transition-all cursor-pointer ${
                   isSelected
                     ? 'bg-blue-600 text-white font-bold shadow-xs'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
                 }`}
               >
-                <span>{rMeta.label}</span>
-                <span className={`text-[10px] font-mono ${isSelected ? 'text-blue-100' : 'text-gray-400'}`}>
-                  {rMeta.width}×{rMeta.height}
-                </span>
+                <span>{rKey}</span>
+                {isSelected && (
+                  <span className="text-[9px] font-mono text-blue-200">
+                    {rMeta.width}×{rMeta.height}
+                  </span>
+                )}
               </button>
             );
           })}
