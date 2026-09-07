@@ -203,50 +203,59 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
-        {/* 2. Mode Selector: Templates vs Asset Groups vs Bulk Export */}
-        <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">
+        {/* 2. Primary Navigation — larger, prominent */}
+        <div className="flex items-center bg-gray-100/80 p-1 rounded-xl border border-gray-200/80">
           <button
             onClick={() => onChangeMode('templates')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-lg text-[13px] font-bold flex items-center gap-2 transition-all cursor-pointer ${
               activeMode === 'templates'
-                ? 'bg-white text-gray-900 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-blue-600" />
+            <Layers className="w-4 h-4 text-blue-600" />
             <span>Templates</span>
-            <span className="text-[10px] font-mono font-normal opacity-70">
+            <span className="text-[10px] font-mono font-normal opacity-60">
               ({currentProject ? currentProject.templates.length : 0})
             </span>
           </button>
 
           <button
             onClick={() => onChangeMode('asset_groups')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-lg text-[13px] font-bold flex items-center gap-2 transition-all cursor-pointer ${
               activeMode === 'asset_groups'
-                ? 'bg-white text-gray-900 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <FolderTree className="w-3.5 h-3.5 text-emerald-600" />
+            <FolderTree className="w-4 h-4 text-emerald-600" />
             <span>Assets</span>
-            <span className="text-[10px] font-mono font-normal opacity-70">
+            <span className="text-[10px] font-mono font-normal opacity-60">
               ({currentProject ? currentProject.assetGroups.length : 0})
             </span>
           </button>
 
           <button
             onClick={() => onChangeMode('export')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-4 py-1.5 rounded-lg text-[13px] font-bold flex items-center gap-2 transition-all cursor-pointer ${
               activeMode === 'export'
-                ? 'bg-white text-gray-900 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            <Download className="w-3.5 h-3.5 text-violet-600" />
+            <Download className="w-4 h-4 text-violet-600" />
             <span>Export</span>
           </button>
         </div>
+
+        {/* Separator + Contextual Dropdowns — smaller, subordinate */}
+        {activeMode === 'templates' && currentProject && (
+          <>
+            <div className="flex items-center gap-1.5 text-[10px] text-gray-300 uppercase tracking-widest font-semibold select-none">
+              <div className="h-4 w-px bg-gray-200" />
+            </div>
+          </>
+        )}
 
         {/* 3. Contextual Dropdown according to Active Mode */}
         {activeMode === 'templates' && currentProject && (
@@ -259,11 +268,11 @@ export const Header: React.FC<HeaderProps> = ({
                   setShowAssetGroupMenu(false);
                   setShowProjectMenu(false);
                 }}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+                className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-150 text-[11px] font-medium transition-colors shadow-none cursor-pointer"
               >
-                <Layers className="w-3.5 h-3.5 text-blue-600" />
-                <span className="max-w-[130px] truncate">{activeTemplate.name}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                <Layers className="w-3 h-3 text-blue-500" />
+                <span className="max-w-[120px] truncate">{activeTemplate.name}</span>
+                <ChevronDown className="w-3 h-3 text-gray-300" />
               </button>
 
               {showTemplateMenu && (
@@ -362,11 +371,11 @@ export const Header: React.FC<HeaderProps> = ({
                   setShowTemplateMenu(false);
                   setShowProjectMenu(false);
                 }}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+                className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-150 text-[11px] font-medium transition-colors shadow-none cursor-pointer"
               >
-                <FolderTree className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="max-w-[130px] truncate">{activeAssetGroup.name}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                <FolderTree className="w-3 h-3 text-emerald-500" />
+                <span className="max-w-[120px] truncate">{activeAssetGroup.name}</span>
+                <ChevronDown className="w-3 h-3 text-gray-300" />
               </button>
 
               <button
