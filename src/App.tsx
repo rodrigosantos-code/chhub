@@ -233,8 +233,9 @@ export default function App() {
   // When switching modes, reset to overview
   const handleSetActiveMode = (mode: typeof activeMode) => {
     setActiveMode(mode);
-    if (mode === 'templates') setIsInTemplateEditor(false);
-    if (mode === 'asset_groups') setIsInAssetEditor(false);
+    // Always reset to overview when clicking a tab
+    setIsInTemplateEditor(false);
+    setIsInAssetEditor(false);
   };
 
   // Resizable bottom panel
