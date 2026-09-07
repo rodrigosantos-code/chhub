@@ -151,9 +151,9 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
         const url = URL.createObjectURL(zipBlob);
         const link = document.createElement('a');
         link.href = url;
-        const safeTpl = tpl.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
-        const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
-        link.download = `${project.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${safeTpl}_${safeAg}.zip`;
+        const safeTpl = tpl.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        link.download = `${project.name.toLowerCase().replace(/[^a-z0-9]/g, '')}_${safeTpl}_${safeAg}.zip`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

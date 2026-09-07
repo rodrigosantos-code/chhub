@@ -527,19 +527,20 @@ export async function exportAllVariationsZip(
   const totalFiles = variations.length * template.activeAspectRatios.length;
   let processed = 0;
 
-  // Sanitize names for file paths
-  const safeProject = projectName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
-  const safeAssetGroup = assetGroup.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+  // Sanitize names for file paths — join words within a section, no underscores inside
+  const safeName = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const safeProject = safeName(projectName);
+  const safeAssetGroup = safeName(assetGroup.name);
 
   // Map ratio keys to short folder/file labels
   const ratioLabel = (key: AspectRatioKey): string => {
     switch (key) {
       case '1:1': return 'square';
-      case '4:5': return 'retrato_4x5';
-      case '9:16': return 'retrato_9x16';
+      case '4:5': return 'retrato4x5';
+      case '9:16': return 'retrato9x16';
       case '16:9': return 'landscape';
-      case '1.91:1': return 'ad_banner_191x1';
-      case '4:1': return 'logo_banner_4x1';
+      case '1.91:1': return 'adbanner191x1';
+      case '4:1': return 'logobanner4x1';
       default: return String(key).replace(':', 'x');
     }
   };
@@ -638,17 +639,18 @@ export async function exportByPlatformZip(
   }
   let processed = 0;
 
-  const safeProject = projectName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
-  const safeAssetGroup = assetGroup.name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+  const safeName = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const safeProject = safeName(projectName);
+  const safeAssetGroup = safeName(assetGroup.name);
 
   const ratioLabel = (key: AspectRatioKey): string => {
     switch (key) {
       case '1:1': return 'square';
-      case '4:5': return 'portrait_4x5';
-      case '9:16': return 'story_9x16';
+      case '4:5': return 'portrait4x5';
+      case '9:16': return 'story9x16';
       case '16:9': return 'landscape';
-      case '1.91:1': return 'ad_banner_191x1';
-      case '4:1': return 'logo_banner_4x1';
+      case '1.91:1': return 'adbanner191x1';
+      case '4:1': return 'logobanner4x1';
       default: return String(key).replace(':', 'x');
     }
   };
@@ -665,7 +667,7 @@ export async function exportByPlatformZip(
   for (const [platformName, ratios] of Object.entries(platformRatios)) {
     if (ratios.length === 0) continue;
 
-    const safePlatform = platformName.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_');
+    const safePlatform = platformName.toLowerCase().replace(/[^a-z0-9]/g, '');
     const platformFolder = zip.folder(safePlatform);
 
     for (const ratioKey of ratios) {

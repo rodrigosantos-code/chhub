@@ -70,8 +70,8 @@ export const ExportTab: React.FC<ExportTabProps> = ({
       const url = URL.createObjectURL(zipBlob);
       const link = document.createElement('a');
       link.href = url;
-      const safeProject = projectName.toLowerCase().replace(/[^a-z0-9]/g, '_');
-      const safeAssetGroup = assetGroup.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const safeProject = projectName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const safeAssetGroup = assetGroup.name.toLowerCase().replace(/[^a-z0-9]/g, '');
       link.download = `${safeProject}_${safeAssetGroup}_${numVariations}vars.zip`;
       document.body.appendChild(link);
       link.click();
