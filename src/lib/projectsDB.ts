@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { Project } from '../types';
+import { compressProjectAssets } from './imageCompressor';
 
 export interface DBProject {
   id: string;
@@ -34,12 +35,15 @@ export async function fetchProjects(): Promise<Project[]> {
  * Uses the project's own `id` as the DB row id.
  */
 export async function saveProject(project: Project): Promise<void> {
+  // Compress base64 images before saving
+  const cleanProject = await compressProjectAssets(project);
+
   const { error } = await supabase.from('projects').upsert(
     {
-      id: project.id,
-      name: project.name,
-      description: project.description,
-      data: project,
+      id: cleanProject.id,
+      name: cleanProject.name,
+      description: cleanProject.description,
+      data: cleanProject,
       updated_at: new Date().toISOString(),
     },
     { onConflict: 'id' }
@@ -51,10 +55,17 @@ export async function saveProject(project: Project): Promise<void> {
 }
 
 /**
- * Save all projects at once (batch upsert).
+ * Save all projects at once.
+ * First uploads all base64 images to Storage, then saves lightweight JSON.
  */
 export async function saveAllProjects(projects: Project[]): Promise<void> {
-  const rows = projects.map((p) => ({
+  // Compress base64 images before saving
+  console.log(`[Supabase] Compressing images for ${projects.length} project(s)...`);
+  const cleanProjects = await Promise.all(
+    projects.map((p) => compressProjectAssets(p))
+  );
+
+  const rows = cleanProjects.map((p) => ({
     id: p.id,
     name: p.name,
     description: p.description,
@@ -62,13 +73,12 @@ export async function saveAllProjects(projects: Project[]): Promise<void> {
     updated_at: new Date().toISOString(),
   }));
 
-  // Log payload size for debugging
   const payloadSize = new Blob([JSON.stringify(rows)]).size;
-  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024 / 1024).toFixed(2)} MB)`);
+  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024 / 1024).toFixed(2)} MB after image upload)`);
 
+  // Save one by one if still large
   if (payloadSize > 4 * 1024 * 1024) {
-    console.warn('[Supabase] Payload is large (>4MB). Saving projects individually...');
-    // Save one by one to avoid request size limits
+    console.warn('[Supabase] Payload still large. Saving individually...');
     for (const row of rows) {
       const { error } = await supabase.from('projects').upsert(row, { onConflict: 'id' });
       if (error) {

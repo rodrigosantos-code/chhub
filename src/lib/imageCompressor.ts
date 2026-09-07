@@ -1,0 +1,91 @@
+/**
+ * Compress a base64 data URL image to a smaller version for cloud storage.
+ * Returns a compressed base64 data URL or the original if not a data URL.
+ *
+ * Resizes to maxDimension px on the largest side and compresses as JPEG.
+ */
+export function compressBase64Image(
+  dataUrl: string,
+  maxDimension: number = 800,
+  quality: number = 0.7
+): Promise<string> {
+  return new Promise((resolve) => {
+    // Skip if not a data URL
+    if (!dataUrl.startsWith('data:image')) {
+      resolve(dataUrl);
+      return;
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+
+      // Only resize if larger than max
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height / width) * maxDimension);
+          width = maxDimension;
+        } else {
+          width = Math.round((width / height) * maxDimension);
+          height = maxDimension;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(dataUrl);
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Export as JPEG for smaller size (or PNG if transparency needed)
+      const compressed = canvas.toDataURL('image/jpeg', quality);
+      resolve(compressed);
+    };
+
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+/**
+ * Process all assets in a project: compress base64 images for cloud storage.
+ * Returns a new project object with compressed images (does not mutate the original).
+ */
+export async function compressProjectAssets(project: any): Promise<any> {
+  const clone = JSON.parse(JSON.stringify(project));
+
+  for (const ag of clone.assetGroups || []) {
+    const imageFolders = [
+      'background', 'logo_1', 'logo_2', 'logo_3',
+      'product_image_1', 'product_image_2', 'product_image_3',
+    ];
+
+    for (const folderKey of imageFolders) {
+      const items = ag.folders?.[folderKey];
+      if (!Array.isArray(items)) continue;
+
+      for (const item of items) {
+        // Main URL
+        if (item.url && item.url.startsWith('data:')) {
+          item.url = await compressBase64Image(item.url, 800, 0.6);
+        }
+
+        // Ratio URLs
+        if (item.ratioUrls) {
+          for (const [ratioKey, ratioUrl] of Object.entries(item.ratioUrls)) {
+            if (typeof ratioUrl === 'string' && ratioUrl.startsWith('data:')) {
+              item.ratioUrls[ratioKey] = await compressBase64Image(ratioUrl as string, 800, 0.6);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return clone;
+}
