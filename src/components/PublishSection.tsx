@@ -229,7 +229,13 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
     const ratiosToSend = platform.ratios
       .filter((r) => r.mappedAppRatio && selectedTemplate.activeAspectRatios.includes(r.mappedAppRatio))
       .map((r) => r.mappedAppRatio!);
-    if (ratiosToSend.length === 0) return;
+    if (ratiosToSend.length === 0) {
+      setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'done', percent: 100, message: 'No matching ratios to export' } }));
+      setTimeout(() => {
+        setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'idle', percent: 0, message: '' } }));
+      }, 2000);
+      return;
+    }
 
     setPublishingPlatform(platformId);
     setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent: 0, message: 'Starting export...' } }));
@@ -703,14 +709,12 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
                           ) : (
                             <button
                               onClick={() => handlePublish(platform.id)}
-                              disabled={selectedAssetGroupIds.size === 0 || !selectedTemplate || publishingPlatform !== null || ratiosToSend.length === 0}
+                              disabled={selectedAssetGroupIds.size === 0 || !selectedTemplate || publishingPlatform !== null}
                               className="w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                             >
                               <Download className="w-3.5 h-3.5" />
                               {selectedAssetGroupIds.size === 0
                                 ? 'Select asset groups'
-                                : ratiosToSend.length === 0
-                                ? 'No matching ratios'
                                 : `Export ${ratiosToSend.length} ratio${ratiosToSend.length !== 1 ? 's' : ''} × ${selectedAssetGroupIds.size} group${selectedAssetGroupIds.size !== 1 ? 's' : ''}`}
                             </button>
                           )}
