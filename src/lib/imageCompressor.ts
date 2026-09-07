@@ -66,10 +66,11 @@ export function compressBase64Image(
 }
 
 /**
- * Process all assets in a project: compress base64 images for cloud storage.
- * Returns a new project object with compressed images (does not mutate the original).
+ * Strip all base64 data URLs from a project clone for cloud storage.
+ * Images are kept in localStorage and never sent to Supabase.
+ * Returns a lightweight project object (does not mutate the original).
  */
-export async function compressProjectAssets(project: any): Promise<any> {
+export function stripImagesForCloud(project: any): any {
   const clone = JSON.parse(JSON.stringify(project));
 
   for (const ag of clone.assetGroups || []) {
@@ -83,16 +84,16 @@ export async function compressProjectAssets(project: any): Promise<any> {
       if (!Array.isArray(items)) continue;
 
       for (const item of items) {
-        // Main URL
+        // Strip main URL if it's base64
         if (item.url && item.url.startsWith('data:')) {
-          item.url = await compressBase64Image(item.url, 800, 0.6);
+          item.url = '';
         }
 
-        // Ratio URLs
+        // Strip ratio URLs if base64
         if (item.ratioUrls) {
-          for (const [ratioKey, ratioUrl] of Object.entries(item.ratioUrls)) {
-            if (typeof ratioUrl === 'string' && ratioUrl.startsWith('data:')) {
-              item.ratioUrls[ratioKey] = await compressBase64Image(ratioUrl as string, 800, 0.6);
+          for (const ratioKey of Object.keys(item.ratioUrls)) {
+            if (typeof item.ratioUrls[ratioKey] === 'string' && item.ratioUrls[ratioKey].startsWith('data:')) {
+              item.ratioUrls[ratioKey] = '';
             }
           }
         }

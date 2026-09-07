@@ -109,7 +109,7 @@ export default function App() {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipNextCloudSaveRef = useRef(false);
 
-  // Load from Supabase on mount
+  // Load from Supabase on mount — merge cloud structure with local images
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -118,14 +118,48 @@ export default function App() {
         if (cancelled) return;
         if (cloudProjects.length > 0) {
           const migrated = cloudProjects.map(migrateProject);
+          // Merge cloud structure with local images (cloud has empty URLs)
+          const localProjects = projects;
+          const merged = migrated.map((cloudProj: Project) => {
+            const localProj = localProjects.find((lp: Project) => lp.id === cloudProj.id);
+            if (!localProj) return cloudProj;
+            // For each asset group, restore image URLs from local
+            const mergedAGs = cloudProj.assetGroups.map((cloudAg) => {
+              const localAg = localProj.assetGroups.find((la) => la.id === cloudAg.id);
+              if (!localAg) return cloudAg;
+              const mergedFolders = { ...cloudAg.folders };
+              for (const folderKey of Object.keys(mergedFolders)) {
+                const cloudItems = mergedFolders[folderKey as keyof typeof mergedFolders];
+                const localItems = localAg.folders[folderKey as keyof typeof localAg.folders];
+                if (Array.isArray(cloudItems) && Array.isArray(localItems)) {
+                  for (const cloudItem of cloudItems as any[]) {
+                    const localItem = (localItems as any[]).find((li: any) => li.id === cloudItem.id);
+                    if (localItem) {
+                      // Restore base64 URLs from local if cloud has empty ones
+                      if (!cloudItem.url && localItem.url) cloudItem.url = localItem.url;
+                      if (cloudItem.ratioUrls && localItem.ratioUrls) {
+                        for (const rk of Object.keys(cloudItem.ratioUrls)) {
+                          if (!cloudItem.ratioUrls[rk] && localItem.ratioUrls[rk]) {
+                            cloudItem.ratioUrls[rk] = localItem.ratioUrls[rk];
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              return { ...cloudAg, folders: mergedFolders };
+            });
+            return { ...cloudProj, assetGroups: mergedAGs };
+          });
           // Skip the debounced cloud save that would be triggered by setProjects
           skipNextCloudSaveRef.current = true;
-          setProjects(migrated);
-          localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(migrated));
+          setProjects(merged);
+          localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(merged));
           // Update active project if current one doesn't exist in cloud data
-          const ids = migrated.map((p: Project) => p.id);
+          const ids = merged.map((p: Project) => p.id);
           if (!ids.includes(activeProjectId)) {
-            setActiveProjectId(migrated[0].id);
+            setActiveProjectId(merged[0].id);
           }
         }
       } catch (err) {

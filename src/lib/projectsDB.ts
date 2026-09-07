@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { Project } from '../types';
-import { compressProjectAssets } from './imageCompressor';
+import { stripImagesForCloud } from './imageCompressor';
 
 export interface DBProject {
   id: string;
@@ -35,8 +35,8 @@ export async function fetchProjects(): Promise<Project[]> {
  * Uses the project's own `id` as the DB row id.
  */
 export async function saveProject(project: Project): Promise<void> {
-  // Compress base64 images before saving
-  const cleanProject = await compressProjectAssets(project);
+  // Strip base64 images — they stay in localStorage only
+  const cleanProject = stripImagesForCloud(project);
 
   const { error } = await supabase.from('projects').upsert(
     {
@@ -56,14 +56,11 @@ export async function saveProject(project: Project): Promise<void> {
 
 /**
  * Save all projects at once.
- * First uploads all base64 images to Storage, then saves lightweight JSON.
+ * Strips base64 images before saving — images live only in localStorage.
  */
 export async function saveAllProjects(projects: Project[]): Promise<void> {
-  // Compress base64 images before saving
-  console.log(`[Supabase] Compressing images for ${projects.length} project(s)...`);
-  const cleanProjects = await Promise.all(
-    projects.map((p) => compressProjectAssets(p))
-  );
+  // Strip base64 images from all projects
+  const cleanProjects = projects.map((p) => stripImagesForCloud(p));
 
   const rows = cleanProjects.map((p) => ({
     id: p.id,
@@ -74,20 +71,7 @@ export async function saveAllProjects(projects: Project[]): Promise<void> {
   }));
 
   const payloadSize = new Blob([JSON.stringify(rows)]).size;
-  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024 / 1024).toFixed(2)} MB after image upload)`);
-
-  // Save one by one if still large
-  if (payloadSize > 4 * 1024 * 1024) {
-    console.warn('[Supabase] Payload still large. Saving individually...');
-    for (const row of rows) {
-      const { error } = await supabase.from('projects').upsert(row, { onConflict: 'id' });
-      if (error) {
-        console.error(`[Supabase] Error saving project "${row.name}":`, error.message, error);
-        throw new Error(`Error saving "${row.name}": ${error.message}`);
-      }
-    }
-    return;
-  }
+  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024).toFixed(1)} KB)`);
 
   const { error } = await supabase.from('projects').upsert(rows, { onConflict: 'id' });
 
