@@ -82,7 +82,10 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   const [uploadFeedback, setUploadFeedback] = useState<string | null>(null);
   const [isMainDragOver, setIsMainDragOver] = useState(false);
   const [dragOverSidebarTab, setDragOverSidebarTab] = useState<FolderType | null>(null);
+  const [renamingFolderKey, setRenamingFolderKey] = useState<FolderType | null>(null);
+  const [renamingFolderValue, setRenamingFolderValue] = useState('');
 
+  const getTabLabel = (tab: typeof FIXED_FOLDER_TABS[number]) => assetGroup.folderLabels?.[tab.key] || tab.label;
   const currentTabMeta = FIXED_FOLDER_TABS.find((t) => t.key === activeTab)!;
 
   // Add Single Item manually
@@ -442,7 +445,40 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     <Folder className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   )}
                   <div className="truncate">
-                    <span className="text-xs font-medium block truncate">{tab.label}</span>
+                    {renamingFolderKey === tab.key ? (
+                      <input
+                        autoFocus
+                        className="text-xs font-medium block w-full bg-white border border-blue-300 rounded px-1 py-0.5 outline-none focus:ring-1 focus:ring-blue-400"
+                        value={renamingFolderValue}
+                        onChange={(e) => setRenamingFolderValue(e.target.value)}
+                        onBlur={() => {
+                          if (renamingFolderValue.trim()) {
+                            onUpdateAssetGroup({
+                              ...assetGroup,
+                              folderLabels: { ...(assetGroup.folderLabels || {}), [tab.key]: renamingFolderValue.trim() },
+                            });
+                          }
+                          setRenamingFolderKey(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                          if (e.key === 'Escape') setRenamingFolderKey(null);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    ) : (
+                      <span
+                        className="text-xs font-medium block truncate"
+                        onDoubleClick={(e) => {
+                          e.stopPropagation();
+                          setRenamingFolderKey(tab.key);
+                          setRenamingFolderValue(getTabLabel(tab));
+                        }}
+                        title="Double-click to rename"
+                      >
+                        {getTabLabel(tab)}
+                      </span>
+                    )}
                     <span className="text-[9px] text-gray-400 font-mono block">{tab.key}</span>
                   </div>
                 </div>

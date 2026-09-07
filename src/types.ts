@@ -94,6 +94,8 @@ export interface TextFolderData {
 export interface AssetGroup {
   id: string;
   name: string;
+  /** Custom display labels per folder key. Falls back to default if not set. */
+  folderLabels?: Partial<Record<FolderType, string>>;
   folders: {
     background: AssetItem[];
     logo_1: AssetItem[];
