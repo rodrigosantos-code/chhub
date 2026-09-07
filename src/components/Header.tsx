@@ -595,64 +595,68 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right side: Variations Counter and Project Status */}
       <div className="flex items-center gap-2">
-        {/* Undo / Redo Buttons */}
-        <div className="flex items-center gap-0.5 bg-gray-50 p-0.5 rounded-lg border border-gray-200">
-          <button
-            onClick={onUndo}
-            disabled={!canUndo}
-            className="p-1.5 rounded-md hover:bg-white hover:shadow-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all cursor-pointer disabled:cursor-default"
-            title="Undo (Ctrl+Z / ⌘Z)"
-          >
-            <Undo2 className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={onRedo}
-            disabled={!canRedo}
-            className="p-1.5 rounded-md hover:bg-white hover:shadow-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all cursor-pointer disabled:cursor-default"
-            title="Redo (Ctrl+Shift+Z / ⌘⇧Z)"
-          >
-            <Redo2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        {activeMode !== 'home' && (
+          <>
+            {/* Undo / Redo Buttons */}
+            <div className="flex items-center gap-0.5 bg-gray-50 p-0.5 rounded-lg border border-gray-200">
+              <button
+                onClick={onUndo}
+                disabled={!canUndo}
+                className="p-1.5 rounded-md hover:bg-white hover:shadow-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all cursor-pointer disabled:cursor-default"
+                title="Undo (Ctrl+Z / ⌘Z)"
+              >
+                <Undo2 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={onRedo}
+                disabled={!canRedo}
+                className="p-1.5 rounded-md hover:bg-white hover:shadow-xs text-gray-600 hover:text-gray-900 disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all cursor-pointer disabled:cursor-default"
+                title="Redo (Ctrl+Shift+Z / ⌘⇧Z)"
+              >
+                <Redo2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-        {activeMode === 'templates' && (
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 text-xs">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span className="text-gray-500 font-medium">Variations:</span>
-            <span
-              className={`font-mono font-bold ${
-                totalVariationsCount > 0 ? 'text-blue-600' : 'text-gray-400'
+            {activeMode === 'templates' && (
+              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 text-xs">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                <span className="text-gray-500 font-medium">Variations:</span>
+                <span
+                  className={`font-mono font-bold ${
+                    totalVariationsCount > 0 ? 'text-blue-600' : 'text-gray-400'
+                  }`}
+                >
+                  {totalVariationsCount}
+                </span>
+              </div>
+            )}
+
+            {/* Save Button */}
+            <button
+              onClick={onSave}
+              disabled={cloudStatus === 'saving'}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:cursor-default ${
+                cloudStatus === 'saving'
+                  ? 'bg-blue-100 text-blue-500 border border-blue-200'
+                  : cloudStatus === 'saved'
+                  ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                  : cloudStatus === 'error'
+                  ? 'bg-red-100 text-red-700 border border-red-200'
+                  : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
               }`}
+              title="Save to cloud"
             >
-              {totalVariationsCount}
-            </span>
-          </div>
+              {cloudStatus === 'saving' ? (
+                <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4 31.4" strokeLinecap="round"/></svg>
+              ) : (
+                <Save className="w-3.5 h-3.5" />
+              )}
+              <span>
+                {cloudStatus === 'saving' ? 'Saving...' : cloudStatus === 'saved' ? 'Saved ✓' : cloudStatus === 'error' ? 'Error' : 'Save'}
+              </span>
+            </button>
+          </>
         )}
-
-        {/* Save Button */}
-        <button
-          onClick={onSave}
-          disabled={cloudStatus === 'saving'}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:cursor-default ${
-            cloudStatus === 'saving'
-              ? 'bg-blue-100 text-blue-500 border border-blue-200'
-              : cloudStatus === 'saved'
-              ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-              : cloudStatus === 'error'
-              ? 'bg-red-100 text-red-700 border border-red-200'
-              : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
-          }`}
-          title="Save to cloud"
-        >
-          {cloudStatus === 'saving' ? (
-            <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4 31.4" strokeLinecap="round"/></svg>
-          ) : (
-            <Save className="w-3.5 h-3.5" />
-          )}
-          <span>
-            {cloudStatus === 'saving' ? 'Saving...' : cloudStatus === 'saved' ? 'Saved ✓' : cloudStatus === 'error' ? 'Error' : 'Save'}
-          </span>
-        </button>
       </div>
     </header>
   );
