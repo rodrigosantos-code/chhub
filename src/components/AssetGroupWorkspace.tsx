@@ -22,6 +22,7 @@ import {
   Copy,
   Image as ImageIcon,
   Crosshair,
+  Palette,
 } from 'lucide-react';
 import { Crop } from 'lucide-react';
 import { AssetItem, AssetGroup, FolderType, Tone, RatioImages, RatioImageKey, CropData } from '../types';
@@ -84,6 +85,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   const [dragOverSidebarTab, setDragOverSidebarTab] = useState<FolderType | null>(null);
   const [renamingFolderKey, setRenamingFolderKey] = useState<FolderType | null>(null);
   const [renamingFolderValue, setRenamingFolderValue] = useState('');
+  const [solidColor, setSolidColor] = useState('#000000');
 
   const getTabLabel = (tab: typeof FIXED_FOLDER_TABS[number]) => assetGroup.folderLabels?.[tab.key] || tab.label;
   const currentTabMeta = FIXED_FOLDER_TABS.find((t) => t.key === activeTab)!;
@@ -666,6 +668,61 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                       <option value="light">☀️ Tono Claro (Light)</option>
                     </select>
                   </div>
+
+                  {/* Solid Color Background Button */}
+                  {activeTab === 'background' && (
+                    <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-lg px-2.5 py-1.5 shadow-2xs">
+                      <Palette className="w-3.5 h-3.5 text-gray-500" />
+                      <input
+                        type="color"
+                        value={solidColor}
+                        onChange={(e) => setSolidColor(e.target.value)}
+                        className="w-6 h-6 rounded cursor-pointer border-0 p-0"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Create a small canvas with the solid color
+                          const canvas = document.createElement('canvas');
+                          canvas.width = 10;
+                          canvas.height = 10;
+                          const ctx = canvas.getContext('2d');
+                          if (!ctx) return;
+                          ctx.fillStyle = solidColor;
+                          ctx.fillRect(0, 0, 10, 10);
+                          const dataUrl = canvas.toDataURL('image/png');
+
+                          // Detect tone based on luminance
+                          const r = parseInt(solidColor.slice(1, 3), 16);
+                          const g = parseInt(solidColor.slice(3, 5), 16);
+                          const b = parseInt(solidColor.slice(5, 7), 16);
+                          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                          const tone: Tone = luminance < 0.5 ? 'dark' : 'light';
+
+                          const newItem: AssetItem = {
+                            id: `solid_${Date.now()}`,
+                            name: `Solid ${solidColor.toUpperCase()}`,
+                            url: dataUrl,
+                            tone,
+                            previewColor: solidColor,
+                          };
+
+                          onUpdateAssetGroup({
+                            ...assetGroup,
+                            folders: {
+                              ...assetGroup.folders,
+                              background: [...assetGroup.folders.background, newItem],
+                            },
+                          });
+                          setUploadFeedback(`Solid color ${solidColor} added as ${tone} background`);
+                          setTimeout(() => setUploadFeedback(null), 2000);
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-900 text-white font-bold text-[11px] cursor-pointer transition-colors"
+                      >
+                        + Solid Color
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {uploadFeedback && (
