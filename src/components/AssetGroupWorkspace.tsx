@@ -1136,130 +1136,152 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
 
                         {expandedRatioItemId === item.id &&
-                          (activeTab === 'background' || activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (
-                            <div className="mt-2 pt-2 border-t border-gray-100 space-y-2">
-                              <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider flex items-center gap-1.5">
-                                <ImagePlus className="w-3 h-3 text-blue-600" />
-                                Images per Ratio
-                                <span className="text-[9px] text-gray-400 font-normal normal-case">
-                                  (uses general if not assigned)
-                                </span>
+                          (activeTab === 'background' || activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (() => {
+                            const RATIO_DEFS_OVERLAY = [
+                              { key: 'square' as RatioImageKey, label: '1:1' },
+                              { key: 'portrait_4_5' as RatioImageKey, label: '4:5' },
+                              { key: 'portrait_9_16' as RatioImageKey, label: '9:16' },
+                              { key: 'landscape' as RatioImageKey, label: '16:9' },
+                              { key: 'ad_banner' as RatioImageKey, label: '1.91:1' },
+                              { key: 'logo_banner' as RatioImageKey, label: '4:1' },
+                            ];
+                            const expandedKey = expandedRatioPreview?.[`overlay_${item.id}`] || null;
+
+                            return (
+                              <div className="mt-2 pt-2 border-t border-gray-100">
+                                <div className="flex items-center gap-1.5 mb-1">
+                                  <span className="text-[9px] text-gray-400 font-semibold uppercase mr-0.5">Ratios:</span>
+                                  {RATIO_DEFS_OVERLAY.map((r) => {
+                                    const hasImage = !!item.ratioUrls?.[r.key];
+                                    const isExpanded = expandedKey === r.key;
+                                    return (
+                                      <button
+                                        key={r.key}
+                                        onClick={() => setExpandedRatioPreview((prev) => ({
+                                          ...prev,
+                                          [`overlay_${item.id}`]: isExpanded ? null : r.key,
+                                        }))}
+                                        className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold border cursor-pointer transition-all ${
+                                          isExpanded
+                                            ? 'bg-blue-100 text-blue-700 border-blue-300 ring-1 ring-blue-300'
+                                            : hasImage
+                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:border-emerald-400'
+                                            : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-gray-400 hover:text-gray-600'
+                                        }`}
+                                      >
+                                        {r.label}
+                                        {hasImage && <Check className="w-2 h-2" />}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+
+                                {/* Expanded preview for selected ratio */}
+                                {expandedKey && (() => {
+                                  const rd = RATIO_DEFS_OVERLAY.find((r) => r.key === expandedKey)!;
+                                  const ratioImage = item.ratioUrls?.[expandedKey];
+                                  const displayUrl = ratioImage || item.url;
+                                  const isCustom = !!ratioImage;
+
+                                  return (
+                                    <div className="mt-2 p-2.5 rounded-lg bg-gray-50 border border-gray-200 animate-in">
+                                      <div className="flex gap-3">
+                                        {/* Image preview */}
+                                        <div className="w-24 h-24 rounded-lg bg-white border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                          <img
+                                            src={displayUrl}
+                                            alt={`${item.name} — ${rd.label}`}
+                                            className="w-full h-full object-contain"
+                                          />
+                                        </div>
+
+                                        {/* Info + actions */}
+                                        <div className="flex-1 min-w-0">
+                                          <div className="text-[11px] font-bold text-gray-700 mb-0.5">
+                                            {rd.label} Ratio
+                                          </div>
+                                          <div className="text-[10px] text-gray-400 mb-2">
+                                            {isCustom ? 'Custom image assigned' : 'Using general image'}
+                                          </div>
+
+                                          <div className="flex flex-wrap gap-1.5">
+                                            {/* Upload / Change */}
+                                            <label className="px-2 py-1 rounded bg-white hover:bg-blue-50 text-blue-600 border border-gray-200 hover:border-blue-300 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors">
+                                              <Upload className="w-2.5 h-2.5" />
+                                              {isCustom ? 'Change' : 'Upload'}
+                                              <input
+                                                type="file"
+                                                accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif,image/heic,image/heif,image/tiff,.heic,.heif,.tiff,.tif,.bmp"
+                                                className="hidden"
+                                                onChange={async (e) => {
+                                                  const file = e.target.files?.[0];
+                                                  if (file) {
+                                                    const dataUrl = await readFileToDataUrl(file);
+                                                    const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                                    const folder = assetGroup.folders[folderKey] as AssetItem[];
+                                                    const updated = folder.map((a) => {
+                                                      if (a.id !== item.id) return a;
+                                                      return {
+                                                        ...a,
+                                                        ratioUrls: { ...(a.ratioUrls || {}), [expandedKey]: dataUrl },
+                                                      };
+                                                    });
+                                                    onUpdateAssetGroup({
+                                                      ...assetGroup,
+                                                      folders: { ...assetGroup.folders, [folderKey]: updated },
+                                                    });
+                                                  }
+                                                  e.target.value = '';
+                                                }}
+                                              />
+                                            </label>
+
+                                            {/* Crop */}
+                                            <button
+                                              onClick={() => setCropEditorState({
+                                                item,
+                                                folderKey: activeTab,
+                                                forRatio: expandedKey,
+                                                imageUrl: displayUrl,
+                                              })}
+                                              className="px-2 py-1 rounded bg-white hover:bg-amber-50 text-amber-600 border border-gray-200 hover:border-amber-300 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                                            >
+                                              <Crop className="w-2.5 h-2.5" />
+                                              Crop
+                                            </button>
+
+                                            {/* Delete custom image */}
+                                            {isCustom && (
+                                              <button
+                                                onClick={() => {
+                                                  const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                                  const folder = assetGroup.folders[folderKey] as AssetItem[];
+                                                  const updated = folder.map((a) => {
+                                                    if (a.id !== item.id) return a;
+                                                    const newRatioUrls = { ...(a.ratioUrls || {}) };
+                                                    delete newRatioUrls[expandedKey];
+                                                    return { ...a, ratioUrls: newRatioUrls };
+                                                  });
+                                                  onUpdateAssetGroup({
+                                                    ...assetGroup,
+                                                    folders: { ...assetGroup.folders, [folderKey]: updated },
+                                                  });
+                                                }}
+                                                className="px-2 py-1 rounded bg-white hover:bg-red-50 text-red-500 border border-gray-200 hover:border-red-300 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+                                              >
+                                                <Trash2 className="w-2.5 h-2.5" />
+                                                Remove
+                                              </button>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
                               </div>
-
-                              {[
-                                { key: 'square' as RatioImageKey, label: 'Square (1:1)', icon: Square, desc: 'Google, Meta, TikTok, Display' },
-                                { key: 'portrait_4_5' as RatioImageKey, label: 'Portrait (4:5)', icon: Smartphone, desc: 'Meta Feed, Google, Display' },
-                                { key: 'portrait_9_16' as RatioImageKey, label: 'Portrait (9:16)', icon: Smartphone, desc: 'Meta Stories/Reels, TikTok' },
-                                { key: 'landscape' as RatioImageKey, label: 'Landscape (16:9)', icon: Monitor, desc: 'Meta, TikTok, Display' },
-                                { key: 'ad_banner' as RatioImageKey, label: 'Ad Banner (1.91:1)', icon: Monitor, desc: 'Google Ads, Display' },
-                                { key: 'logo_banner' as RatioImageKey, label: 'Logo Banner (4:1)', icon: Monitor, desc: 'Google Ads Logo' },
-                              ].map((ratio) => {
-                                const currentUrl = item.ratioUrls?.[ratio.key];
-                                const RatioIcon = ratio.icon;
-                                return (
-                                  <div
-                                    key={ratio.key}
-                                    className="flex items-center gap-2.5 p-2 rounded-lg bg-gray-50/80 border border-gray-100"
-                                  >
-                                    {/* Thumbnail */}
-                                    <div className="w-10 h-10 rounded-md bg-white border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
-                                      {currentUrl ? (
-                                        <img
-                                          src={currentUrl}
-                                          alt={`${item.name} ${ratio.label}`}
-                                          className="w-full h-full object-contain"
-                                        />
-                                      ) : (
-                                        <RatioIcon className="w-4 h-4 text-gray-300" />
-                                      )}
-                                    </div>
-
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                      <div className="text-[11px] font-semibold text-gray-700 flex items-center gap-1.5">
-                                        <RatioIcon className="w-3 h-3 text-gray-400" />
-                                        {ratio.label}
-                                      </div>
-                                      <div className="text-[10px] text-gray-400">
-                                        {currentUrl ? 'Image assigned ✓' : ratio.desc}
-                                      </div>
-                                    </div>
-
-                                    {/* Actions */}
-                                    <div className="flex items-center gap-1 shrink-0">
-                                      <label className="px-2 py-1 rounded bg-white hover:bg-blue-50 text-blue-600 border border-gray-200 hover:border-blue-300 text-[10px] font-semibold flex items-center gap-1 cursor-pointer transition-colors">
-                                        <Upload className="w-2.5 h-2.5" />
-                                        <span>{currentUrl ? 'Change' : 'Upload'}</span>
-                                        <input
-                                          type="file"
-                                          accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif,image/avif,image/heic,image/heif,image/tiff,.heic,.heif,.tiff,.tif,.bmp"
-                                          className="hidden"
-                                          onChange={async (e) => {
-                                            const file = e.target.files?.[0];
-                                            if (file) {
-                                              const dataUrl = await readFileToDataUrl(file);
-                                              // For backgrounds, store directly in ratioUrls
-                                              const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
-                                              const folder = assetGroup.folders[folderKey] as AssetItem[];
-                                              const updated = folder.map((a) => {
-                                                if (a.id !== item.id) return a;
-                                                return {
-                                                  ...a,
-                                                  ratioUrls: { ...(a.ratioUrls || {}), [ratio.key]: dataUrl },
-                                                };
-                                              });
-                                              onUpdateAssetGroup({
-                                                ...assetGroup,
-                                                folders: { ...assetGroup.folders, [folderKey]: updated },
-                                              });
-                                            }
-                                            e.target.value = '';
-                                          }}
-                                        />
-                                      </label>
-                                      {/* Crop button for ratio image */}
-                                      {currentUrl && (
-                                        <button
-                                          onClick={() => setCropEditorState({
-                                            item,
-                                            folderKey: activeTab,
-                                            forRatio: ratio.key,
-                                            imageUrl: currentUrl,
-                                          })}
-                                          className="p-1 rounded text-amber-500 hover:text-amber-700 hover:bg-amber-50 transition-colors cursor-pointer"
-                                          title={`Crop for ${ratio.label}`}
-                                        >
-                                          <Crop className="w-3 h-3" />
-                                        </button>
-                                      )}
-                                      {currentUrl && (
-                                        <button
-                                          onClick={() => {
-                                            const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
-                                            const folder = assetGroup.folders[folderKey] as AssetItem[];
-                                            const updated = folder.map((a) => {
-                                              if (a.id !== item.id) return a;
-                                              const newRatioUrls = { ...(a.ratioUrls || {}) };
-                                              delete newRatioUrls[ratio.key];
-                                              return { ...a, ratioUrls: newRatioUrls };
-                                            });
-                                            onUpdateAssetGroup({
-                                              ...assetGroup,
-                                              folders: { ...assetGroup.folders, [folderKey]: updated },
-                                            });
-                                          }}
-                                          className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                                          title="Remove image for this ratio"
-                                        >
-                                          <Trash2 className="w-3 h-3" />
-                                        </button>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
+                            );
+                          })()}
 
                         {/* Expandable Focal Point Editor */}
                         {expandedFocalItemId === item.id && (() => {
