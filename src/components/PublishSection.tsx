@@ -195,12 +195,32 @@ interface PlatformConnection {
 export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
   const [connections, setConnections] = useState<Record<string, PlatformConnection>>({});
   const [expandedPlatform, setExpandedPlatform] = useState<string | null>(null);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(project.templates[0]?.id || '');
+  const [selectedTemplateIds, setSelectedTemplateIds] = useState<Set<string>>(new Set());
   const [selectedAssetGroupIds, setSelectedAssetGroupIds] = useState<Set<string>>(new Set());
   const [publishingPlatform, setPublishingPlatform] = useState<string | null>(null);
   const [publishProgress, setPublishProgress] = useState<Record<string, { status: 'idle' | 'rendering' | 'uploading' | 'done' | 'error'; percent: number; message: string }>>({});
 
-  const selectedTemplate = project.templates.find((t) => t.id === selectedTemplateId) || project.templates[0];
+  const selectedTemplates = project.templates.filter((t) => selectedTemplateIds.has(t.id));
+
+  const toggleTemplate = (id: string) => {
+    setSelectedTemplateIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  // Combined active ratios from all selected templates
+  const allActiveRatios = useMemo(() => {
+    const ratios = new Set<AspectRatioKey>();
+    for (const t of selectedTemplates) {
+      for (const r of t.activeAspectRatios) {
+        ratios.add(r);
+      }
+    }
+    return Array.from(ratios);
+  }, [selectedTemplates]);
 
   // Simulate connect/disconnect
   const handleToggleConnection = (platformId: string) => {
@@ -223,11 +243,11 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
   // Real publish: export ZIP with platform folders
   const handlePublish = async (platformId: string) => {
     const platform = PLATFORMS.find((p) => p.id === platformId);
-    if (!platform || selectedAssetGroupIds.size === 0 || !selectedTemplate) return;
+    if (!platform || selectedAssetGroupIds.size === 0 || selectedTemplates.length === 0) return;
 
-    // Build ratios-to-send for this single platform
+    // Build ratios-to-send for this single platform (union of all selected templates)
     const ratiosToSend = platform.ratios
-      .filter((r) => r.mappedAppRatio && selectedTemplate.activeAspectRatios.includes(r.mappedAppRatio))
+      .filter((r) => r.mappedAppRatio && allActiveRatios.includes(r.mappedAppRatio))
       .map((r) => r.mappedAppRatio!);
     if (ratiosToSend.length === 0) {
       setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'done', percent: 100, message: 'No matching ratios to export' } }));
@@ -242,37 +262,47 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
 
     try {
       const selectedAGs = project.assetGroups.filter((ag) => selectedAssetGroupIds.has(ag.id));
-      const platformRatiosMap: Record<string, AspectRatioKey[]> = {
-        [platform.name]: ratiosToSend,
-      };
 
-      for (const ag of selectedAGs) {
-        const variations = generateAllVariations(selectedTemplate, ag);
+      for (const tpl of selectedTemplates) {
+        // Only use ratios active in THIS template
+        const tplRatios = platform.ratios
+          .filter((r) => r.mappedAppRatio && tpl.activeAspectRatios.includes(r.mappedAppRatio))
+          .map((r) => r.mappedAppRatio!);
+        if (tplRatios.length === 0) continue;
 
-        const zipBlob = await exportByPlatformZip(
-          selectedTemplate,
-          ag,
-          variations,
-          project.name,
-          platformRatiosMap,
-          (current, total, message) => {
-            const percent = Math.round((current / total) * 100);
-            setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent, message } }));
-          }
-        );
+        const platformRatiosMap: Record<string, AspectRatioKey[]> = {
+          [platform.name]: tplRatios,
+        };
 
-        // Download ZIP
-        const url = URL.createObjectURL(zipBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        const safeName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const safePlatform = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        link.download = `${safeName}_${safeAg}_${safePlatform}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        for (const ag of selectedAGs) {
+          const variations = generateAllVariations(tpl, ag);
+
+          const zipBlob = await exportByPlatformZip(
+            tpl,
+            ag,
+            variations,
+            project.name,
+            platformRatiosMap,
+            (current, total, message) => {
+              const percent = Math.round((current / total) * 100);
+              setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'rendering', percent, message } }));
+            }
+          );
+
+          // Download ZIP
+          const url = URL.createObjectURL(zipBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          const safeName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          const safeTpl = tpl.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          const safePlatform = platform.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          link.download = `${safeName}_${safeTpl}_${safeAg}_${safePlatform}.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
       }
 
       setPublishProgress((prev) => ({ ...prev, [platformId]: { status: 'done', percent: 100, message: 'Exported successfully!' } }));
@@ -289,56 +319,54 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
 
   // Publish All: export ZIP with all platform folders in one file
   const handlePublishAll = async () => {
-    if (selectedAssetGroupIds.size === 0 || !selectedTemplate) return;
+    if (selectedAssetGroupIds.size === 0 || selectedTemplates.length === 0) return;
 
     setPublishingPlatform('_all');
     setPublishProgress((prev) => ({ ...prev, _all: { status: 'rendering', percent: 0, message: 'Starting export...' } }));
 
     try {
-      // Build platform→ratios map for all connected platforms
-      const platformRatiosMap: Record<string, AspectRatioKey[]> = {};
-      for (const platform of PLATFORMS) {
-        const ratios = platform.ratios
-          .filter((r) => r.mappedAppRatio && selectedTemplate.activeAspectRatios.includes(r.mappedAppRatio))
-          .map((r) => r.mappedAppRatio!);
-        if (ratios.length > 0) {
-          platformRatiosMap[platform.name] = ratios;
-        }
-      }
-
-      if (Object.keys(platformRatiosMap).length === 0) {
-        setPublishProgress((prev) => ({ ...prev, _all: { status: 'error', percent: 0, message: 'No matching ratios' } }));
-        setPublishingPlatform(null);
-        return;
-      }
-
       const selectedAGs = project.assetGroups.filter((ag) => selectedAssetGroupIds.has(ag.id));
 
-      for (const ag of selectedAGs) {
-        const variations = generateAllVariations(selectedTemplate, ag);
-
-        const zipBlob = await exportByPlatformZip(
-          selectedTemplate,
-          ag,
-          variations,
-          project.name,
-          platformRatiosMap,
-          (current, total, message) => {
-            const percent = Math.round((current / total) * 100);
-            setPublishProgress((prev) => ({ ...prev, _all: { status: 'rendering', percent, message } }));
+      for (const tpl of selectedTemplates) {
+        // Build platform→ratios map using THIS template's active ratios
+        const platformRatiosMap: Record<string, AspectRatioKey[]> = {};
+        for (const platform of PLATFORMS) {
+          const ratios = platform.ratios
+            .filter((r) => r.mappedAppRatio && tpl.activeAspectRatios.includes(r.mappedAppRatio))
+            .map((r) => r.mappedAppRatio!);
+          if (ratios.length > 0) {
+            platformRatiosMap[platform.name] = ratios;
           }
-        );
+        }
+        if (Object.keys(platformRatiosMap).length === 0) continue;
 
-        const url = URL.createObjectURL(zipBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        const safeName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
-        link.download = `${safeName}_${safeAg}_all_platforms.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        for (const ag of selectedAGs) {
+          const variations = generateAllVariations(tpl, ag);
+
+          const zipBlob = await exportByPlatformZip(
+            tpl,
+            ag,
+            variations,
+            project.name,
+            platformRatiosMap,
+            (current, total, message) => {
+              const percent = Math.round((current / total) * 100);
+              setPublishProgress((prev) => ({ ...prev, _all: { status: 'rendering', percent, message } }));
+            }
+          );
+
+          const url = URL.createObjectURL(zipBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          const safeName = project.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          const safeTpl = tpl.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          const safeAg = ag.name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+          link.download = `${safeName}_${safeTpl}_${safeAg}_all_platforms.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
       }
 
       setPublishProgress((prev) => ({ ...prev, _all: { status: 'done', percent: 100, message: 'Exported successfully!' } }));
@@ -364,9 +392,9 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
 
   // Calculate ratio coverage for a platform
   const getRatioCoverage = (platform: PlatformSpec) => {
-    if (!selectedTemplate) return { covered: 0, total: 0, details: [] as { spec: PlatformRatioSpec; status: 'available' | 'adaptable' | 'missing' }[] };
+    if (selectedTemplates.length === 0) return { covered: 0, total: 0, details: [] as { spec: PlatformRatioSpec; status: 'available' | 'adaptable' | 'missing' }[] };
 
-    const activeRatios = selectedTemplate.activeAspectRatios;
+    const activeRatios = allActiveRatios;
     const details = platform.ratios.map((spec) => {
       if (spec.mappedAppRatio && activeRatios.includes(spec.mappedAppRatio)) {
         return { spec, status: 'available' as const };
@@ -404,21 +432,32 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Template */}
               <div>
-                <label className="text-[11px] font-semibold text-gray-600 mb-1.5 block">Template</label>
-                <select
-                  value={selectedTemplateId}
-                  onChange={(e) => setSelectedTemplateId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 cursor-pointer"
-                >
-                  {project.templates.map((tpl) => (
-                    <option key={tpl.id} value={tpl.id}>
-                      {tpl.name} — {tpl.layers.length} layers, {tpl.activeAspectRatios.join(', ')}
-                    </option>
-                  ))}
-                </select>
-                {selectedTemplate && (
+                <label className="text-[11px] font-semibold text-gray-600 mb-1.5 block">
+                  Templates ({selectedTemplateIds.size} selected)
+                </label>
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {project.templates.map((tpl) => {
+                    const isSelected = selectedTemplateIds.has(tpl.id);
+                    return (
+                      <button
+                        key={tpl.id}
+                        onClick={() => toggleTemplate(tpl.id)}
+                        className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg border text-left text-xs cursor-pointer transition-all ${
+                          isSelected
+                            ? 'bg-blue-50 border-blue-300 text-blue-800 font-semibold'
+                            : 'bg-gray-50 border-gray-100 text-gray-600 hover:border-gray-300'
+                        }`}
+                      >
+                        <input type="checkbox" checked={isSelected} readOnly className="rounded text-blue-600 w-3.5 h-3.5 pointer-events-none" />
+                        {tpl.name}
+                        <span className="ml-auto text-[9px] text-gray-400">{tpl.activeAspectRatios.join(', ')}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {allActiveRatios.length > 0 && (
                   <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                    {selectedTemplate.activeAspectRatios.map((r) => (
+                    {allActiveRatios.map((r) => (
                       <span key={r} className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">
                         {r}
                       </span>
@@ -484,7 +523,7 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
               ) : (
                 <button
                   onClick={handlePublishAll}
-                  disabled={selectedAssetGroupIds.size === 0 || !selectedTemplate || publishingPlatform !== null}
+                  disabled={selectedAssetGroupIds.size === 0 || selectedTemplates.length === 0 || publishingPlatform !== null}
                   className="px-5 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm"
                 >
                   <Download className="w-3.5 h-3.5" />
@@ -506,7 +545,7 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
 
               // Calculate exactly which ratios will be sent to this platform
               const ratiosToSend = platform.ratios
-                .filter((r) => r.mappedAppRatio && selectedTemplate?.activeAspectRatios.includes(r.mappedAppRatio))
+                .filter((r) => r.mappedAppRatio && allActiveRatios.includes(r.mappedAppRatio))
                 .map((r) => r.mappedAppRatio!);
 
               return (
@@ -709,7 +748,7 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
                           ) : (
                             <button
                               onClick={() => handlePublish(platform.id)}
-                              disabled={selectedAssetGroupIds.size === 0 || !selectedTemplate || publishingPlatform !== null}
+                              disabled={selectedAssetGroupIds.size === 0 || selectedTemplates.length === 0 || publishingPlatform !== null}
                               className="w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-not-allowed text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                             >
                               <Download className="w-3.5 h-3.5" />
