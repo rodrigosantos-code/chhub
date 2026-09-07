@@ -182,18 +182,6 @@ export const BulkExportModal: React.FC<BulkExportModalProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-gradient-to-br from-slate-50 to-gray-100 overflow-hidden">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur border-b border-gray-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2.5">
-            <Download className="w-5 h-5 text-violet-600" />
-            Bulk Export — {project.name}
-          </h1>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Select templates and asset groups to export in mass
-          </p>
-        </div>
-      </div>
 
       {/* Body */}
       <div className="flex-1 overflow-y-auto p-8">

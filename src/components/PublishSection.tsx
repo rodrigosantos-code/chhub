@@ -291,18 +291,6 @@ export const PublishSection: React.FC<PublishSectionProps> = ({ project }) => {
 
   return (
     <div className="flex-1 flex flex-col h-full bg-gradient-to-br from-slate-50 to-gray-100 overflow-hidden">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur border-b border-gray-200 px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2.5">
-            <Send className="w-5 h-5 text-violet-600" />
-            Publish — {project.name}
-          </h1>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Connect platforms, map assets, and publish campaigns
-          </p>
-        </div>
-      </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">

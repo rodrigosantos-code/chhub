@@ -19,7 +19,6 @@ function ratioToImageKey(ratioKey: AspectRatioKey): RatioImageKey {
     case '9:16': return 'portrait_9_16';
     case '16:9': return 'landscape';
     case '1.91:1': return 'ad_banner';
-    case '2:3': return 'pinterest_pin';
     case '4:1': return 'logo_banner';
   }
 }
@@ -110,8 +109,6 @@ export function getRatioFolderName(ratioKey: AspectRatioKey, activeRatios: Aspec
       return 'Landscape';
     case '1.91:1':
       return 'Ad_Banner_191x1';
-    case '2:3':
-      return 'Pinterest_2x3';
     case '4:1':
       return 'Logo_Banner_4x1';
     default:
@@ -542,7 +539,6 @@ export async function exportAllVariationsZip(
       case '9:16': return 'retrato_9x16';
       case '16:9': return 'landscape';
       case '1.91:1': return 'ad_banner_191x1';
-      case '2:3': return 'pinterest_2x3';
       case '4:1': return 'logo_banner_4x1';
       default: return String(key).replace(':', 'x');
     }

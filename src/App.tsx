@@ -33,8 +33,7 @@ import { NewTemplateModal } from './components/NewTemplateModal';
 import { NewAssetGroupModal } from './components/NewAssetGroupModal';
 import { ProjectManagerModal } from './components/ProjectManagerModal';
 import { HomeDashboard } from './components/HomeDashboard';
-import { BulkExportModal } from './components/BulkExportModal';
-import { PublishSection } from './components/PublishSection';
+import { ExportSection } from './components/ExportSection';
 import { fetchProjects, saveAllProjects, syncDeletedProjects } from './lib/projectsDB';
 
 const STORAGE_PROJECTS_KEY = 'chhub_projects_v3';
@@ -223,8 +222,8 @@ export default function App() {
     return projects.find((p) => p.id === activeProjectId) || projects[0] || INITIAL_EMPTY_PROJECTS[0];
   }, [projects, activeProjectId]);
 
-  // Active Mode: 'home' | 'templates' | 'asset_groups' | 'bulk_export' | 'publish'
-  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups' | 'bulk_export' | 'publish'>('home');
+  // Active Mode: 'home' | 'templates' | 'asset_groups' | 'export'
+  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups' | 'export'>('home');
   const [bulkExportProjectId, setBulkExportProjectId] = useState<string | null>(null);
 
   // Resizable bottom panel
@@ -885,15 +884,9 @@ export default function App() {
           onUpdateAssetGroup={handleUpdateAssetGroup}
           onBackToEditor={() => setActiveMode('templates')}
         />
-      ) : activeMode === 'bulk_export' ? (
-        /* Inline Bulk Export Section */
-        <BulkExportModal
-          project={currentProject}
-          onClose={() => setActiveMode('templates')}
-        />
-      ) : activeMode === 'publish' ? (
-        /* Publish Section */
-        <PublishSection project={currentProject} />
+      ) : activeMode === 'export' ? (
+        /* Unified Export Section (Bulk Export + Publish) */
+        <ExportSection project={currentProject} />
       ) : null}
 
       {/* Modals */}

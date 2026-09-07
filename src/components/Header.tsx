@@ -15,7 +15,6 @@ import {
   LayoutGrid,
   Download,
   ArrowLeft,
-  Send,
 } from 'lucide-react';
 import { AssetGroup, MasterTemplate, Project } from '../types';
 
@@ -37,8 +36,8 @@ interface HeaderProps {
   onNewAssetGroup: () => void;
   totalVariationsCount: number;
 
-  activeMode: 'home' | 'templates' | 'asset_groups' | 'bulk_export' | 'publish';
-  onChangeMode: (mode: 'home' | 'templates' | 'asset_groups' | 'bulk_export' | 'publish') => void;
+  activeMode: 'home' | 'templates' | 'asset_groups' | 'export';
+  onChangeMode: (mode: 'home' | 'templates' | 'asset_groups' | 'export') => void;
 
   canUndo: boolean;
   canRedo: boolean;
@@ -237,27 +236,15 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           <button
-            onClick={() => onChangeMode('bulk_export')}
+            onClick={() => onChangeMode('export')}
             className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeMode === 'bulk_export'
+              activeMode === 'export'
                 ? 'bg-white text-gray-900 shadow-xs'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             <Download className="w-3.5 h-3.5 text-violet-600" />
-            <span>Bulk Export</span>
-          </button>
-
-          <button
-            onClick={() => onChangeMode('publish')}
-            className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeMode === 'publish'
-                ? 'bg-white text-gray-900 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Send className="w-3.5 h-3.5 text-purple-600" />
-            <span>Publish</span>
+            <span>Export</span>
           </button>
         </div>
 
