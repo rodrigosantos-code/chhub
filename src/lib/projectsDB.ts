@@ -62,10 +62,27 @@ export async function saveAllProjects(projects: Project[]): Promise<void> {
     updated_at: new Date().toISOString(),
   }));
 
+  // Log payload size for debugging
+  const payloadSize = new Blob([JSON.stringify(rows)]).size;
+  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024 / 1024).toFixed(2)} MB)`);
+
+  if (payloadSize > 4 * 1024 * 1024) {
+    console.warn('[Supabase] Payload is large (>4MB). Saving projects individually...');
+    // Save one by one to avoid request size limits
+    for (const row of rows) {
+      const { error } = await supabase.from('projects').upsert(row, { onConflict: 'id' });
+      if (error) {
+        console.error(`[Supabase] Error saving project "${row.name}":`, error.message, error);
+        throw new Error(`Error saving "${row.name}": ${error.message}`);
+      }
+    }
+    return;
+  }
+
   const { error } = await supabase.from('projects').upsert(rows, { onConflict: 'id' });
 
   if (error) {
-    console.error('[Supabase] Error saving all projects:', error.message);
+    console.error('[Supabase] Error saving all projects:', error.message, error.details, error.hint);
     throw new Error(error.message);
   }
 }
