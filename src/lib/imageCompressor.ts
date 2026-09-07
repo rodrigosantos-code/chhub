@@ -2,7 +2,8 @@
  * Compress a base64 data URL image to a smaller version for cloud storage.
  * Returns a compressed base64 data URL or the original if not a data URL.
  *
- * Resizes to maxDimension px on the largest side and compresses as JPEG.
+ * Preserves PNG format (with transparency) for PNGs.
+ * Converts non-transparent images to JPEG for better compression.
  */
 export function compressBase64Image(
   dataUrl: string,
@@ -15,6 +16,9 @@ export function compressBase64Image(
       resolve(dataUrl);
       return;
     }
+
+    // Detect if source is PNG (likely has transparency)
+    const isPng = dataUrl.startsWith('data:image/png');
 
     const img = new Image();
     img.onload = () => {
@@ -40,10 +44,19 @@ export function compressBase64Image(
         return;
       }
 
+      // For PNG: keep transparent background
+      // For others: fill white then draw
+      if (!isPng) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, width, height);
+      }
+
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Export as JPEG for smaller size (or PNG if transparency needed)
-      const compressed = canvas.toDataURL('image/jpeg', quality);
+      // Keep PNG for transparency, JPEG for everything else
+      const compressed = isPng
+        ? canvas.toDataURL('image/png')
+        : canvas.toDataURL('image/jpeg', quality);
       resolve(compressed);
     };
 
