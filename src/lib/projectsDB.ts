@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { Project } from '../types';
-import { stripImagesForCloud } from './imageCompressor';
+import { uploadProjectAssets } from './storageUploader';
 
 export interface DBProject {
   id: string;
@@ -32,11 +32,10 @@ export async function fetchProjects(): Promise<Project[]> {
 
 /**
  * Save (upsert) a single project to Supabase.
- * Uses the project's own `id` as the DB row id.
+ * Uploads base64 images to Storage first, then saves lightweight JSON with URLs.
  */
 export async function saveProject(project: Project): Promise<void> {
-  // Strip base64 images — they stay in localStorage only
-  const cleanProject = stripImagesForCloud(project);
+  const cleanProject = await uploadProjectAssets(project);
 
   const { error } = await supabase.from('projects').upsert(
     {
@@ -56,11 +55,16 @@ export async function saveProject(project: Project): Promise<void> {
 
 /**
  * Save all projects at once.
- * Strips base64 images before saving — images live only in localStorage.
+ * Uploads base64 images to Supabase Storage, replaces with public URLs,
+ * then saves lightweight JSON to the projects table.
  */
 export async function saveAllProjects(projects: Project[]): Promise<void> {
-  // Strip base64 images from all projects
-  const cleanProjects = projects.map((p) => stripImagesForCloud(p));
+  // Upload all base64 images to Storage → get projects with public URLs
+  console.log(`[Supabase] Uploading images to Storage for ${projects.length} project(s)...`);
+  const cleanProjects: any[] = [];
+  for (const p of projects) {
+    cleanProjects.push(await uploadProjectAssets(p));
+  }
 
   const rows = cleanProjects.map((p) => ({
     id: p.id,
@@ -71,7 +75,7 @@ export async function saveAllProjects(projects: Project[]): Promise<void> {
   }));
 
   const payloadSize = new Blob([JSON.stringify(rows)]).size;
-  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024).toFixed(1)} KB)`);
+  console.log(`[Supabase] Saving ${rows.length} projects (${(payloadSize / 1024).toFixed(1)} KB after upload)`);
 
   const { error } = await supabase.from('projects').upsert(rows, { onConflict: 'id' });
 

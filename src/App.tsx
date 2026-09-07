@@ -118,12 +118,11 @@ export default function App() {
         if (cancelled) return;
         if (cloudProjects.length > 0) {
           const migrated = cloudProjects.map(migrateProject);
-          // Merge cloud structure with local images (cloud has empty URLs)
+          // Merge: prefer local base64 images (full-res) over cloud URLs
           const localProjects = projects;
           const merged = migrated.map((cloudProj: Project) => {
             const localProj = localProjects.find((lp: Project) => lp.id === cloudProj.id);
-            if (!localProj) return cloudProj;
-            // For each asset group, restore image URLs from local
+            if (!localProj) return cloudProj; // New from cloud, use as-is
             const mergedAGs = cloudProj.assetGroups.map((cloudAg) => {
               const localAg = localProj.assetGroups.find((la) => la.id === cloudAg.id);
               if (!localAg) return cloudAg;
@@ -135,12 +134,14 @@ export default function App() {
                   for (const cloudItem of cloudItems as any[]) {
                     const localItem = (localItems as any[]).find((li: any) => li.id === cloudItem.id);
                     if (localItem) {
-                      // Always prefer local URL (full-res source of truth)
-                      if (localItem.url) cloudItem.url = localItem.url;
+                      // Prefer local base64 (full-res), else keep cloud URL
+                      if (localItem.url && localItem.url.startsWith('data:')) {
+                        cloudItem.url = localItem.url;
+                      }
                       if (localItem.ratioUrls) {
                         if (!cloudItem.ratioUrls) cloudItem.ratioUrls = {};
                         for (const rk of Object.keys(localItem.ratioUrls)) {
-                          if (localItem.ratioUrls[rk]) {
+                          if (localItem.ratioUrls[rk] && localItem.ratioUrls[rk].startsWith('data:')) {
                             cloudItem.ratioUrls[rk] = localItem.ratioUrls[rk];
                           }
                         }
@@ -153,11 +154,9 @@ export default function App() {
             });
             return { ...cloudProj, assetGroups: mergedAGs };
           });
-          // Skip the debounced cloud save that would be triggered by setProjects
           skipNextCloudSaveRef.current = true;
           setProjects(merged);
           localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(merged));
-          // Update active project if current one doesn't exist in cloud data
           const ids = merged.map((p: Project) => p.id);
           if (!ids.includes(activeProjectId)) {
             setActiveProjectId(merged[0].id);
