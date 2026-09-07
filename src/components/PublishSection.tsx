@@ -68,10 +68,10 @@ const PLATFORMS: PlatformSpec[] = [
       logoRequired: true,
     },
     ratios: [
-      { ratio: '1.91:1', label: 'Landscape', minWidth: 600, minHeight: 314, recommended: '1200×628', importance: 'required' },
+      { ratio: '1.91:1', label: 'Landscape', minWidth: 600, minHeight: 314, recommended: '1200×628', mappedAppRatio: '1.91:1', importance: 'required' },
       { ratio: '1:1', label: 'Square', minWidth: 300, minHeight: 300, recommended: '1200×1200', mappedAppRatio: '1:1', importance: 'required' },
       { ratio: '4:5', label: 'Portrait', minWidth: 480, minHeight: 600, recommended: '960×1200', mappedAppRatio: '4:5', importance: 'recommended' },
-      { ratio: '4:1', label: 'Logo Landscape', minWidth: 512, minHeight: 128, recommended: '1200×300', importance: 'optional' },
+      { ratio: '4:1', label: 'Logo Landscape', minWidth: 512, minHeight: 128, recommended: '1200×300', mappedAppRatio: '4:1', importance: 'optional' },
     ],
   },
   {
@@ -130,7 +130,7 @@ const PLATFORMS: PlatformSpec[] = [
       logoRequired: false,
     },
     ratios: [
-      { ratio: '2:3', label: 'Standard Pin', minWidth: 1000, minHeight: 1500, recommended: '1000×1500', importance: 'required' },
+      { ratio: '2:3', label: 'Standard Pin', minWidth: 1000, minHeight: 1500, recommended: '1000×1500', mappedAppRatio: '2:3', importance: 'required' },
       { ratio: '1:1', label: 'Square Pin', minWidth: 1000, minHeight: 1000, recommended: '1000×1000', mappedAppRatio: '1:1', importance: 'recommended' },
       { ratio: '9:16', label: 'Idea Pin', minWidth: 1080, minHeight: 1920, recommended: '1080×1920', mappedAppRatio: '9:16', importance: 'optional' },
     ],
@@ -150,7 +150,7 @@ const PLATFORMS: PlatformSpec[] = [
       logoRequired: true,
     },
     ratios: [
-      { ratio: '1.91:1', label: 'Landscape', minWidth: 1200, minHeight: 628, recommended: '1200×628', importance: 'required' },
+      { ratio: '1.91:1', label: 'Landscape', minWidth: 1200, minHeight: 628, recommended: '1200×628', mappedAppRatio: '1.91:1', importance: 'required' },
       { ratio: '1:1', label: 'Square', minWidth: 1080, minHeight: 1080, recommended: '1080×1080', mappedAppRatio: '1:1', importance: 'recommended' },
       { ratio: '4:5', label: 'Portrait', minWidth: 628, minHeight: 785, recommended: '628×785', mappedAppRatio: '4:5', importance: 'optional' },
     ],
@@ -170,7 +170,7 @@ const PLATFORMS: PlatformSpec[] = [
       logoRequired: true,
     },
     ratios: [
-      { ratio: '1.91:1', label: 'Landscape Banner', minWidth: 1200, minHeight: 628, recommended: '1200×628', importance: 'required' },
+      { ratio: '1.91:1', label: 'Landscape Banner', minWidth: 1200, minHeight: 628, recommended: '1200×628', mappedAppRatio: '1.91:1', importance: 'required' },
       { ratio: '1:1', label: 'Square', minWidth: 1200, minHeight: 1200, recommended: '1200×1200', mappedAppRatio: '1:1', importance: 'required' },
       { ratio: '4:5', label: 'Portrait', minWidth: 960, minHeight: 1200, recommended: '960×1200', mappedAppRatio: '4:5', importance: 'recommended' },
       { ratio: '16:9', label: 'Widescreen', minWidth: 1920, minHeight: 1080, recommended: '1920×1080', mappedAppRatio: '16:9', importance: 'optional' },

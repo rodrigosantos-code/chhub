@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
+  ASPECT_RATIOS,
   AspectRatioKey,
   AssetGroup,
   ConditionalRule,
@@ -429,7 +430,7 @@ export default function App() {
           activeAspectRatios: t.activeAspectRatios.filter((r) => r !== ratio),
         };
       } else {
-        if (t.activeAspectRatios.length >= 3) return t;
+        if (t.activeAspectRatios.length >= Object.keys(ASPECT_RATIOS).length) return t;
         return {
           ...t,
           activeAspectRatios: [...t.activeAspectRatios, ratio],
@@ -462,7 +463,7 @@ export default function App() {
     const isBg = folderType === 'background';
     const isForm = folderType.startsWith('form');
 
-    const defaultPositions: Record<AspectRatioKey, any> = {
+    const defaultPositions: Partial<Record<AspectRatioKey, any>> = {
       '1:1': {
         x: isBg ? 0 : isForm ? 10 : 20,
         y: isBg ? 0 : isText ? 75 : isForm ? 80 : 25,

@@ -216,10 +216,10 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
         <div className="pt-1">
           <details className="group">
             <summary className="text-[11px] text-blue-600 hover:text-blue-700 cursor-pointer font-medium list-none flex items-center justify-between">
-              <span>Manage formats ({template.activeAspectRatios.length}/3 max)</span>
+              <span>Manage formats ({template.activeAspectRatios.length}/{Object.keys(ASPECT_RATIOS).length} max)</span>
               <span className="text-[10px] text-gray-400 group-open:rotate-180 transition-transform">▾</span>
             </summary>
-            <div className="mt-2 space-y-1 bg-gray-50 p-2 rounded-lg border border-gray-200">
+            <div className="mt-2 space-y-1 bg-gray-50 p-2 rounded-lg border border-gray-200 max-h-64 overflow-y-auto">
               {(Object.keys(ASPECT_RATIOS) as AspectRatioKey[]).map((rKey) => {
                 const meta = ASPECT_RATIOS[rKey];
                 const isActive = template.activeAspectRatios.includes(rKey);
@@ -227,7 +227,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 return (
                   <label
                     key={rKey}
-                    className="flex items-center justify-between p-1 rounded hover:bg-gray-100 cursor-pointer text-xs"
+                    className="flex items-center justify-between p-1.5 rounded hover:bg-gray-100 cursor-pointer text-xs"
                   >
                     <div className="flex items-center gap-2">
                       <input
@@ -236,9 +236,12 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                         onChange={() => onToggleActiveRatio(rKey)}
                         className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer"
                       />
-                      <span className="font-medium text-gray-800">{meta.label}</span>
+                      <div>
+                        <div className="font-medium text-gray-800">{meta.label}</div>
+                        <div className="text-[9px] text-gray-400 leading-tight">{meta.description}</div>
+                      </div>
                     </div>
-                    <span className="text-[10px] font-mono text-gray-400">
+                    <span className="text-[10px] font-mono text-gray-400 shrink-0 ml-2">
                       {meta.width}×{meta.height}
                     </span>
                   </label>

@@ -14,7 +14,7 @@ export type FolderType =
   | 'form_2'
   | 'form_3';
 
-export type AspectRatioKey = '1:1' | '4:5' | '9:16' | '16:9';
+export type AspectRatioKey = '1:1' | '4:5' | '9:16' | '16:9' | '1.91:1' | '2:3' | '4:1';
 
 export interface AspectRatioMeta {
   key: AspectRatioKey;
@@ -25,10 +25,13 @@ export interface AspectRatioMeta {
 }
 
 export const ASPECT_RATIOS: Record<AspectRatioKey, AspectRatioMeta> = {
-  '1:1': { key: '1:1', label: '1:1 Square', width: 1080, height: 1080, description: 'Feed Instagram / Facebook' },
-  '4:5': { key: '4:5', label: '4:5 Portrait', width: 1080, height: 1350, description: 'Feed Vertical Instagram' },
-  '9:16': { key: '9:16', label: '9:16 Story / Reel', width: 1080, height: 1920, description: 'Stories, Reels, TikTok' },
-  '16:9': { key: '16:9', label: '16:9 Landscape', width: 1920, height: 1080, description: 'Twitter, LinkedIn, Web' },
+  '1:1':    { key: '1:1',    label: '1:1 Square',        width: 1080, height: 1080, description: 'Feed Instagram / Facebook / TikTok' },
+  '4:5':    { key: '4:5',    label: '4:5 Portrait',      width: 1080, height: 1350, description: 'Feed Vertical Instagram / Meta Ads' },
+  '9:16':   { key: '9:16',   label: '9:16 Story / Reel', width: 1080, height: 1920, description: 'Stories, Reels, TikTok' },
+  '16:9':   { key: '16:9',   label: '16:9 Landscape',    width: 1920, height: 1080, description: 'YouTube, DV360, Web' },
+  '1.91:1': { key: '1.91:1', label: '1.91:1 Ad Banner',  width: 1200, height: 628,  description: 'Google Pmax, LinkedIn, DV360' },
+  '2:3':    { key: '2:3',    label: '2:3 Pinterest Pin',  width: 1000, height: 1500, description: 'Pinterest Standard & Shopping' },
+  '4:1':    { key: '4:1',    label: '4:1 Logo Banner',   width: 1200, height: 300,  description: 'Google Pmax Logo Landscape' },
 };
 
 export type Tone = 'light' | 'dark';
@@ -49,12 +52,15 @@ export interface RatioImages {
   portrait_4_5?: string;   // 4:5
   portrait_9_16?: string;  // 9:16
   landscape?: string;      // 16:9
+  ad_banner?: string;      // 1.91:1
+  pinterest_pin?: string;  // 2:3
+  logo_banner?: string;    // 4:1
   // Legacy compatibility
   portrait?: string;       // Old shared portrait field
   [key: string]: string | undefined;
 }
 
-export type RatioImageKey = 'square' | 'portrait_4_5' | 'portrait_9_16' | 'landscape';
+export type RatioImageKey = 'square' | 'portrait_4_5' | 'portrait_9_16' | 'landscape' | 'ad_banner' | 'pinterest_pin' | 'logo_banner';
 
 export interface CropData {
   x: number;      // crop region X offset (0-1 of original image)
@@ -165,7 +171,7 @@ export interface TemplateLayer {
   textDynamization?: TextDynamizationSettings;
   shapeConfig?: ShapeConfig;
   visible: boolean;
-  positionsByRatio: Record<AspectRatioKey, LayerRatioSettings>;
+  positionsByRatio: Partial<Record<AspectRatioKey, LayerRatioSettings>>;
 }
 
 export interface MasterTemplate {
