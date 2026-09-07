@@ -13,6 +13,8 @@ import {
   Redo2,
   Save,
   LayoutGrid,
+  Download,
+  ArrowLeft,
 } from 'lucide-react';
 import { AssetGroup, MasterTemplate, Project } from '../types';
 
@@ -34,8 +36,8 @@ interface HeaderProps {
   onNewAssetGroup: () => void;
   totalVariationsCount: number;
 
-  activeMode: 'home' | 'templates' | 'asset_groups';
-  onChangeMode: (mode: 'home' | 'templates' | 'asset_groups') => void;
+  activeMode: 'home' | 'templates' | 'asset_groups' | 'bulk_export';
+  onChangeMode: (mode: 'home' | 'templates' | 'asset_groups' | 'bulk_export') => void;
 
   canUndo: boolean;
   canRedo: boolean;
@@ -102,37 +104,46 @@ export const Header: React.FC<HeaderProps> = ({
     >
       {/* Left side: Brand + Project Selection + View Switcher */}
       <div className="flex items-center gap-3 flex-wrap">
-        {/* Brand */}
+        {/* Logo — click to go Home */}
         <div className="flex items-center gap-2 pr-1">
-          <span className="font-extrabold text-sm tracking-tight text-gray-900">
+          <button
+            onClick={() => onChangeMode('home')}
+            className="font-extrabold text-sm tracking-tight text-gray-900 hover:opacity-70 transition-opacity cursor-pointer flex items-center gap-1.5"
+            title="Back to Home"
+          >
+            {activeMode !== 'home' && (
+              <ArrowLeft className="w-3.5 h-3.5 text-gray-400" />
+            )}
             CH<span className="text-blue-600">hub</span>
-          </span>
+          </button>
         </div>
 
-        <div className="h-5 w-px bg-gray-200 hidden sm:block" />
+        {activeMode !== 'home' && (
+          <>
+            <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
-        {/* 1. Project Selector (Project selector) */}
-        <div className="relative">
-          <button
-            id="project-selector-btn"
-            onClick={() => {
-              setShowProjectMenu(!showProjectMenu);
-              setShowTemplateMenu(false);
-              setShowAssetGroupMenu(false);
-            }}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-900 border border-gray-200 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
-            title="Switch project or brand"
-          >
-            <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-            <span className="max-w-[140px] truncate">
-              {currentProject ? currentProject.name : 'Select Project'}
-            </span>
-            <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-          </button>
+            {/* 1. Project Selector */}
+            <div className="relative">
+              <button
+                id="project-selector-btn"
+                onClick={() => {
+                  setShowProjectMenu(!showProjectMenu);
+                  setShowTemplateMenu(false);
+                  setShowAssetGroupMenu(false);
+                }}
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-900 border border-gray-200 text-xs font-semibold transition-colors cursor-pointer shadow-xs"
+                title="Switch project or brand"
+              >
+                <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <span className="max-w-[140px] truncate">
+                  {currentProject ? currentProject.name : 'Select Project'}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+              </button>
 
-          {/* Project Dropdown */}
-          {showProjectMenu && (
-            <div className="absolute left-0 mt-1.5 w-72 bg-white border border-gray-200 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
+              {/* Project Dropdown */}
+              {showProjectMenu && (
+                <div className="absolute left-0 mt-1.5 w-72 bg-white border border-gray-200 rounded-xl shadow-2xl py-1.5 z-50 text-xs">
               <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-gray-400 tracking-wider border-b border-gray-100 flex items-center justify-between">
                 <span>Proyectos de Marca</span>
                 <span className="font-mono">{projects.length}</span>
@@ -192,21 +203,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
-        {/* 2. Mode Selector: Home vs Templates vs Asset Groups */}
+        {/* 2. Mode Selector: Templates vs Asset Groups vs Bulk Export */}
         <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">
-          <button
-            onClick={() => onChangeMode('home')}
-            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-              activeMode === 'home'
-                ? 'bg-white text-gray-900 shadow-xs'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-            title="All Brands"
-          >
-            <LayoutGrid className="w-3.5 h-3.5 text-violet-600" />
-            <span>Home</span>
-          </button>
-
           <button
             onClick={() => onChangeMode('templates')}
             className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
@@ -235,6 +233,18 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-[10px] font-mono font-normal opacity-70">
               ({currentProject ? currentProject.assetGroups.length : 0})
             </span>
+          </button>
+
+          <button
+            onClick={() => onChangeMode('bulk_export')}
+            className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+              activeMode === 'bulk_export'
+                ? 'bg-white text-gray-900 shadow-xs'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Download className="w-3.5 h-3.5 text-violet-600" />
+            <span>Bulk Export</span>
           </button>
         </div>
 
@@ -569,6 +579,8 @@ export const Header: React.FC<HeaderProps> = ({
               <span>New Group</span>
             </button>
           </div>
+        )}
+        </>
         )}
       </div>
 

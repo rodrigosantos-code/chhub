@@ -221,8 +221,8 @@ export default function App() {
     return projects.find((p) => p.id === activeProjectId) || projects[0] || INITIAL_EMPTY_PROJECTS[0];
   }, [projects, activeProjectId]);
 
-  // Active Mode: 'home' (Dashboard) vs 'templates' (Canvas & Layers) vs 'asset_groups' (Folders & Resources)
-  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups'>('home');
+  // Active Mode: 'home' (Dashboard) vs 'templates' (Canvas & Layers) vs 'asset_groups' vs 'bulk_export'
+  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups' | 'bulk_export'>('home');
   const [bulkExportProjectId, setBulkExportProjectId] = useState<string | null>(null);
 
   // Resizable bottom panel
@@ -869,7 +869,7 @@ export default function App() {
             height={bottomPanelHeight}
           />
         </>
-      ) : (
+      ) : activeMode === 'asset_groups' ? (
         /* Dedicated Asset Group Workspace */
         <AssetGroupWorkspace
           assetGroup={activeAssetGroup}
@@ -880,7 +880,15 @@ export default function App() {
           onUpdateAssetGroup={handleUpdateAssetGroup}
           onBackToEditor={() => setActiveMode('templates')}
         />
-      )}
+      ) : activeMode === 'bulk_export' ? (
+        /* Inline Bulk Export */
+        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 overflow-hidden">
+          <BulkExportModal
+            project={currentProject}
+            onClose={() => setActiveMode('templates')}
+          />
+        </div>
+      ) : null}
 
       {/* Modals */}
       <ProjectManagerModal
