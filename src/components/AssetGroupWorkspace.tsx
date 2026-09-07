@@ -1145,10 +1145,12 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               </div>
 
                               {[
-                                { key: 'square' as RatioImageKey, label: 'Square (1:1)', icon: Square, desc: 'Feed Instagram' },
-                                { key: 'portrait_4_5' as RatioImageKey, label: 'Portrait (4:5)', icon: Smartphone, desc: 'Instagram Feed' },
-                                { key: 'portrait_9_16' as RatioImageKey, label: 'Portrait (9:16)', icon: Smartphone, desc: 'Stories, Reels' },
-                                { key: 'landscape' as RatioImageKey, label: 'Landscape (16:9)', icon: Monitor, desc: 'Twitter, Web' },
+                                { key: 'square' as RatioImageKey, label: 'Square (1:1)', icon: Square, desc: 'Google, Meta, TikTok, Display' },
+                                { key: 'portrait_4_5' as RatioImageKey, label: 'Portrait (4:5)', icon: Smartphone, desc: 'Meta Feed, Google, Display' },
+                                { key: 'portrait_9_16' as RatioImageKey, label: 'Portrait (9:16)', icon: Smartphone, desc: 'Meta Stories/Reels, TikTok' },
+                                { key: 'landscape' as RatioImageKey, label: 'Landscape (16:9)', icon: Monitor, desc: 'Meta, TikTok, Display' },
+                                { key: 'ad_banner' as RatioImageKey, label: 'Ad Banner (1.91:1)', icon: Monitor, desc: 'Google Ads, Display' },
+                                { key: 'logo_banner' as RatioImageKey, label: 'Logo Banner (4:1)', icon: Monitor, desc: 'Google Ads Logo' },
                               ].map((ratio) => {
                                 const currentUrl = item.ratioUrls?.[ratio.key];
                                 const RatioIcon = ratio.icon;
