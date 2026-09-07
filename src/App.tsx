@@ -135,11 +135,12 @@ export default function App() {
                   for (const cloudItem of cloudItems as any[]) {
                     const localItem = (localItems as any[]).find((li: any) => li.id === cloudItem.id);
                     if (localItem) {
-                      // Restore base64 URLs from local if cloud has empty ones
-                      if (!cloudItem.url && localItem.url) cloudItem.url = localItem.url;
-                      if (cloudItem.ratioUrls && localItem.ratioUrls) {
-                        for (const rk of Object.keys(cloudItem.ratioUrls)) {
-                          if (!cloudItem.ratioUrls[rk] && localItem.ratioUrls[rk]) {
+                      // Always prefer local URL (full-res source of truth)
+                      if (localItem.url) cloudItem.url = localItem.url;
+                      if (localItem.ratioUrls) {
+                        if (!cloudItem.ratioUrls) cloudItem.ratioUrls = {};
+                        for (const rk of Object.keys(localItem.ratioUrls)) {
+                          if (localItem.ratioUrls[rk]) {
                             cloudItem.ratioUrls[rk] = localItem.ratioUrls[rk];
                           }
                         }
