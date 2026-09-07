@@ -1040,8 +1040,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                   </div>
                   <input
                     type="range"
-                    min="18"
-                    max="110"
+                    min="8"
+                    max="300"
                     value={layerPosition.fontSize || 42}
                     onChange={(e) =>
                       onUpdateLayerPosition(selectedLayer.id, selectedRatio, {
