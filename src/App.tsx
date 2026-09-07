@@ -34,6 +34,8 @@ import { NewAssetGroupModal } from './components/NewAssetGroupModal';
 import { ProjectManagerModal } from './components/ProjectManagerModal';
 import { HomeDashboard } from './components/HomeDashboard';
 import { ExportSection } from './components/ExportSection';
+import { TemplatesOverview } from './components/TemplatesOverview';
+import { AssetsOverview } from './components/AssetsOverview';
 import { fetchProjects, saveAllProjects, syncDeletedProjects } from './lib/projectsDB';
 
 const STORAGE_PROJECTS_KEY = 'chhub_projects_v3';
@@ -224,7 +226,16 @@ export default function App() {
 
   // Active Mode: 'home' | 'templates' | 'asset_groups' | 'export'
   const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups' | 'export'>('home');
+  const [isInTemplateEditor, setIsInTemplateEditor] = useState(false);
+  const [isInAssetEditor, setIsInAssetEditor] = useState(false);
   const [bulkExportProjectId, setBulkExportProjectId] = useState<string | null>(null);
+
+  // When switching modes, reset to overview
+  const handleSetActiveMode = (mode: typeof activeMode) => {
+    setActiveMode(mode);
+    if (mode === 'templates') setIsInTemplateEditor(false);
+    if (mode === 'asset_groups') setIsInAssetEditor(false);
+  };
 
   // Resizable bottom panel
   const [bottomPanelHeight, setBottomPanelHeight] = useState(224);
@@ -416,6 +427,19 @@ export default function App() {
         };
       })
     );
+  };
+
+  const handleDeleteAssetGroup = (agId: string) => {
+    if (currentProject.assetGroups.length <= 1) return;
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.id !== currentProject.id) return p;
+        return { ...p, assetGroups: p.assetGroups.filter((ag) => ag.id !== agId) };
+      })
+    );
+    if (activeAssetGroupId === agId) {
+      setActiveAssetGroupId(currentProject.assetGroups.find((ag) => ag.id !== agId)?.id || '');
+    }
   };
 
   // Toggle active aspect ratios (max 3)
@@ -705,6 +729,37 @@ export default function App() {
     );
     setActiveTemplateId(newTemplate.id);
     setActiveMode('templates');
+    setIsInTemplateEditor(true);
+  };
+
+  const handleDuplicateTemplate = (templateId: string) => {
+    const source = currentProject.templates.find((t) => t.id === templateId);
+    if (!source) return;
+    const newId = `tpl_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const duplicate: MasterTemplate = {
+      ...JSON.parse(JSON.stringify(source)),
+      id: newId,
+      name: `${source.name} (Copy)`,
+    };
+    setProjects((prev) =>
+      prev.map((p) =>
+        p.id !== currentProject.id ? p : { ...p, templates: [...p.templates, duplicate] }
+      )
+    );
+  };
+
+  const handleDeleteTemplate = (templateId: string) => {
+    if (currentProject.templates.length <= 1) return;
+    setProjects((prev) =>
+      prev.map((p) => {
+        if (p.id !== currentProject.id) return p;
+        const filtered = p.templates.filter((t) => t.id !== templateId);
+        return { ...p, templates: filtered };
+      })
+    );
+    if (activeTemplateId === templateId) {
+      setActiveTemplateId(currentProject.templates.find((t) => t.id !== templateId)?.id || '');
+    }
   };
 
   // Create Asset Group
@@ -774,7 +829,7 @@ export default function App() {
         onNewAssetGroup={() => setIsNewAssetGroupOpen(true)}
         totalVariationsCount={calculationReport.totalVariationsCount}
         activeMode={activeMode}
-        onChangeMode={setActiveMode}
+        onChangeMode={handleSetActiveMode}
         canUndo={canUndo}
         canRedo={canRedo}
         onUndo={undo}
@@ -795,95 +850,125 @@ export default function App() {
             handleSelectProject(projId);
             setActiveTemplateId(tplId);
             setActiveMode('templates');
+            setIsInTemplateEditor(true);
           }}
           onOpenAssetGroup={(projId, agId) => {
             handleSelectProject(projId);
             setActiveAssetGroupId(agId);
             setActiveMode('asset_groups');
+            setIsInAssetEditor(true);
           }}
           onNewProject={() => setIsProjectManagerOpen(true)}
           onManageBrand={(projId) => {
             handleSelectProject(projId);
             setActiveMode('templates');
+            setIsInTemplateEditor(false);
           }}
           onOpenProjectManager={() => setIsProjectManagerOpen(true)}
         />
       ) : activeMode === 'templates' ? (
-        <>
-          {/* Main Workspace (Left Panel + Right Canvas Area) */}
-          <div className="flex-1 flex overflow-hidden">
-            {/* Left Panel: Modes, Objects & Aspect Ratio Controller */}
-            <LeftPanel
-              template={activeTemplate}
-              assetGroup={activeAssetGroup}
-              selectedRatio={selectedRatio}
-              selectedLayerId={selectedLayerId}
-              currentVariation={allVariations[currentVariationIndex] || null}
-              onSelectRatio={setSelectedRatio}
-              onToggleActiveRatio={handleToggleActiveRatio}
-              onAddLayer={handleAddLayer}
-              onUpdateLayerPosition={handleUpdateLayerPosition}
-              onUpdateLayer={handleUpdateLayer}
-              onDeleteLayer={handleDeleteLayer}
-              onUpdateTextDynamization={handleUpdateTextDynamization}
-              onUpdateAssetGroup={handleUpdateAssetGroup}
-            />
+        isInTemplateEditor ? (
+          <>
+            {/* Main Workspace (Left Panel + Right Canvas Area) */}
+            <div className="flex-1 flex overflow-hidden">
+              {/* Left Panel: Modes, Objects & Aspect Ratio Controller */}
+              <LeftPanel
+                template={activeTemplate}
+                assetGroup={activeAssetGroup}
+                selectedRatio={selectedRatio}
+                selectedLayerId={selectedLayerId}
+                currentVariation={allVariations[currentVariationIndex] || null}
+                onSelectRatio={setSelectedRatio}
+                onToggleActiveRatio={handleToggleActiveRatio}
+                onAddLayer={handleAddLayer}
+                onUpdateLayerPosition={handleUpdateLayerPosition}
+                onUpdateLayer={handleUpdateLayer}
+                onDeleteLayer={handleDeleteLayer}
+                onUpdateTextDynamization={handleUpdateTextDynamization}
+                onUpdateAssetGroup={handleUpdateAssetGroup}
+              />
 
-            {/* Right Panel: Interactive Canvas Area */}
-            <CanvasArea
+              {/* Right Panel: Interactive Canvas Area */}
+              <CanvasArea
+                template={activeTemplate}
+                assetGroup={activeAssetGroup}
+                selectedRatio={selectedRatio}
+                variations={allVariations}
+                currentVariationIndex={currentVariationIndex}
+                selectedLayerId={selectedLayerId}
+                onSelectVariationIndex={setCurrentVariationIndex}
+                onSelectRatio={setSelectedRatio}
+                onSelectLayer={setSelectedLayerId}
+                onUpdateLayerPosition={handleUpdateLayerPosition}
+                onUpdateLayer={handleUpdateLayer}
+              />
+            </div>
+
+            {/* Resize Handle */}
+            <div
+              onMouseDown={handleResizeMouseDown}
+              className="h-1.5 bg-gray-100 border-t border-gray-200 cursor-row-resize flex items-center justify-center hover:bg-blue-100 active:bg-blue-200 transition-colors group z-30 flex-shrink-0"
+            >
+              <div className="w-10 h-0.5 rounded-full bg-gray-300 group-hover:bg-blue-400 transition-colors" />
+            </div>
+
+            {/* Bottom Panel: 3 Tabs (Layers, Dynamization, Export) */}
+            <BottomPanel
               template={activeTemplate}
               assetGroup={activeAssetGroup}
-              selectedRatio={selectedRatio}
               variations={allVariations}
-              currentVariationIndex={currentVariationIndex}
+              report={calculationReport}
               selectedLayerId={selectedLayerId}
-              onSelectVariationIndex={setCurrentVariationIndex}
-              onSelectRatio={setSelectedRatio}
+              currentVariationIndex={currentVariationIndex}
               onSelectLayer={setSelectedLayerId}
-              onUpdateLayerPosition={handleUpdateLayerPosition}
-              onUpdateLayer={handleUpdateLayer}
+              onToggleVisibility={handleToggleVisibility}
+              onMoveLayer={handleMoveLayer}
+              onDeleteLayer={handleDeleteLayer}
+              onUpdateLayerDynamization={handleUpdateLayerDynamization}
+              onUpdateTextDynamization={handleUpdateTextDynamization}
+              onSelectVariationIndex={setCurrentVariationIndex}
+              onUpdateAssetGroup={handleUpdateAssetGroup}
+              projectName={currentProject.name}
+              height={bottomPanelHeight}
             />
-          </div>
-
-          {/* Resize Handle */}
-          <div
-            onMouseDown={handleResizeMouseDown}
-            className="h-1.5 bg-gray-100 border-t border-gray-200 cursor-row-resize flex items-center justify-center hover:bg-blue-100 active:bg-blue-200 transition-colors group z-30 flex-shrink-0"
-          >
-            <div className="w-10 h-0.5 rounded-full bg-gray-300 group-hover:bg-blue-400 transition-colors" />
-          </div>
-
-          {/* Bottom Panel: 3 Tabs (Layers, Dynamization, Export) */}
-          <BottomPanel
-            template={activeTemplate}
-            assetGroup={activeAssetGroup}
-            variations={allVariations}
-            report={calculationReport}
-            selectedLayerId={selectedLayerId}
-            currentVariationIndex={currentVariationIndex}
-            onSelectLayer={setSelectedLayerId}
-            onToggleVisibility={handleToggleVisibility}
-            onMoveLayer={handleMoveLayer}
-            onDeleteLayer={handleDeleteLayer}
-            onUpdateLayerDynamization={handleUpdateLayerDynamization}
-            onUpdateTextDynamization={handleUpdateTextDynamization}
-            onSelectVariationIndex={setCurrentVariationIndex}
-            onUpdateAssetGroup={handleUpdateAssetGroup}
-            projectName={currentProject.name}
-            height={bottomPanelHeight}
+          </>
+        ) : (
+          <TemplatesOverview
+            project={currentProject}
+            onOpenTemplate={(tplId) => {
+              setActiveTemplateId(tplId);
+              setIsInTemplateEditor(true);
+            }}
+            onCreateTemplate={() => setIsNewTemplateOpen(true)}
+            onDuplicateTemplate={handleDuplicateTemplate}
+            onDeleteTemplate={handleDeleteTemplate}
+            onRenameTemplate={handleRenameTemplate}
           />
-        </>
+        )
       ) : activeMode === 'asset_groups' ? (
-        /* Dedicated Asset Group Workspace */
-        <AssetGroupWorkspace
-          assetGroup={activeAssetGroup}
-          allAssetGroups={currentProject.assetGroups}
-          onSelectAssetGroup={setActiveAssetGroupId}
-          onNewAssetGroup={() => setIsNewAssetGroupOpen(true)}
-          onDuplicateAssetGroup={handleDuplicateAssetGroup}
-          onUpdateAssetGroup={handleUpdateAssetGroup}
-          onBackToEditor={() => setActiveMode('templates')}
-        />
+        isInAssetEditor ? (
+          <AssetGroupWorkspace
+            assetGroup={activeAssetGroup}
+            allAssetGroups={currentProject.assetGroups}
+            onSelectAssetGroup={setActiveAssetGroupId}
+            onNewAssetGroup={() => setIsNewAssetGroupOpen(true)}
+            onDuplicateAssetGroup={handleDuplicateAssetGroup}
+            onUpdateAssetGroup={handleUpdateAssetGroup}
+            onBackToEditor={() => setIsInAssetEditor(false)}
+          />
+        ) : (
+          <AssetsOverview
+            project={currentProject}
+            onOpenAssetGroup={(agId) => {
+              setActiveAssetGroupId(agId);
+              setIsInAssetEditor(true);
+            }}
+            onCreateAssetGroup={() => setIsNewAssetGroupOpen(true)}
+            onDuplicateAssetGroup={handleDuplicateAssetGroup}
+            onDeleteAssetGroup={handleDeleteAssetGroup}
+            onRenameAssetGroup={handleRenameAssetGroup}
+          />
+        )
       ) : activeMode === 'export' ? (
         /* Unified Export Section (Bulk Export + Publish) */
         <ExportSection project={currentProject} />
