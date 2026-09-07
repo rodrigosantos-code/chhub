@@ -1025,8 +1025,8 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
 
-                            {/* Edit Focal Point Button (background + overlays) */}
-                            {(activeTab === 'background' || activeTab.startsWith('product_image')) && (
+                            {/* Edit Focal Point Button (background only) */}
+                            {activeTab === 'background' && (
                               <button
                                 onClick={() =>
                                   setExpandedFocalItemId(

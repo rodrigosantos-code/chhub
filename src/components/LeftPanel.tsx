@@ -757,8 +757,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
               </div>
             )}
 
-            {/* Subject Position in Composition (background and overlay layers) */}
-            {(selectedLayer.folderType === 'background' || selectedLayer.folderType.startsWith('product_image')) && (() => {
+            {/* Subject Position in Composition (background layers only) */}
+            {selectedLayer.folderType === 'background' && (() => {
               const fp = layerPosition.focalPoint || { x: 0.5, y: 0.5 };
               // Show detected asset focal point for reference
               const resolvedLayer = currentVariation?.resolvedLayers[selectedLayer.id];
