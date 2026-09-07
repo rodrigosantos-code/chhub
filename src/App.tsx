@@ -31,6 +31,8 @@ import { AssetGroupManagerModal } from './components/AssetGroupManagerModal';
 import { NewTemplateModal } from './components/NewTemplateModal';
 import { NewAssetGroupModal } from './components/NewAssetGroupModal';
 import { ProjectManagerModal } from './components/ProjectManagerModal';
+import { HomeDashboard } from './components/HomeDashboard';
+import { BulkExportModal } from './components/BulkExportModal';
 import { fetchProjects, saveAllProjects, syncDeletedProjects } from './lib/projectsDB';
 
 const STORAGE_PROJECTS_KEY = 'chhub_projects_v3';
@@ -219,8 +221,9 @@ export default function App() {
     return projects.find((p) => p.id === activeProjectId) || projects[0] || INITIAL_EMPTY_PROJECTS[0];
   }, [projects, activeProjectId]);
 
-  // Active Mode: 'templates' (Canvas & Layers) vs 'asset_groups' (Folders & Resources)
-  const [activeMode, setActiveMode] = useState<'templates' | 'asset_groups'>('templates');
+  // Active Mode: 'home' (Dashboard) vs 'templates' (Canvas & Layers) vs 'asset_groups' (Folders & Resources)
+  const [activeMode, setActiveMode] = useState<'home' | 'templates' | 'asset_groups'>('home');
+  const [bulkExportProjectId, setBulkExportProjectId] = useState<string | null>(null);
 
   // Resizable bottom panel
   const [bottomPanelHeight, setBottomPanelHeight] = useState(224);
@@ -780,7 +783,28 @@ export default function App() {
       />
 
       {/* Workspace according to active mode */}
-      {activeMode === 'templates' ? (
+      {activeMode === 'home' ? (
+        <HomeDashboard
+          projects={projects}
+          activeProjectId={activeProjectId}
+          onSelectProject={(projId) => {
+            handleSelectProject(projId);
+          }}
+          onOpenTemplate={(projId, tplId) => {
+            handleSelectProject(projId);
+            setActiveTemplateId(tplId);
+            setActiveMode('templates');
+          }}
+          onOpenAssetGroup={(projId, agId) => {
+            handleSelectProject(projId);
+            setActiveAssetGroupId(agId);
+            setActiveMode('asset_groups');
+          }}
+          onNewProject={() => setIsProjectManagerOpen(true)}
+          onOpenBulkExport={(projId) => setBulkExportProjectId(projId)}
+          onOpenProjectManager={() => setIsProjectManagerOpen(true)}
+        />
+      ) : activeMode === 'templates' ? (
         <>
           {/* Main Workspace (Left Panel + Right Canvas Area) */}
           <div className="flex-1 flex overflow-hidden">
@@ -890,9 +914,20 @@ export default function App() {
         onCreateAssetGroup={handleCreateAssetGroup}
       />
 
-      {/* Cloud sync status indicator */}
+      {/* Bulk Export Modal */}
+      {bulkExportProjectId && (() => {
+        const exportProject = projects.find((p) => p.id === bulkExportProjectId);
+        return exportProject ? (
+          <BulkExportModal
+            project={exportProject}
+            onClose={() => setBulkExportProjectId(null)}
+          />
+        ) : null;
+      })()}
+
+      {/* Cloud status */}
       {cloudStatus !== 'idle' && (
-        <div className={`fixed bottom-4 right-4 z-[9999] flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shadow-lg transition-all ${
+        <div className={`fixed bottom-4 right-4 z-50 px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-2 shadow-lg transition-all ${
           cloudStatus === 'saving' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
           cloudStatus === 'saved' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
           'bg-red-100 text-red-700 border border-red-200'

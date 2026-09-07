@@ -12,6 +12,7 @@ import {
   Undo2,
   Redo2,
   Save,
+  LayoutGrid,
 } from 'lucide-react';
 import { AssetGroup, MasterTemplate, Project } from '../types';
 
@@ -33,8 +34,8 @@ interface HeaderProps {
   onNewAssetGroup: () => void;
   totalVariationsCount: number;
 
-  activeMode: 'templates' | 'asset_groups';
-  onChangeMode: (mode: 'templates' | 'asset_groups') => void;
+  activeMode: 'home' | 'templates' | 'asset_groups';
+  onChangeMode: (mode: 'home' | 'templates' | 'asset_groups') => void;
 
   canUndo: boolean;
   canRedo: boolean;
@@ -191,8 +192,21 @@ export const Header: React.FC<HeaderProps> = ({
 
         <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
-        {/* 2. Mode Selector: Templates vs Asset Groups */}
+        {/* 2. Mode Selector: Home vs Templates vs Asset Groups */}
         <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200">
+          <button
+            onClick={() => onChangeMode('home')}
+            className={`px-2.5 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+              activeMode === 'home'
+                ? 'bg-white text-gray-900 shadow-xs'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+            title="All Brands"
+          >
+            <LayoutGrid className="w-3.5 h-3.5 text-violet-600" />
+            <span>Home</span>
+          </button>
+
           <button
             onClick={() => onChangeMode('templates')}
             className={`px-3 py-1 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
