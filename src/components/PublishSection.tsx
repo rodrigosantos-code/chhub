@@ -55,7 +55,7 @@ interface PlatformSpec {
 /** Simple SVG icons for each platform */
 const PlatformIcon: React.FC<{ platformId: string; className?: string }> = ({ platformId, className = 'w-7 h-7' }) => {
   switch (platformId) {
-    case 'google_pmax':
+    case 'google':
       return (
         <svg className={className} viewBox="0 0 24 24" fill="none">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -64,7 +64,7 @@ const PlatformIcon: React.FC<{ platformId: string; className?: string }> = ({ pl
           <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
         </svg>
       );
-    case 'meta_ads':
+    case 'meta':
       return (
         <svg className={className} viewBox="0 0 24 24" fill="none">
           <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z" fill="#1877F2"/>
@@ -76,23 +76,14 @@ const PlatformIcon: React.FC<{ platformId: string; className?: string }> = ({ pl
           <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.28 6.28 0 00-6.28 6.28 6.28 6.28 0 006.28 6.28 6.28 6.28 0 006.28-6.28V9.4a8.16 8.16 0 004.73 1.51V7.46a4.83 4.83 0 01-.91-.77z" fill="#111"/>
         </svg>
       );
-    case 'pinterest':
+    case 'display':
       return (
         <svg className={className} viewBox="0 0 24 24" fill="none">
-          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.237 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.425 1.808-2.425.853 0 1.265.641 1.265 1.408 0 .858-.545 2.14-.828 3.33-.236.995.5 1.807 1.48 1.807 1.778 0 3.144-1.874 3.144-4.58 0-2.393-1.72-4.068-4.177-4.068-2.845 0-4.515 2.135-4.515 4.34 0 .859.331 1.781.745 2.282a.3.3 0 01.069.287l-.278 1.133c-.044.183-.145.222-.335.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.965-.527-2.291-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="#E60023"/>
-        </svg>
-      );
-    case 'linkedin':
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" fill="#0A66C2"/>
-        </svg>
-      );
-    case 'dv360':
-      return (
-        <svg className={className} viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="2" width="20" height="20" rx="4" fill="#34A853"/>
-          <path d="M7 8h10v2H7V8zm0 3h10v2H7v-2zm0 3h7v2H7v-2z" fill="white"/>
+          <rect x="2" y="3" width="20" height="14" rx="2" stroke="#16a34a" strokeWidth="2" fill="none"/>
+          <path d="M8 21h8M12 17v4" stroke="#16a34a" strokeWidth="2" strokeLinecap="round"/>
+          <rect x="5" y="6" width="6" height="4" rx="1" fill="#16a34a" opacity="0.3"/>
+          <rect x="13" y="6" width="6" height="4" rx="1" fill="#16a34a" opacity="0.3"/>
+          <rect x="5" y="12" width="14" height="2" rx="1" fill="#16a34a" opacity="0.3"/>
         </svg>
       );
     default:
@@ -102,13 +93,13 @@ const PlatformIcon: React.FC<{ platformId: string; className?: string }> = ({ pl
 
 const PLATFORMS: PlatformSpec[] = [
   {
-    id: 'google_pmax',
-    name: 'Google Pmax',
+    id: 'google',
+    name: 'Google',
     color: 'text-blue-700',
     bgColor: 'bg-blue-50',
     borderColor: 'border-blue-200',
     iconColor: 'text-blue-600',
-    description: 'Performance Max campaigns with automated placements across Search, Display, YouTube, Gmail, and Discover.',
+    description: 'Performance Max, Search, YouTube, Gmail, and Discover.',
     assetRequirements: {
       maxImages: 20,
       maxHeadlines: 5,
@@ -123,13 +114,13 @@ const PLATFORMS: PlatformSpec[] = [
     ],
   },
   {
-    id: 'meta_ads',
-    name: 'Meta Ads',
+    id: 'meta',
+    name: 'Meta',
     color: 'text-indigo-700',
     bgColor: 'bg-indigo-50',
     borderColor: 'border-indigo-200',
     iconColor: 'text-indigo-600',
-    description: 'Facebook & Instagram Feed, Stories, Reels, and Audience Network placements.',
+    description: 'Facebook & Instagram Feed, Stories, Reels, and Audience Network.',
     assetRequirements: {
       maxImages: 10,
       maxHeadlines: 5,
@@ -145,12 +136,12 @@ const PLATFORMS: PlatformSpec[] = [
   },
   {
     id: 'tiktok',
-    name: 'TikTok Ads',
+    name: 'TikTok',
     color: 'text-gray-900',
     bgColor: 'bg-gray-50',
     borderColor: 'border-gray-300',
     iconColor: 'text-gray-800',
-    description: 'In-Feed Ads, TopView, and Spark Ads on TikTok\'s For You page.',
+    description: 'In-Feed Ads, TopView, and Spark Ads.',
     assetRequirements: {
       maxImages: 10,
       maxHeadlines: 1,
@@ -164,53 +155,13 @@ const PLATFORMS: PlatformSpec[] = [
     ],
   },
   {
-    id: 'pinterest',
-    name: 'Pinterest Ads',
-    color: 'text-red-700',
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
-    iconColor: 'text-red-600',
-    description: 'Promoted Pins, Idea Pins, and Shopping Ads in Pinterest feeds.',
-    assetRequirements: {
-      maxImages: 5,
-      maxHeadlines: 1,
-      maxDescriptions: 1,
-      logoRequired: false,
-    },
-    ratios: [
-      { ratio: '2:3', label: 'Standard Pin', minWidth: 1000, minHeight: 1500, recommended: '1000×1500', mappedAppRatio: '2:3', importance: 'required' },
-      { ratio: '1:1', label: 'Square Pin', minWidth: 1000, minHeight: 1000, recommended: '1000×1000', mappedAppRatio: '1:1', importance: 'recommended' },
-      { ratio: '9:16', label: 'Idea Pin', minWidth: 1080, minHeight: 1920, recommended: '1080×1920', mappedAppRatio: '9:16', importance: 'optional' },
-    ],
-  },
-  {
-    id: 'linkedin',
-    name: 'LinkedIn Ads',
-    color: 'text-sky-700',
-    bgColor: 'bg-sky-50',
-    borderColor: 'border-sky-200',
-    iconColor: 'text-sky-600',
-    description: 'Sponsored Content, Message Ads, and Dynamic Ads on LinkedIn.',
-    assetRequirements: {
-      maxImages: 5,
-      maxHeadlines: 3,
-      maxDescriptions: 2,
-      logoRequired: true,
-    },
-    ratios: [
-      { ratio: '1.91:1', label: 'Landscape', minWidth: 1200, minHeight: 628, recommended: '1200×628', mappedAppRatio: '1.91:1', importance: 'required' },
-      { ratio: '1:1', label: 'Square', minWidth: 1080, minHeight: 1080, recommended: '1080×1080', mappedAppRatio: '1:1', importance: 'recommended' },
-      { ratio: '4:5', label: 'Portrait', minWidth: 628, minHeight: 785, recommended: '628×785', mappedAppRatio: '4:5', importance: 'optional' },
-    ],
-  },
-  {
-    id: 'dv360',
-    name: 'DV360',
+    id: 'display',
+    name: 'Display',
     color: 'text-green-700',
     bgColor: 'bg-green-50',
     borderColor: 'border-green-200',
     iconColor: 'text-green-600',
-    description: 'Display & Video 360 programmatic campaigns across the open web.',
+    description: 'Programmatic display banners across the open web.',
     assetRequirements: {
       maxImages: 15,
       maxHeadlines: 5,
