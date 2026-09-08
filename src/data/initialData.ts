@@ -5,7 +5,9 @@ export function createEmptyAssetGroup(name = 'Asset Group 1'): AssetGroup {
     id: `ag_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     name,
     folders: {
-      background: [],
+      background_1: [],
+      background_2: [],
+      background_3: [],
       logo_1: [],
       logo_2: [],
       logo_3: [],

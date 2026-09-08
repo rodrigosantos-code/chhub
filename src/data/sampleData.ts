@@ -196,7 +196,7 @@ export const DEFAULT_PROJECT: Project = {
       id: 'ag_summer_26',
       name: 'Colección Verano (SS26)',
       folders: {
-        background: [
+        background_1: [
           {
             id: 'bg_light_1',
             name: 'Estudio Editorial Neutro',
@@ -219,6 +219,8 @@ export const DEFAULT_PROJECT: Project = {
             previewColor: '#FAF5F0',
           },
         ],
+        background_2: [],
+        background_3: [],
         logo_1: [
           {
             id: 'logo_word_dark',
@@ -301,7 +303,7 @@ export const DEFAULT_PROJECT: Project = {
       id: 'ag_winter_essentials',
       name: 'Colección Invierno (Capsule)',
       folders: {
-        background: [
+        background_1: [
           {
             id: 'bg_dark_invierno',
             name: 'Midnight Slate Dark',
@@ -317,6 +319,8 @@ export const DEFAULT_PROJECT: Project = {
             previewColor: '#F0ECE1',
           },
         ],
+        background_2: [],
+        background_3: [],
         logo_1: [
           {
             id: 'logo_word_dark_w',
@@ -401,7 +405,7 @@ export const DEFAULT_PROJECT: Project = {
         {
           id: 'layer_bg',
           name: 'Fondo Principal',
-          folderType: 'background',
+          folderType: 'background_1',
           dynamizationType: 'by_folder',
           visible: true,
           positionsByRatio: {
@@ -512,7 +516,7 @@ export const DEFAULT_PROJECT: Project = {
         {
           id: 'st_bg',
           name: 'Fondo',
-          folderType: 'background',
+          folderType: 'background_1',
           dynamizationType: 'by_folder',
           visible: true,
           positionsByRatio: {

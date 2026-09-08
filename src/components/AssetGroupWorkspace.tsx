@@ -43,7 +43,9 @@ interface AssetGroupWorkspaceProps {
 }
 
 const FIXED_FOLDER_TABS: { key: FolderType; label: string; shortLabel: string; isText: boolean }[] = [
-  { key: 'background', label: 'Fondos', shortLabel: 'BG', isText: false },
+  { key: 'background_1', label: 'Fondos 1', shortLabel: 'BG1', isText: false },
+  { key: 'background_2', label: 'Fondos 2', shortLabel: 'BG2', isText: false },
+  { key: 'background_3', label: 'Fondos 3', shortLabel: 'BG3', isText: false },
   { key: 'logo_1', label: 'Logo Principal', shortLabel: 'L1', isText: false },
   { key: 'logo_2', label: 'Logo Secundario', shortLabel: 'L2', isText: false },
   { key: 'logo_3', label: 'Logo 3', shortLabel: 'L3', isText: false },
@@ -65,7 +67,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   onUpdateAssetGroup,
   onBackToEditor,
 }) => {
-  const [activeTab, setActiveTab] = useState<FolderType>('background');
+  const [activeTab, setActiveTab] = useState<FolderType>('background_1');
   const [newAssetName, setNewAssetName] = useState('');
   const [newAssetUrl, setNewAssetUrl] = useState('');
   const [newAssetTone, setNewAssetTone] = useState<Tone>('dark');
@@ -97,7 +99,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
   // Add Single Item manually
   const handleAddItem = (
-    folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3'
+    folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3'
   ) => {
     if (!newAssetName.trim()) return;
 
@@ -124,7 +126,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
   // Multi-image file upload (Batch processing)
   const handleMultiFileUpload = async (
-    folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3',
+    folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3',
     files: FileList | File[] | null
   ) => {
     if (!files || files.length === 0) return;
@@ -199,7 +201,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
   // Remove Item
   const handleRemoveItem = (
-    folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3',
+    folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3',
     itemId: string
   ) => {
     onUpdateAssetGroup({
@@ -213,7 +215,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
   // Toggle tone
   const handleToggleTone = (
-    folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3',
+    folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3',
     itemId: string
   ) => {
     onUpdateAssetGroup({
@@ -453,7 +455,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     } else {
                       handleMultiFileUpload(
                         tab.key as
-                          | 'background'
+                          | 'background_1' | 'background_2' | 'background_3'
                           | 'logo_1'
                           | 'logo_2'
                           | 'product_image_1'
@@ -474,7 +476,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 <div className="flex items-center gap-2 truncate">
                   {tab.isText ? (
                     <Type className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                  ) : tab.key === 'background' ? (
+                  ) : tab.key .startsWith('background') ? (
                     <ImageIcon className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   ) : (
                     <Folder className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -659,7 +661,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
                     handleMultiFileUpload(
                       activeTab as
-                        | 'background'
+                        | 'background_1' | 'background_2' | 'background_3'
                         | 'logo_1'
                         | 'logo_2'
                         | 'product_image_1'
@@ -706,7 +708,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                       onChange={(e) => {
                         handleMultiFileUpload(
                           activeTab as
-                            | 'background'
+                            | 'background_1' | 'background_2' | 'background_3'
                             | 'logo_1'
                             | 'logo_2'
                             | 'product_image_1'
@@ -734,7 +736,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                   </div>
 
                   {/* Solid Color Background Button */}
-                  {activeTab === 'background' && (
+                  {activeTab .startsWith('background') && (
                     <div className="flex items-center gap-1.5 bg-white border border-gray-300 rounded-lg px-2.5 py-1.5 shadow-2xs">
                       <Palette className="w-3.5 h-3.5 text-gray-500" />
                       <input
@@ -846,7 +848,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     onClick={() =>
                       handleAddItem(
                         activeTab as
-                          | 'background'
+                          | 'background_1' | 'background_2' | 'background_3'
                           | 'logo_1'
                           | 'logo_2'
                           | 'product_image_1'
@@ -879,7 +881,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     {(
                       assetGroup.folders[
                         activeTab as
-                          | 'background'
+                          | 'background_1' | 'background_2' | 'background_3'
                           | 'logo_1'
                           | 'logo_2'
                           | 'product_image_1'
@@ -913,7 +915,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                 alt={item.name}
                                 className="w-full h-full object-contain"
                               />
-                              {activeTab === 'background' && item.focalPoint && (
+                              {activeTab .startsWith('background') && item.focalPoint && (
                                 <div
                                   className="absolute w-1.5 h-1.5 rounded-full bg-orange-500 border border-white shadow-sm pointer-events-none"
                                   style={{
@@ -935,7 +937,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                   onClick={() =>
                                     handleToggleTone(
                                       activeTab as
-                                        | 'background'
+                                        | 'background_1' | 'background_2' | 'background_3'
                                         | 'logo_1'
                                         | 'logo_2'
                                         | 'product_image_1'
@@ -963,7 +965,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                   )}
                                 </button>
 
-                                {activeTab !== 'background' && (
+                                {activeTab .startsWith('background') === false && (
                                   <span className="text-[10px] text-gray-500 truncate">
                                     {oppositeItem ? (
                                       <span className="text-blue-600 font-medium">
@@ -1005,7 +1007,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                             )}
 
                             {/* Crop button for backgrounds */}
-                            {activeTab === 'background' && (
+                            {activeTab .startsWith('background') && (
                               <button
                                 onClick={() => setCropEditorState({
                                   item,
@@ -1024,7 +1026,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               </button>
                             )}
 
-                            {activeTab !== 'background' && (
+                            {activeTab .startsWith('background') === false && (
                               <button
                                 onClick={() => setPairingModalItem(item)}
                                 className={`px-2 py-1 rounded text-[11px] font-medium flex items-center gap-1 border cursor-pointer transition-colors ${
@@ -1040,11 +1042,11 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                             )}
 
                             {/* Negative Fill Color (alternative to pairing) */}
-                            {activeTab !== 'background' && (
+                            {activeTab .startsWith('background') === false && (
                               <div className="flex items-center gap-1">
                                 <button
                                   onClick={() => {
-                                    const folderKey = activeTab as 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                    const folderKey = activeTab as 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
                                     const folder = assetGroup.folders[folderKey];
                                     if (Array.isArray(folder)) {
                                       const updated = folder.map((a: AssetItem) =>
@@ -1072,7 +1074,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                     type="color"
                                     value={item.negativeFillColor}
                                     onChange={(e) => {
-                                      const folderKey = activeTab as 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                      const folderKey = activeTab as 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
                                       const folder = assetGroup.folders[folderKey];
                                       if (Array.isArray(folder)) {
                                         const updated = folder.map((a: AssetItem) =>
@@ -1092,7 +1094,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                               onClick={() =>
                                 handleRemoveItem(
                                   activeTab as
-                                    | 'background'
+                                    | 'background_1' | 'background_2' | 'background_3'
                                     | 'logo_1'
                                     | 'logo_2'
                                     | 'product_image_1'
@@ -1107,7 +1109,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                             </button>
 
                             {/* Edit Focal Point Button (background only) */}
-                            {activeTab === 'background' && (
+                            {activeTab .startsWith('background') && (
                               <button
                                 onClick={() =>
                                   setExpandedFocalItemId(
@@ -1128,7 +1130,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                         </div>
 
                         {/* Ratio status indicators for backgrounds — clickable */}
-                        {activeTab === 'background' && (() => {
+                        {activeTab .startsWith('background') && (() => {
                           const RATIO_DEFS = [
                             { key: 'square' as RatioImageKey, label: '1:1' },
                             { key: 'portrait_4_5' as RatioImageKey, label: '4:5' },
@@ -1241,7 +1243,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                           <button
                                             onClick={() => setCropEditorState({
                                               item,
-                                              folderKey: 'background',
+                                              folderKey: 'background_1',
                                               forRatio: expandedKey,
                                               imageUrl: displayUrl,
                                             })}
@@ -1310,7 +1312,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
 
                         {expandedRatioItemId === item.id &&
-                          (activeTab === 'background' || activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (() => {
+                          (activeTab .startsWith('background') || activeTab === 'product_image_1' || activeTab === 'product_image_2' || activeTab === 'product_image_3') && (() => {
                             const RATIO_DEFS_OVERLAY = [
                               { key: 'square' as RatioImageKey, label: '1:1' },
                               { key: 'portrait_4_5' as RatioImageKey, label: '4:5' },
@@ -1391,7 +1393,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                                   const file = e.target.files?.[0];
                                                   if (file) {
                                                     const dataUrl = await readFileToDataUrl(file);
-                                                    const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                                    const folderKey = activeTab as 'background_1' | 'background_2' | 'background_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
                                                     const folder = assetGroup.folders[folderKey] as AssetItem[];
                                                     const updated = folder.map((a) => {
                                                       if (a.id !== item.id) return a;
@@ -1428,7 +1430,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                                             {isCustom && (
                                               <button
                                                 onClick={() => {
-                                                  const folderKey = activeTab as 'background' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+                                                  const folderKey = activeTab as 'background_1' | 'background_2' | 'background_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
                                                   const folder = assetGroup.folders[folderKey] as AssetItem[];
                                                   const updated = folder.map((a) => {
                                                     if (a.id !== item.id) return a;
@@ -1460,7 +1462,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                         {/* Expandable Focal Point Editor */}
                         {expandedFocalItemId === item.id && (() => {
                           const fp = item.focalPoint || { x: 0.5, y: 0.5 };
-                          const folderKey = activeTab as 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3';
+                          const folderKey = activeTab as 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3' | 'product_image_3';
 
                           const updateFP = (newFP: { x: number; y: number }) => {
                             const folder = assetGroup.folders[folderKey];

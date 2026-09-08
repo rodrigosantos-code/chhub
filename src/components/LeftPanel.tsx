@@ -87,7 +87,9 @@ const FIXED_FOLDER_DEFS: {
   category: 'background' | 'logo' | 'product' | 'text' | 'form';
   desc: string;
 }[] = [
-  { type: 'background', title: 'Background', category: 'background', desc: 'Background images' },
+  { type: 'background_1', title: 'Background 1', category: 'background', desc: 'Primary background images' },
+  { type: 'background_2', title: 'Background 2', category: 'background', desc: 'Secondary background images' },
+  { type: 'background_3', title: 'Background 3', category: 'background', desc: 'Third background images' },
   { type: 'logo_1', title: 'Logo 1 (Logotype)', category: 'logo', desc: 'Primary logotype variants' },
   { type: 'logo_2', title: 'Logo 2 (Symbol)', category: 'logo', desc: 'Isotype or symbol variants' },
   { type: 'logo_3', title: 'Logo 3', category: 'logo', desc: 'Third logotype or variant' },
@@ -165,7 +167,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     } else {
       const newItems = await readMultipleImageFiles(files, 'auto');
       if (newItems.length > 0) {
-        const key = slotType as 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
+        const key = slotType as 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3';
         onUpdateAssetGroup({
           ...assetGroup,
           folders: {
@@ -758,7 +760,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             )}
 
             {/* Subject Position in Composition (background layers only) */}
-            {selectedLayer.folderType === 'background' && (() => {
+            {selectedLayer.folderType .startsWith('background') && (() => {
               const fp = layerPosition.focalPoint || { x: 0.5, y: 0.5 };
               // Show detected asset focal point for reference
               const resolvedLayer = currentVariation?.resolvedLayers[selectedLayer.id];

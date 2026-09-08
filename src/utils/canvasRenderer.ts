@@ -379,7 +379,7 @@ export async function renderVariationOnCanvas(
         const effectiveUrl = getAssetUrlForRatio(asset, ratioKey);
         const img = await preloadImage(effectiveUrl);
         if (img && img.naturalWidth > 0) {
-          const fit = pos.objectFit || (layer.folderType === 'background' ? 'cover' : 'contain');
+          const fit = pos.objectFit || (layer.folderType.startsWith('background') ? 'cover' : 'contain');
           const scaleFactor = (pos.scale !== undefined ? pos.scale : 100) / 100;
           const anchor = getAnchorAlignment(pos.anchorPoint || 'center');
 
@@ -554,7 +554,7 @@ export async function exportAllVariationsZip(
 
   // Detect background tone for a variation
   const getBgTone = (variation: GeneratedVariation): string => {
-    const bgLayer = template.layers.find((l) => l.folderType === 'background');
+    const bgLayer = template.layers.find((l) => l.folderType.startsWith('background'));
     if (bgLayer) {
       const resolved = variation.resolvedLayers[bgLayer.id];
       if (resolved?.resolvedTone) return resolved.resolvedTone;
@@ -663,7 +663,7 @@ export async function exportByPlatformZip(
   };
 
   const getBgTone = (variation: GeneratedVariation): string => {
-    const bgLayer = template.layers.find((l) => l.folderType === 'background');
+    const bgLayer = template.layers.find((l) => l.folderType.startsWith('background'));
     if (bgLayer) {
       const resolved = variation.resolvedLayers[bgLayer.id];
       if (resolved?.resolvedTone) return resolved.resolvedTone;

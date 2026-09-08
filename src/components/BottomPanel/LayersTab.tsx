@@ -133,7 +133,7 @@ export const LayersTab: React.FC<LayersTabProps> = ({
 
               <div>
                 <div className="font-bold text-gray-800 flex items-center gap-1.5">
-                  <span>{layer.name}</span>
+                  <span>{assetGroup?.folderLabels?.[layer.folderType] || layer.name}</span>
                   {!layer.visible && (
                     <span className="text-[9px] bg-gray-100 text-gray-500 px-1 rounded">
                       Oculta

@@ -47,7 +47,7 @@ export const NewTemplateModal: React.FC<NewTemplateModalProps> = ({
         {
           id: `layer_bg_${Date.now()}`,
           name: 'Background',
-          folderType: 'background',
+          folderType: 'background_1',
           dynamizationType: 'by_folder',
           visible: true,
           carouselFixed: templateType === 'carousel' ? true : undefined,

@@ -24,7 +24,7 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
       id: `ag_${Date.now()}`,
       name: name.trim(),
       folders: {
-        background: [
+        background_1: [
           {
             id: `bg_${Date.now()}`,
             name: 'Minimal Grey Background',
@@ -32,6 +32,8 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
             tone: 'light',
           },
         ],
+        background_2: [],
+        background_3: [],
         logo_1: [],
         logo_2: [],
         logo_3: [],

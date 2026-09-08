@@ -15,8 +15,12 @@ export function getFolderItems(
   folderType: FolderType
 ): { items: AssetItem[]; count: number; textStrings?: string[] } {
   switch (folderType) {
-    case 'background':
-      return { items: assetGroup.folders.background, count: assetGroup.folders.background.length };
+    case 'background_1':
+      return { items: assetGroup.folders.background_1, count: assetGroup.folders.background_1.length };
+    case 'background_2':
+      return { items: assetGroup.folders.background_2, count: assetGroup.folders.background_2.length };
+    case 'background_3':
+      return { items: assetGroup.folders.background_3, count: assetGroup.folders.background_3.length };
     case 'logo_1':
       return { items: assetGroup.folders.logo_1, count: assetGroup.folders.logo_1.length };
     case 'logo_2':
@@ -297,7 +301,7 @@ export function generateAllVariations(
 
   // Categorize layers
   const bgLayer = visibleLayers.find(
-    (l) => l.folderType === 'background' && l.dynamizationType === 'by_folder'
+    (l) => l.folderType.startsWith('background') && l.dynamizationType === 'by_folder'
   );
   const contrastLayers = visibleLayers.filter((l) => l.dynamizationType === 'by_contrast' && !l.conditionalRule);
   const conditionalLayers = visibleLayers.filter((l) => l.conditionalRule != null);
@@ -311,7 +315,7 @@ export function generateAllVariations(
     (l) =>
       l.dynamizationType === 'by_folder' &&
       !isLogoFolder(l.folderType) &&
-      l.folderType !== 'background' &&
+      !l.folderType.startsWith('background') &&
       !l.conditionalRule
   );
 

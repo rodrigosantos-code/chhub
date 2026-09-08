@@ -71,7 +71,10 @@ function migrateProject(proj: any): Project {
           ...ag,
           folders: {
             ...ag.folders,
-            background: ag.folders.background ?? [],
+            // Migrate old 'background' to 'background_1'
+            background_1: ag.folders.background_1 ?? ag.folders.background ?? [],
+            background_2: ag.folders.background_2 ?? [],
+            background_3: ag.folders.background_3 ?? [],
             logo_1: ag.folders.logo_1 ?? [],
             logo_2: ag.folders.logo_2 ?? [],
             logo_3: ag.folders.logo_3 ?? [],
@@ -94,6 +97,8 @@ function migrateProject(proj: any): Project {
       templateType: tpl.templateType || 'single',
       layers: (tpl.layers || []).map((l: any) => ({
         ...l,
+        // Migrate old 'background' folderType to 'background_1'
+        folderType: l.folderType === 'background' ? 'background_1' : l.folderType,
         dynamizationType: l.dynamizationType === 'conditional' ? 'by_folder' : l.dynamizationType,
       })),
     })),
@@ -536,7 +541,9 @@ export default function App() {
   // Add Layer
   const handleAddLayer = (folderType: FolderType) => {
     const layerNames: Record<FolderType, string> = {
-      background: 'Background',
+      background_1: 'Background 1',
+      background_2: 'Background 2',
+      background_3: 'Background 3',
       logo_1: 'Logotype 1',
       logo_2: 'Logotype 2 (Isotype)',
       logo_3: 'Logotype 3',
@@ -554,7 +561,7 @@ export default function App() {
 
     const isText = folderType.startsWith('texto');
     const isLogo = folderType.startsWith('logo');
-    const isBg = folderType === 'background';
+    const isBg = folderType.startsWith('background');
     const isForm = folderType.startsWith('form');
 
     const defaultPositions: Partial<Record<AspectRatioKey, any>> = {
@@ -619,12 +626,13 @@ export default function App() {
     // In carousel mode, auto-assign new variable layers to the current slide
     const isCarousel = activeTemplate.templateType === 'carousel';
 
-    // In carousel mode, if same folderType already exists, append slide label
-    let layerName = layerNames[folderType];
+    // Use custom folder label from the active asset group if available
+    const customLabel = activeAssetGroup?.folderLabels?.[folderType];
+    let layerName = customLabel || layerNames[folderType];
     if (isCarousel) {
       const existingCount = activeTemplate.layers.filter(l => l.folderType === folderType).length;
       if (existingCount > 0) {
-        layerName = `${layerNames[folderType]} (S${currentSlideIndex + 1})`;
+        layerName = `${customLabel || layerNames[folderType]} (S${currentSlideIndex + 1})`;
       }
     }
 
@@ -900,7 +908,9 @@ export default function App() {
       ...item,
       id: `asset_${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 6)}`,
     }));
-    clonedGroup.folders.background = regenIds(clonedGroup.folders.background);
+    clonedGroup.folders.background_1 = regenIds(clonedGroup.folders.background_1);
+    clonedGroup.folders.background_2 = regenIds(clonedGroup.folders.background_2);
+    clonedGroup.folders.background_3 = regenIds(clonedGroup.folders.background_3);
     clonedGroup.folders.logo_1 = regenIds(clonedGroup.folders.logo_1);
     clonedGroup.folders.logo_2 = regenIds(clonedGroup.folders.logo_2);
     clonedGroup.folders.product_image_1 = regenIds(clonedGroup.folders.product_image_1);

@@ -42,7 +42,9 @@ interface DynamizationTabProps {
 }
 
 const FOLDER_OPTIONS: { value: FolderType; label: string }[] = [
-  { value: 'background', label: 'background' },
+  { value: 'background_1', label: 'background_1' },
+  { value: 'background_2', label: 'background_2' },
+  { value: 'background_3', label: 'background_3' },
   { value: 'logo_1', label: 'logo_1 (Logotipo)' },
   { value: 'logo_2', label: 'logo_2 (Symbol)' },
   { value: 'logo_3', label: 'logo_3 (Logo 3)' },
@@ -135,7 +137,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
           const otherLayers = activeLayers.filter((l) => l.id !== layer.id);
           const currentCount = getFolderItems(assetGroup, layer.folderType).count;
           const isTextLayer = layer.folderType.startsWith('texto');
-          const isBgLayer = layer.folderType === 'background';
+          const isBgLayer = layer.folderType .startsWith('background');
 
           // Text dynamization defaults
           const textSettings: TextDynamizationSettings = layer.textDynamization || {
@@ -458,7 +460,7 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           onUpdateLayerDynamization(layer.id, layer.dynamizationType, undefined);
                         } else {
                           // Add conditional rule with defaults
-                          const bgLayer = activeLayers.find((l) => l.folderType === 'background');
+                          const bgLayer = activeLayers.find((l) => l.folderType .startsWith('background'));
                           onUpdateLayerDynamization(layer.id, layer.dynamizationType, {
                             dependsOnLayerId: bgLayer?.id || otherLayers[0]?.id || '',
                             condition: 'resolved_tone_is_dark',

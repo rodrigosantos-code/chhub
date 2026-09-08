@@ -131,7 +131,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
       const deltaPercentY = (deltaY / meta.height) * 100;
 
       if (isDragging) {
-        const isBackground = selectedLayer?.folderType === 'background';
+        const isBackground = selectedLayer?.folderType .startsWith('background');
         const newX = isBackground
           ? Math.max(0, Math.min(100 - dragStart.layerW, dragStart.layerX + deltaPercentX))
           : Math.round((dragStart.layerX + deltaPercentX) * 100) / 100;
@@ -640,7 +640,7 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
                 )}
 
                 {/* Focal Point Visual Indicator on Canvas (background only) */}
-                {isSelected && layer.folderType === 'background' && (
+                {isSelected && layer.folderType .startsWith('background') && (
                   <div
                     className="absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 z-40"
                     style={{

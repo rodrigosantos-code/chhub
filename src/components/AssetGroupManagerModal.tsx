@@ -33,7 +33,9 @@ interface AssetGroupManagerModalProps {
 }
 
 const FIXED_FOLDER_TABS: { key: FolderType; label: string; isText: boolean }[] = [
-  { key: 'background', label: 'background', isText: false },
+  { key: 'background_1', label: 'background_1', isText: false },
+  { key: 'background_2', label: 'background_2', isText: false },
+  { key: 'background_3', label: 'background_3', isText: false },
   { key: 'logo_1', label: 'logo_1', isText: false },
   { key: 'logo_2', label: 'logo_2', isText: false },
   { key: 'logo_3', label: 'logo_3', isText: false },
@@ -52,7 +54,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
   onClose,
   onUpdateAssetGroup,
 }) => {
-  const [activeTab, setActiveTab] = useState<FolderType>('background');
+  const [activeTab, setActiveTab] = useState<FolderType>('background_1');
   const [newAssetName, setNewAssetName] = useState('');
   const [newAssetUrl, setNewAssetUrl] = useState('');
   const [newAssetTone, setNewAssetTone] = useState<Tone>('dark');
@@ -67,7 +69,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
   const currentTabMeta = FIXED_FOLDER_TABS.find((t) => t.key === activeTab)!;
 
   // Add new image asset
-  const handleAddAsset = (folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3') => {
+  const handleAddAsset = (folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3') => {
     if (!newAssetName.trim()) return;
 
     const newItem: AssetItem = {
@@ -92,7 +94,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
   };
 
   // Remove asset
-  const handleRemoveAsset = (folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3', assetId: string) => {
+  const handleRemoveAsset = (folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3', assetId: string) => {
     const updated = assetGroup.folders[folderKey].filter((a) => a.id !== assetId);
     onUpdateAssetGroup({
       ...assetGroup,
@@ -104,7 +106,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
   };
 
   // Update tone of asset (claro ↔ oscuro)
-  const handleToggleTone = (folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3', assetId: string) => {
+  const handleToggleTone = (folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3', assetId: string) => {
     const updated = assetGroup.folders[folderKey].map((a) => {
       if (a.id === assetId) {
         return { ...a, tone: (a.tone === 'dark' ? 'light' : 'dark') as Tone };
@@ -168,7 +170,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
 
   // Batch Image Upload
   const handleBatchImageUpload = async (
-    folderKey: 'background' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3',
+    folderKey: 'background_1' | 'background_2' | 'background_3' | 'logo_1' | 'logo_2' | 'logo_3' | 'product_image_1' | 'product_image_2' | 'product_image_3',
     files: FileList | File[] | null
   ) => {
     if (!files || files.length === 0) return;
@@ -473,7 +475,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                         onClick={() =>
                           handleAddAsset(
                             activeTab as
-                              | 'background'
+                              | 'background_1' | 'background_2' | 'background_3'
                               | 'logo_1'
                               | 'logo_2'
                               | 'product_image_1'
@@ -526,7 +528,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                                   onClick={() =>
                                     handleToggleTone(
                                       activeTab as
-                                        | 'background'
+                                        | 'background_1' | 'background_2' | 'background_3'
                                         | 'logo_1'
                                         | 'logo_2'
                                         | 'product_image_1'
@@ -555,7 +557,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                                 </button>
 
                                 {/* Opposite Pairing Info (Section 6.1) */}
-                                {activeTab !== 'background' && (
+                                {activeTab .startsWith('background') === false && (
                                   <div className="text-[10px]">
                                     {oppositeItem ? (
                                       <span className="flex items-center gap-1 text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
@@ -573,7 +575,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
 
                           <div className="flex items-center gap-2">
                             {/* Pair Opposite Button */}
-                            {activeTab !== 'background' && (
+                            {activeTab .startsWith('background') === false && (
                               <button
                                 onClick={() => setPairingModalItem(item)}
                                 className="px-2.5 py-1 rounded bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 flex items-center gap-1 text-[11px] cursor-pointer"
@@ -588,7 +590,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                               onClick={() =>
                                 handleRemoveAsset(
                                   activeTab as
-                                    | 'background'
+                                    | 'background_1' | 'background_2' | 'background_3'
                                     | 'logo_1'
                                     | 'logo_2'
                                     | 'product_image_1'

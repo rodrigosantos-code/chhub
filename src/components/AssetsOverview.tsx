@@ -37,7 +37,7 @@ export const AssetsOverview: React.FC<AssetsOverviewProps> = ({
   const countAssets = (ag: AssetGroup) => {
     let images = 0;
     let texts = 0;
-    const imageFolders: (keyof typeof ag.folders)[] = ['background', 'logo_1', 'logo_2', 'logo_3', 'product_image_1', 'product_image_2', 'product_image_3'];
+    const imageFolders: (keyof typeof ag.folders)[] = ['background_1', 'background_2', 'background_3', 'logo_1', 'logo_2', 'logo_3', 'product_image_1', 'product_image_2', 'product_image_3'];
     const textFolders: (keyof typeof ag.folders)[] = ['texto_1', 'texto_2', 'texto_3', 'texto_4'];
     for (const k of imageFolders) {
       images += (ag.folders[k] as AssetItem[]).length;
@@ -55,7 +55,7 @@ export const AssetsOverview: React.FC<AssetsOverviewProps> = ({
 
   // Get first background image as preview
   const getPreviewUrl = (ag: AssetGroup): string | null => {
-    const bg = ag.folders.background;
+    const bg = ag.folders.background_1;
     if (bg.length > 0 && bg[0].url) return bg[0].url;
     const logo = ag.folders.logo_1;
     if (logo.length > 0 && logo[0].url) return logo[0].url;

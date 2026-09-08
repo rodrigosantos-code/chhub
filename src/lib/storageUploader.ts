@@ -62,7 +62,7 @@ export async function uploadProjectAssets(project: any): Promise<any> {
 
   for (const ag of clone.assetGroups || []) {
     const imageFolders = [
-      'background', 'logo_1', 'logo_2', 'logo_3',
+      'background_1', 'background_2', 'background_3', 'logo_1', 'logo_2', 'logo_3',
       'product_image_1', 'product_image_2', 'product_image_3',
     ];
 

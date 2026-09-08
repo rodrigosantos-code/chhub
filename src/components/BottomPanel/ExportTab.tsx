@@ -242,7 +242,7 @@ export const ExportTab: React.FC<ExportTabProps> = ({
           {variations.map((v, i) => {
             const isSelected = i === currentVariationIndex;
             const layerValues = Object.values(v.resolvedLayers) as ResolvedLayerValue[];
-            const bgResolved = layerValues.find((l) => l.folderUsed === 'background');
+            const bgResolved = layerValues.find((l) => l.folderUsed .startsWith('background'));
             const textResolved = layerValues.find((l) => l.textValue);
             const logoResolved = layerValues.find((l) => l.folderUsed.startsWith('logo'));
 

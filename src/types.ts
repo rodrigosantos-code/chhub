@@ -1,5 +1,7 @@
 export type FolderType =
-  | 'background'
+  | 'background_1'
+  | 'background_2'
+  | 'background_3'
   | 'logo_1'
   | 'logo_2'
   | 'logo_3'
@@ -102,7 +104,9 @@ export interface AssetGroup {
   /** Custom display labels per folder key. Falls back to default if not set. */
   folderLabels?: Partial<Record<FolderType, string>>;
   folders: {
-    background: AssetItem[];
+    background_1: AssetItem[];
+    background_2: AssetItem[];
+    background_3: AssetItem[];
     logo_1: AssetItem[];
     logo_2: AssetItem[];
     logo_3: AssetItem[];
