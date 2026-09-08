@@ -38,6 +38,7 @@ interface DynamizationTabProps {
     layerId: string,
     updates: Partial<TextDynamizationSettings>
   ) => void;
+  currentSlideIndex?: number;
 }
 
 const FOLDER_OPTIONS: { value: FolderType; label: string }[] = [
@@ -68,9 +69,22 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
   onSelectLayer,
   onUpdateLayerDynamization,
   onUpdateTextDynamization,
+  currentSlideIndex,
 }) => {
   const cycleInfo = detectCircularDependency(template.layers);
-  const activeLayers = template.layers.filter((l) => l.visible);
+  const isCarousel = template.templateType === 'carousel';
+  const slideIdx = currentSlideIndex ?? 0;
+
+  // In carousel mode, only show layers visible on the current slide
+  const activeLayers = template.layers.filter((l) => {
+    if (!l.visible) return false;
+    if (!isCarousel) return true;
+    // Fixed layers are always visible
+    if (l.carouselFixed) return true;
+    // Variable layers: only if assigned to current slide
+    const slides = l.visibleOnSlides ?? [0];
+    return slides.includes(slideIdx);
+  });
 
   return (
     <div className="h-full overflow-y-auto px-4 py-3 text-xs space-y-3 bg-white text-gray-800">
@@ -102,6 +116,17 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
           </p>
         </div>
       </div>
+
+      {/* Carousel Slide Indicator */}
+      {isCarousel && (
+        <div className="bg-purple-50 border border-purple-200 p-2.5 rounded-lg flex items-center gap-2">
+          <Sparkles className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+          <span className="text-[11px] text-purple-800">
+            Mostrando dinamización de <strong>Slide {slideIdx + 1}</strong> — {activeLayers.length} capa{activeLayers.length !== 1 ? 's' : ''} en este slide.
+            Cambia de slide para configurar las capas de otros slides.
+          </span>
+        </div>
+      )}
 
       {/* Layers Dynamization Table */}
       <div className="space-y-3">

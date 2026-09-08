@@ -176,6 +176,7 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             onSelectLayer={onSelectLayer}
             onUpdateLayerDynamization={onUpdateLayerDynamization}
             onUpdateTextDynamization={onUpdateTextDynamization}
+            currentSlideIndex={currentSlideIndex}
           />
         )}
 
