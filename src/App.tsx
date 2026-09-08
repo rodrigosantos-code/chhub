@@ -330,6 +330,7 @@ export default function App() {
 
   const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
   const [currentVariationIndex, setCurrentVariationIndex] = useState<number>(0);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
 
   // Modals
   const [isAssetManagerOpen, setIsAssetManagerOpen] = useState(false);
@@ -933,20 +934,48 @@ export default function App() {
                 onUpdateAssetGroup={handleUpdateAssetGroup}
               />
 
-              {/* Right Panel: Interactive Canvas Area */}
-              <CanvasArea
-                template={activeTemplate}
-                assetGroup={activeAssetGroup}
-                selectedRatio={selectedRatio}
-                variations={allVariations}
-                currentVariationIndex={currentVariationIndex}
-                selectedLayerId={selectedLayerId}
-                onSelectVariationIndex={setCurrentVariationIndex}
-                onSelectRatio={setSelectedRatio}
-                onSelectLayer={setSelectedLayerId}
-                onUpdateLayerPosition={handleUpdateLayerPosition}
-                onUpdateLayer={handleUpdateLayer}
-              />
+              {/* Right Panel: Canvas Area + Carousel Nav */}
+              <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Carousel Slide Navigator */}
+                {activeTemplate.templateType === 'carousel' && activeTemplate.slideCount && (
+                  <div className="flex items-center justify-center gap-2 px-4 py-2 bg-violet-50/80 border-b border-violet-200">
+                    <span className="text-[10px] font-bold text-violet-600 uppercase tracking-wider mr-2">
+                      Slide
+                    </span>
+                    {Array.from({ length: activeTemplate.slideCount }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentSlideIndex(i)}
+                        className={`w-8 h-8 rounded-lg text-xs font-bold cursor-pointer transition-all ${
+                          currentSlideIndex === i
+                            ? 'bg-violet-600 text-white shadow-md scale-110'
+                            : 'bg-white text-violet-700 border border-violet-300 hover:bg-violet-100'
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                    <span className="text-[10px] text-violet-500 ml-2">
+                      de {activeTemplate.slideCount}
+                    </span>
+                  </div>
+                )}
+
+                {/* Interactive Canvas Area */}
+                <CanvasArea
+                  template={activeTemplate}
+                  assetGroup={activeAssetGroup}
+                  selectedRatio={selectedRatio}
+                  variations={allVariations}
+                  currentVariationIndex={currentVariationIndex}
+                  selectedLayerId={selectedLayerId}
+                  onSelectVariationIndex={setCurrentVariationIndex}
+                  onSelectRatio={setSelectedRatio}
+                  onSelectLayer={setSelectedLayerId}
+                  onUpdateLayerPosition={handleUpdateLayerPosition}
+                  onUpdateLayer={handleUpdateLayer}
+                />
+              </div>
             </div>
 
             {/* Resize Handle */}
