@@ -23,11 +23,13 @@ import {
   Image as ImageIcon,
   Crosshair,
   Palette,
+  Layers,
 } from 'lucide-react';
 import { Crop } from 'lucide-react';
 import { AssetItem, AssetGroup, FolderType, Tone, RatioImages, RatioImageKey, CropData } from '../types';
 import { readMultipleImageFiles, readTextFiles } from '../utils/fileUploader';
 import { CropEditorModal } from './CropEditorModal';
+import { MatchComparisonModal } from './MatchComparisonModal';
 import { processImageFile } from '../utils/imageConverter';
 
 interface AssetGroupWorkspaceProps {
@@ -86,6 +88,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
   const [renamingFolderKey, setRenamingFolderKey] = useState<FolderType | null>(null);
   const [renamingFolderValue, setRenamingFolderValue] = useState('');
   const [solidColor, setSolidColor] = useState('#000000');
+  const [showMatchModal, setShowMatchModal] = useState(false);
 
   const getTabLabel = (tab: typeof FIXED_FOLDER_TABS[number]) => assetGroup.folderLabels?.[tab.key] || tab.label;
   const currentTabMeta = FIXED_FOLDER_TABS.find((t) => t.key === activeTab)!;
@@ -723,6 +726,23 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                       </button>
                     </div>
                   )}
+
+                  {/* Matcheo Visual Button (logos + overlays, 2+ items) */}
+                  {(activeTab.startsWith('logo') || activeTab.startsWith('product_image')) && (() => {
+                    const folderItems = assetGroup.folders[activeTab as keyof typeof assetGroup.folders];
+                    const imageItems = Array.isArray(folderItems) ? folderItems.filter((i: any) => i.url) : [];
+                    if (imageItems.length < 2) return null;
+                    return (
+                      <button
+                        type="button"
+                        onClick={() => setShowMatchModal(true)}
+                        className="flex items-center gap-1.5 bg-violet-50 border border-violet-300 rounded-lg px-3 py-1.5 shadow-2xs text-violet-700 font-bold text-[11px] hover:bg-violet-100 cursor-pointer transition-colors"
+                      >
+                        <Layers className="w-3.5 h-3.5" />
+                        Matcheo Visual
+                      </button>
+                    );
+                  })()}
                 </div>
 
                 {uploadFeedback && (
@@ -1659,6 +1679,21 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
           onClose={() => setCropEditorState(null)}
         />
       )}
+
+      {/* Match Comparison Modal */}
+      {showMatchModal && (() => {
+        const folderItems = assetGroup.folders[activeTab as keyof typeof assetGroup.folders];
+        const imageItems = Array.isArray(folderItems)
+          ? (folderItems as AssetItem[]).filter((i) => i.url)
+          : [];
+        return (
+          <MatchComparisonModal
+            items={imageItems}
+            folderLabel={getTabLabel(currentTabMeta)}
+            onClose={() => setShowMatchModal(false)}
+          />
+        );
+      })()}
     </div>
   );
 };
