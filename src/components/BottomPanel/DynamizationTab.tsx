@@ -237,7 +237,8 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                         <button
                           onClick={() => {
                             const folderKey = layer.folderType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
-                            const firstFileId = assetGroup.folders[folderKey]?.files[0]?.id ?? '';
+                            const f = assetGroup.folders[folderKey] as any;
+                            const firstFileId = f?.files?.[0]?.id ?? '';
                             onUpdateTextDynamization(layer.id, {
                               dynamicContent: false,
                               fixedTextFileId: textSettings.fixedTextFileId ?? firstFileId,
@@ -275,13 +276,14 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           >
                             {(() => {
                               const folderKey = layer.folderType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
-                              const folder = assetGroup.folders[folderKey];
-                              if (!folder || !folder.files || folder.files.length === 0) {
+                              const folder = assetGroup.folders[folderKey] as any;
+                              const files = folder?.files && Array.isArray(folder.files) ? folder.files : [];
+                              if (files.length === 0) {
                                 return <option value="">No hay archivos disponibles</option>;
                               }
-                              return folder.files.map((f) => (
+                              return files.map((f: any) => (
                                 <option key={f.id} value={f.id}>
-                                  {f.fileName} ({f.variations.length} variaciones)
+                                  {f.fileName} ({f.variations?.length || 0} variaciones)
                                 </option>
                               ));
                             })()}

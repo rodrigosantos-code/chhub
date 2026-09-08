@@ -43,8 +43,12 @@ export const AssetsOverview: React.FC<AssetsOverviewProps> = ({
       images += (ag.folders[k] as AssetItem[]).length;
     }
     for (const k of textFolders) {
-      const folder = ag.folders[k] as { files: { variations: string[] }[] };
-      texts += folder.files.reduce((sum, f) => sum + f.variations.length, 0);
+      const folder = ag.folders[k] as any;
+      if (folder?.files && Array.isArray(folder.files)) {
+        texts += folder.files.reduce((sum: number, f: any) => sum + (f.variations?.length || 0), 0);
+      } else if (folder?.variations) {
+        texts += folder.variations.length;
+      }
     }
     return { images, texts };
   };

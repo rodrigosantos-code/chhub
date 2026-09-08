@@ -429,7 +429,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
           {FIXED_FOLDER_TABS.map((tab) => {
             const count = tab.isText
-              ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.reduce((sum, f) => sum + f.variations.length, 0)
+              ? (() => { const f = assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'] as any; return f?.files ? f.files.reduce((s: number, fi: any) => s + (fi.variations?.length || 0), 0) : (f?.variations?.length || 0); })()
               : (assetGroup.folders[tab.key as keyof typeof assetGroup.folders] as AssetItem[]).length;
             const isSelected = activeTab === tab.key;
             const isDraggingOver = dragOverSidebarTab === tab.key;
@@ -532,7 +532,10 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
         {/* Right Detail Pane */}
         <div className="flex-1 bg-white border border-gray-200 rounded-xl p-5 shadow-xs overflow-y-auto space-y-5">
           {/* Text Editor */}
-          {currentTabMeta.isText ? (
+          {currentTabMeta.isText ? (() => {
+            const textFolder = assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'] as any;
+            const textFiles = textFolder?.files && Array.isArray(textFolder.files) ? textFolder.files : [];
+            return (
             <div className="space-y-4 max-w-3xl">
               {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
@@ -542,7 +545,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                     Carpeta: <code>{activeTab}</code>
                   </span>
                   <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2.5 py-1 rounded">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.length} archivos
+                    {textFiles.length} archivos
                   </span>
                 </div>
                 <button
@@ -561,7 +564,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
               )}
 
               {/* Files list */}
-              {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.length === 0 ? (
+              {textFiles.length === 0 ? (
                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center space-y-3">
                   <FileText className="w-8 h-8 text-gray-300 mx-auto" />
                   <p className="text-xs text-gray-400">
@@ -570,7 +573,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.map((file) => (
+                  {textFiles.map((file: any) => (
                     <div key={file.id} className="bg-white border border-gray-200 rounded-xl p-4 space-y-3 shadow-xs">
                       {/* File header */}
                       <div className="flex items-center justify-between">
@@ -639,7 +642,8 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 </div>
               )}
             </div>
-          ) : (
+            );
+          })() : (
             /* Image / Logo / Background Editor */
             <div className="space-y-6 max-w-4xl">
               {/* Multi-file Drag & Drop & Upload Zone */}
