@@ -143,7 +143,8 @@ export interface LayerRatioSettings {
 }
 
 export interface TextDynamizationSettings {
-  dynamicContent: boolean; // Cycles through phrases from .txt file if true; if false, static text
+  dynamicContent: boolean; // true = 'por carpeta' (cycles all), false = 'por archivo' (specific)
+  fixedTextIndex?: number; // When dynamicContent=false, which variant index to use
   contrastColorEnabled: boolean; // Activa cambio de color por contraste con el fondo
   contrastTextColor: string; // Color al que cambiar por contraste (ej. '#FFFFFF')
 }

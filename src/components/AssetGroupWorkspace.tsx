@@ -562,18 +562,49 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
               {/* Badges */}
               <div>
-                <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">
-                  Generated variants ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length}):
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                    Generated variants ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length}):
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newText = prompt('Nuevo texto:');
+                      if (newText && newText.trim()) {
+                        const folderKey = activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
+                        const existing = assetGroup.folders[folderKey];
+                        const newContent = existing.content
+                          ? existing.content + ', ' + newText.trim()
+                          : newText.trim();
+                        handleUpdateTextFolder(folderKey, newContent);
+                      }
+                    }}
+                    className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
+                  >
+                    <Plus className="w-3 h-3" /> Añadir texto
+                  </button>
                 </div>
                 {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.map((v, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-xs flex items-center gap-2"
+                        className="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-xs flex items-center gap-2 group"
                       >
                         <span className="text-[10px] font-mono text-blue-600 font-bold">#{i + 1}</span>
                         <span>{v}</span>
+                        <button
+                          onClick={() => {
+                            const folderKey = activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
+                            const existing = assetGroup.folders[folderKey];
+                            const updatedVariations = existing.variations.filter((_, idx) => idx !== i);
+                            const newContent = updatedVariations.join(', ');
+                            handleUpdateTextFolder(folderKey, newContent);
+                          }}
+                          className="ml-1 text-gray-300 hover:text-red-500 cursor-pointer transition-colors opacity-0 group-hover:opacity-100"
+                          title="Eliminar"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
                       </span>
                     ))}
                   </div>

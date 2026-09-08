@@ -348,7 +348,8 @@ export function generateAllVariations(
     // Text layers
     if (layer.folderType.startsWith('texto')) {
       if (layer.textDynamization?.dynamicContent === false) {
-        const singleText = info.textStrings?.[0] || 'Text';
+        const idx = layer.textDynamization.fixedTextIndex ?? 0;
+        const singleText = info.textStrings?.[idx] ?? info.textStrings?.[0] ?? 'Text';
         return [{ layer, text: singleText }];
       }
       if (info.textStrings && info.textStrings.length > 0) {

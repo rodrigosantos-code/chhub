@@ -215,34 +215,77 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           <Type className="w-3.5 h-3.5 text-blue-600" />
                           1. Content Dynamization
                         </span>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={textSettings.dynamicContent}
-                            onChange={(e) =>
-                              onUpdateTextDynamization(layer.id, {
-                                dynamicContent: e.target.checked,
-                              })
-                            }
-                            className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
-                          />
-                          <span className={`text-[11px] font-bold ${textSettings.dynamicContent ? 'text-blue-600' : 'text-gray-400'}`}>
-                            {textSettings.dynamicContent ? 'Enabled' : 'Fixed (1st phrase)'}
-                          </span>
-                        </label>
                       </div>
 
-                      <p className="text-[11px] text-gray-500 leading-relaxed">
-                        {textSettings.dynamicContent ? (
-                          <span>
-                            Uses phrases from file <strong className="text-gray-800">{layer.folderType}.txt</strong>. Generates <strong>{currentCount} variations</strong> of text.
-                          </span>
-                        ) : (
-                          <span>
-                            Static text: uses the first phrase from the file without multiplying the number of variations.
-                          </span>
-                        )}
-                      </p>
+                      {/* Mode selector: Por carpeta / Por archivo */}
+                      <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg border border-gray-200">
+                        <button
+                          onClick={() =>
+                            onUpdateTextDynamization(layer.id, {
+                              dynamicContent: true,
+                            })
+                          }
+                          className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer ${
+                            textSettings.dynamicContent
+                              ? 'bg-blue-600 text-white font-bold shadow-xs'
+                              : 'text-gray-500 hover:text-gray-900'
+                          }`}
+                        >
+                          <FolderSync className="w-3 h-3" />
+                          Por carpeta
+                        </button>
+                        <button
+                          onClick={() =>
+                            onUpdateTextDynamization(layer.id, {
+                              dynamicContent: false,
+                              fixedTextIndex: textSettings.fixedTextIndex ?? 0,
+                            })
+                          }
+                          className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer ${
+                            !textSettings.dynamicContent
+                              ? 'bg-amber-600 text-white font-bold shadow-xs'
+                              : 'text-gray-500 hover:text-gray-900'
+                          }`}
+                        >
+                          <Type className="w-3 h-3" />
+                          Por archivo
+                        </button>
+                      </div>
+
+                      {textSettings.dynamicContent ? (
+                        <p className="text-[11px] text-gray-500 leading-relaxed">
+                          Usa todas las frases de <strong className="text-gray-800">{layer.folderType}.txt</strong>. Genera <strong>{currentCount} variaciones</strong> de texto.
+                        </p>
+                      ) : (
+                        <div className="space-y-2">
+                          <p className="text-[11px] text-gray-500 leading-relaxed">
+                            Texto fijo: selecciona qué frase usar de <strong className="text-gray-800">{layer.folderType}</strong>.
+                          </p>
+                          {/* Dropdown to pick specific text */}
+                          <select
+                            value={textSettings.fixedTextIndex ?? 0}
+                            onChange={(e) =>
+                              onUpdateTextDynamization(layer.id, {
+                                fixedTextIndex: Number(e.target.value),
+                              })
+                            }
+                            className="w-full bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-gray-900 focus:border-amber-500 outline-none cursor-pointer"
+                          >
+                            {(() => {
+                              const folderKey = layer.folderType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
+                              const folder = assetGroup.folders[folderKey];
+                              if (!folder || !folder.variations || folder.variations.length === 0) {
+                                return <option value={0}>No hay textos disponibles</option>;
+                              }
+                              return folder.variations.map((v, i) => (
+                                <option key={i} value={i}>
+                                  #{i + 1} — {v}
+                                </option>
+                              ));
+                            })()}
+                          </select>
+                        </div>
+                      )}
                     </div>
 
                     {/* Option 2: Color (Siempre por Contraste) */}
