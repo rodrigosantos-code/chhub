@@ -57,14 +57,30 @@ export const LayersTab: React.FC<LayersTabProps> = ({
     );
   }
 
+  // In carousel mode, filter layers: fixed always show, variable only on assigned slides
+  const visibleLayers = isCarousel
+    ? layers.filter((l) => {
+        if (l.carouselFixed) return true; // fixed always visible
+        const assigned = l.visibleOnSlides ?? [0];
+        return assigned.includes(currentSlideIndex ?? 0);
+      })
+    : layers;
+
   // Display top of stack (highest z-index) first
-  const displayLayers = [...layers].reverse();
+  const displayLayers = [...visibleLayers].reverse();
 
   return (
     <div className="h-full overflow-y-auto px-5 py-3 space-y-1.5 text-xs bg-white text-gray-800">
       <div className="flex items-center justify-between text-[10px] uppercase font-bold text-gray-400 tracking-wider pb-1 border-b border-gray-100">
-        <span>Stacking Order (z-index: Top → Bottom)</span>
-        <span>{layers.length} layers</span>
+        <span>
+          Stacking Order (z-index: Top → Bottom)
+          {isCarousel && (
+            <span className="ml-2 text-violet-500 normal-case">
+              · Slide {(currentSlideIndex ?? 0) + 1}
+            </span>
+          )}
+        </span>
+        <span>{visibleLayers.length} layers{isCarousel && ` / ${layers.length} total`}</span>
       </div>
 
       {displayLayers.map((layer, index) => {
