@@ -98,8 +98,6 @@ const FIXED_FOLDER_DEFS: {
   { type: 'texto_2', title: 'Text 2 (Subtitle)', category: 'text', desc: 'Secondary text file' },
   { type: 'texto_3', title: 'Text 3', category: 'text', desc: 'Third text field' },
   { type: 'texto_4', title: 'Text 4', category: 'text', desc: 'Fourth text field' },
-  { type: 'texto_5', title: 'Text 5', category: 'text', desc: 'Fifth text field' },
-  { type: 'texto_6', title: 'Text 6', category: 'text', desc: 'Sixth text field' },
   { type: 'form_1', title: 'Form 1', category: 'form', desc: 'Shape (rectangle, circle, etc.)' },
   { type: 'form_2', title: 'Form 2', category: 'form', desc: 'Shape (rectangle, circle, etc.)' },
   { type: 'form_3', title: 'Form 3', category: 'form', desc: 'Shape (rectangle, circle, etc.)' },
@@ -147,7 +145,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     if (category === 'text') {
       const phrases = await readTextFiles(files);
       if (phrases.length > 0) {
-        const key = slotType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4' | 'texto_5' | 'texto_6';
+        const key = slotType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
         const existing = assetGroup.folders[key].variations;
         const combined = Array.from(new Set([...existing, ...phrases]));
         onUpdateAssetGroup({

@@ -39,6 +39,8 @@ interface CanvasAreaProps {
     ratio: AspectRatioKey,
     updates: Partial<TemplateLayer['positionsByRatio'][AspectRatioKey]>
   ) => void;
+  onUpdateLayer?: (layerId: string, updates: Partial<TemplateLayer>) => void;
+  currentSlideIndex?: number;
 }
 
 export const CanvasArea: React.FC<CanvasAreaProps> = ({
@@ -52,6 +54,8 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
   onSelectRatio,
   onSelectLayer,
   onUpdateLayerPosition,
+  onUpdateLayer,
+  currentSlideIndex = 0,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -72,8 +76,8 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
   // Render on canvas whenever variation, template, ratio or asset group changes
   useEffect(() => {
     if (!canvasRef.current || !currentVariation) return;
-    renderVariationOnCanvas(canvasRef.current, currentVariation, template, selectedRatio, 1080);
-  }, [currentVariation, template, selectedRatio, assetGroup]);
+    renderVariationOnCanvas(canvasRef.current, currentVariation, template, selectedRatio, 1080, currentSlideIndex);
+  }, [currentVariation, template, selectedRatio, assetGroup, currentSlideIndex]);
 
   // Adjust zoom to fit container on mount or ratio change
   useEffect(() => {
@@ -557,6 +561,9 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
           {/* Interactive Bounding Box Overlays for Layers */}
           {template.layers.map((layer) => {
             if (!layer.visible) return null;
+            // Carousel: non-fixed layers hidden on non-zero slides
+            const isCarousel = template.templateType === 'carousel';
+            if (isCarousel && !layer.carouselFixed && currentSlideIndex > 0) return null;
             const isSelected = layer.id === selectedLayerId;
             const pos = layer.positionsByRatio[selectedRatio] || layer.positionsByRatio['1:1'];
 

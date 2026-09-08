@@ -150,7 +150,8 @@ export async function renderVariationOnCanvas(
   variation: GeneratedVariation,
   template: MasterTemplate,
   ratioKey: AspectRatioKey,
-  targetWidth?: number
+  targetWidth?: number,
+  currentSlideIndex?: number
 ) {
   const meta = ASPECT_RATIOS[ratioKey] || ASPECT_RATIOS['1:1'];
   const baseW = targetWidth || meta.width;
@@ -172,6 +173,10 @@ export async function renderVariationOnCanvas(
   // Render layers in stack order
   for (const layer of template.layers) {
     if (!layer.visible) continue;
+    // Carousel: skip non-fixed layers on non-first slides
+    const isCarousel = template.templateType === 'carousel';
+    const slideIdx = currentSlideIndex ?? 0;
+    if (isCarousel && !layer.carouselFixed && slideIdx > 0) continue;
 
     const resolved = variation.resolvedLayers[layer.id];
     if (!resolved) continue;

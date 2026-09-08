@@ -50,8 +50,6 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
         },
         texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
         texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
-        texto_5: { fileName: 'texto_5.txt', content: '', variations: [] },
-        texto_6: { fileName: 'texto_6.txt', content: '', variations: [] },
       },
     };
 

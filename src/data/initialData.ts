@@ -32,16 +32,6 @@ export function createEmptyAssetGroup(name = 'Asset Group 1'): AssetGroup {
         content: '',
         variations: [],
       },
-      texto_5: {
-        fileName: 'texto_5.txt',
-        content: '',
-        variations: [],
-      },
-      texto_6: {
-        fileName: 'texto_6.txt',
-        content: '',
-        variations: [],
-      },
     },
   };
 }
