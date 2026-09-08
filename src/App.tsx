@@ -616,9 +616,21 @@ export default function App() {
       },
     };
 
+    // In carousel mode, auto-assign new variable layers to the current slide
+    const isCarousel = activeTemplate.templateType === 'carousel';
+
+    // In carousel mode, if same folderType already exists, append slide label
+    let layerName = layerNames[folderType];
+    if (isCarousel) {
+      const existingCount = activeTemplate.layers.filter(l => l.folderType === folderType).length;
+      if (existingCount > 0) {
+        layerName = `${layerNames[folderType]} (S${currentSlideIndex + 1})`;
+      }
+    }
+
     const newLayer: TemplateLayer = {
       id: `layer_${Date.now()}`,
-      name: layerNames[folderType],
+      name: layerName,
       folderType,
       dynamizationType: isForm ? 'by_contrast' : isText ? 'by_folder' : folderType.startsWith('logo') ? 'by_contrast' : 'by_folder',
       textDynamization: isText
@@ -642,6 +654,8 @@ export default function App() {
         : undefined,
       visible: true,
       positionsByRatio: defaultPositions,
+      // Carousel: assign variable layers to current slide only
+      ...(isCarousel && !isBg ? { visibleOnSlides: [currentSlideIndex], carouselFixed: false } : {}),
     };
 
     updateActiveTemplate((t) => ({

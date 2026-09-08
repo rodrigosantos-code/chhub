@@ -160,11 +160,14 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                         </div>
                         <div className="space-y-1.5">
                           {project.assetGroups.map((ag) => {
-                            const bgCount = ag.folders.background.length;
-                            const logoCount = ag.folders.logo_1.length + ag.folders.logo_2.length + ag.folders.logo_3.length;
-                            const productCount = ag.folders.product_image_1.length + ag.folders.product_image_2.length + ag.folders.product_image_3.length;
+                            const bgCount = ag.folders.background?.length || 0;
+                            const logoCount = (ag.folders.logo_1?.length || 0) + (ag.folders.logo_2?.length || 0) + (ag.folders.logo_3?.length || 0);
+                            const productCount = (ag.folders.product_image_1?.length || 0) + (ag.folders.product_image_2?.length || 0) + (ag.folders.product_image_3?.length || 0);
                             const textCount = [ag.folders.texto_1, ag.folders.texto_2, ag.folders.texto_3, ag.folders.texto_4]
-                              .filter((t) => t.variations.length > 0).length;
+                              .filter((t: any) => {
+                                if (t?.files && Array.isArray(t.files)) return t.files.some((f: any) => f.variations?.length > 0);
+                                return t?.variations?.length > 0;
+                              }).length;
 
                             return (
                               <button
