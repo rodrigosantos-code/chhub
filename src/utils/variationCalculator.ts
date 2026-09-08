@@ -29,21 +29,13 @@ export function getFolderItems(
       return { items: assetGroup.folders.product_image_2, count: assetGroup.folders.product_image_2.length };
     case 'product_image_3':
       return { items: assetGroup.folders.product_image_3, count: assetGroup.folders.product_image_3.length };
-    case 'texto_1': {
-      const vars = assetGroup.folders.texto_1.variations.filter((v) => v.trim().length > 0);
-      return { items: [], count: vars.length, textStrings: vars };
-    }
-    case 'texto_2': {
-      const vars = assetGroup.folders.texto_2.variations.filter((v) => v.trim().length > 0);
-      return { items: [], count: vars.length, textStrings: vars };
-    }
-    case 'texto_3': {
-      const vars = assetGroup.folders.texto_3.variations.filter((v) => v.trim().length > 0);
-      return { items: [], count: vars.length, textStrings: vars };
-    }
+    case 'texto_1':
+    case 'texto_2':
+    case 'texto_3':
     case 'texto_4': {
-      const vars = assetGroup.folders.texto_4.variations.filter((v) => v.trim().length > 0);
-      return { items: [], count: vars.length, textStrings: vars };
+      const folder = assetGroup.folders[folderType];
+      const allVars = folder.files.flatMap((f) => f.variations.filter((v) => v.trim().length > 0));
+      return { items: [], count: allVars.length, textStrings: allVars };
     }
     case 'form_1':
     case 'form_2':
@@ -348,9 +340,16 @@ export function generateAllVariations(
     // Text layers
     if (layer.folderType.startsWith('texto')) {
       if (layer.textDynamization?.dynamicContent === false) {
-        const idx = layer.textDynamization.fixedTextIndex ?? 0;
-        const singleText = info.textStrings?.[idx] ?? info.textStrings?.[0] ?? 'Text';
-        return [{ layer, text: singleText }];
+        // 'Por archivo' mode: use variations from a specific file
+        const folderKey = layer.folderType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
+        const folder = assetGroup.folders[folderKey];
+        const fileId = layer.textDynamization.fixedTextFileId;
+        const file = fileId ? folder.files.find((f) => f.id === fileId) : folder.files[0];
+        const vars = file ? file.variations.filter((v) => v.trim().length > 0) : [];
+        if (vars.length > 0) {
+          return vars.map((t) => ({ layer, text: t }));
+        }
+        return [{ layer, text: file?.variations[0] || 'Text' }];
       }
       if (info.textStrings && info.textStrings.length > 0) {
         return info.textStrings.map((t) => ({ layer, text: t }));

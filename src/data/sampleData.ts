@@ -281,27 +281,20 @@ export const DEFAULT_PROJECT: Project = {
           },
         ],
         product_image_3: [],
-        texto_1: {
+        texto_1: { files: [{
+          id: 'tf_sample_1a',
           fileName: 'titulares_verano.txt',
           content: 'Nueva Colección SS26, Esencia Minimalista, 20% en Lanzamiento, Diseñado para Durar',
-          variations: [
-            'Nueva Colección SS26',
-            'Esencia Minimalista',
-            '20% en Lanzamiento',
-            'Diseñado para Durar',
-          ],
-        },
-        texto_2: {
+          variations: ['Nueva Colección SS26', 'Esencia Minimalista', '20% en Lanzamiento', 'Diseñado para Durar'],
+        }] },
+        texto_2: { files: [{
+          id: 'tf_sample_1b',
           fileName: 'subtitulos_promo.txt',
           content: 'Disponibilidad Limitada, Envío Gratuito 24h, Exclusivo en Web',
-          variations: [
-            'Disponibilidad Limitada',
-            'Envío Gratuito 24h',
-            'Exclusivo en Web',
-          ],
-        },
-        texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
-        texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
+          variations: ['Disponibilidad Limitada', 'Envío Gratuito 24h', 'Exclusivo en Web'],
+        }] },
+        texto_3: { files: [] },
+        texto_4: { files: [] },
       },
     },
     {
@@ -380,18 +373,20 @@ export const DEFAULT_PROJECT: Project = {
           },
         ],
         product_image_3: [],
-        texto_1: {
+        texto_1: { files: [{
+          id: 'tf_sample_2a',
           fileName: 'titulares_invierno.txt',
           content: 'Cápsula Invierno 2026, Estilo Atemporal, Edición Limitada',
           variations: ['Cápsula Invierno 2026', 'Estilo Atemporal', 'Edición Limitada'],
-        },
-        texto_2: {
+        }] },
+        texto_2: { files: [{
+          id: 'tf_sample_2b',
           fileName: 'subtitulos_invierno.txt',
           content: 'Exclusivo Miembros VIP, Envío Urgente Incluido',
           variations: ['Exclusivo Miembros VIP', 'Envío Urgente Incluido'],
-        },
-        texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
-        texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
+        }] },
+        texto_3: { files: [] },
+        texto_4: { files: [] },
       },
     },
   ],

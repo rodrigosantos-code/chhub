@@ -12,26 +12,10 @@ export function createEmptyAssetGroup(name = 'Asset Group 1'): AssetGroup {
       product_image_1: [],
       product_image_2: [],
       product_image_3: [],
-      texto_1: {
-        fileName: 'titulares.txt',
-        content: '',
-        variations: [],
-      },
-      texto_2: {
-        fileName: 'subtitulos.txt',
-        content: '',
-        variations: [],
-      },
-      texto_3: {
-        fileName: 'texto_3.txt',
-        content: '',
-        variations: [],
-      },
-      texto_4: {
-        fileName: 'texto_4.txt',
-        content: '',
-        variations: [],
-      },
+      texto_1: { files: [] },
+      texto_2: { files: [] },
+      texto_3: { files: [] },
+      texto_4: { files: [] },
     },
   };
 }

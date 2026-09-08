@@ -149,24 +149,19 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
     setPairingModalItem(null);
   };
 
-  // Update text folder (.txt comma-separated)
-  const handleUpdateTextFolder = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', newContent: string) => {
-    const vars = newContent
-      .split(',')
-      .map((v) => v.trim())
-      .filter((v) => v.length > 0);
-
-    const updatedText: TextFolderData = {
-      ...assetGroup.folders[folderKey],
-      content: newContent,
-      variations: vars,
-    };
-
+  // Update text file in a folder
+  const handleUpdateTextFile = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', fileId: string, newContent: string) => {
+    const vars = newContent.split(',').map((v) => v.trim()).filter((v) => v.length > 0);
+    const folder = assetGroup.folders[folderKey];
     onUpdateAssetGroup({
       ...assetGroup,
       folders: {
         ...assetGroup.folders,
-        [folderKey]: updatedText,
+        [folderKey]: {
+          files: folder.files.map((f) =>
+            f.id === fileId ? { ...f, content: newContent, variations: vars } : f
+          ),
+        },
       },
     });
   };
@@ -212,17 +207,18 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
     try {
       const phrases = await readTextFiles(files);
       if (phrases.length > 0) {
-        const existing = assetGroup.folders[folderKey].variations;
-        const combined = Array.from(new Set([...existing, ...phrases]));
+        const folder = assetGroup.folders[folderKey];
+        const newFile = {
+          id: `tf_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
+          fileName: files[0] instanceof File ? files[0].name : 'imported.txt',
+          content: phrases.join(', '),
+          variations: phrases,
+        };
         onUpdateAssetGroup({
           ...assetGroup,
           folders: {
             ...assetGroup.folders,
-            [folderKey]: {
-              ...assetGroup.folders[folderKey],
-              content: combined.join(', '),
-              variations: combined,
-            },
+            [folderKey]: { files: [...folder.files, newFile] },
           },
         });
         setUploadFeedback(`${phrases.length} phrases imported!`);
@@ -273,7 +269,7 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
             {FIXED_FOLDER_TABS.map((tab) => {
               const isSelected = activeTab === tab.key;
               const count = tab.isText
-                ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length
+                ? (assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'] as { files: any[] }).files.reduce((sum, f) => sum + f.variations.length, 0)
                 : (assetGroup.folders[tab.key as keyof typeof assetGroup.folders] as AssetItem[]).length;
 
               return (
@@ -308,34 +304,18 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
           </div>
 
           {/* Folder Content Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-white">
-            {/* Text Folder Editor (.txt with comma-separated variations) */}
-            {currentTabMeta.isText ? (
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+            {currentTabMeta?.isText ? (
+              /* Text Folder Editor — multi-file */
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText className="w-4 h-4 text-blue-600" />
                     <span className="font-bold text-gray-800">
-                      Single file: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
+                      Carpeta: <code>{activeTab}</code>
                     </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label className="cursor-pointer text-blue-600 hover:text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors">
-                      <Upload className="w-3.5 h-3.5" />
-                      <span>Importar .txt</span>
-                      <input
-                        type="file"
-                        accept=".txt,text/plain"
-                        multiple
-                        onChange={(e) => {
-                          handleTextFileUpload(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.files);
-                          e.target.value = '';
-                        }}
-                        className="hidden"
-                      />
-                    </label>
                     <span className="text-[11px] text-gray-500 font-mono bg-gray-100 px-2 py-0.5 rounded">
-                      {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variations
+                      {(assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'] as { files: any[] }).files.length} archivos
                     </span>
                   </div>
                 </div>
@@ -347,37 +327,40 @@ export const AssetGroupManagerModal: React.FC<AssetGroupManagerModalProps> = ({
                   </div>
                 )}
 
-                <div className="bg-gray-50 p-2.5 rounded-lg border border-gray-200 text-[11px] text-gray-600">
-                  Enter text variants separated by commas or import files <code>.txt</code>. Each line or phrase will generate a dynamic variation.
-                </div>
-
-                <textarea
-                  rows={4}
-                  value={assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].content}
-                  onChange={(e) =>
-                    handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.value)
-                  }
-                  placeholder="Escribe variantes separadas por comas..."
-                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 font-sans text-xs focus:border-blue-500 outline-none leading-relaxed"
-                />
-
-                {/* Parsed Variation Badges */}
-                <div>
-                  <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1.5">
-                    Generated variants:
+                {(assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'] as { files: any[] }).files.length === 0 ? (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center text-xs text-gray-400">
+                    No hay archivos. Crea archivos desde el workspace principal.
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.map((v, i) => (
-                      <span
-                        key={i}
-                        className="px-2.5 py-1 rounded-md bg-gray-50 border border-gray-200 text-gray-800 text-xs flex items-center gap-1.5"
-                      >
-                        <span className="text-[9px] font-mono text-blue-600 font-bold">#{i + 1}</span>
-                        <span>{v}</span>
-                      </span>
+                ) : (
+                  <div className="space-y-3">
+                    {(assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'] as { files: any[] }).files.map((file) => (
+                      <div key={file.id} className="bg-white border border-gray-200 rounded-lg p-3 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <FileText className="w-3.5 h-3.5 text-blue-500" />
+                          <span className="font-bold text-xs text-gray-800">{file.fileName}</span>
+                          <span className="text-[10px] font-mono text-gray-400">{file.variations.length} vars</span>
+                        </div>
+                        <textarea
+                          rows={2}
+                          value={file.content}
+                          onChange={(e) =>
+                            handleUpdateTextFile(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', file.id, e.target.value)
+                          }
+                          className="w-full bg-gray-50 border border-gray-200 rounded p-2 text-gray-900 text-xs focus:border-blue-500 outline-none"
+                        />
+                        {file.variations.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {file.variations.map((v: string, i: number) => (
+                              <span key={i} className="px-2 py-0.5 rounded bg-blue-50 border border-blue-100 text-gray-800 text-[10px]">
+                                #{i + 1} {v}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               /* Image / Logo / Product Folder Editor */

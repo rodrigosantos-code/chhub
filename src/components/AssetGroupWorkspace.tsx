@@ -168,20 +168,21 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
     try {
       const phrases = await readTextFiles(files);
       if (phrases.length > 0) {
-        const existing = assetGroup.folders[folderKey].variations;
-        const combined = Array.from(new Set([...existing, ...phrases]));
+        const folder = assetGroup.folders[folderKey];
+        const newFile = {
+          id: `tf_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
+          fileName: files[0] instanceof File ? files[0].name : 'imported.txt',
+          content: phrases.join(', '),
+          variations: phrases,
+        };
         onUpdateAssetGroup({
           ...assetGroup,
           folders: {
             ...assetGroup.folders,
-            [folderKey]: {
-              ...assetGroup.folders[folderKey],
-              content: combined.join(', '),
-              variations: combined,
-            },
+            [folderKey]: { files: [...folder.files, newFile] },
           },
         });
-        setUploadFeedback(`${phrases.length} phrases imported successfully!`);
+        setUploadFeedback(`${phrases.length} phrases imported as new file!`);
         setTimeout(() => setUploadFeedback(null), 4000);
       } else {
         setUploadFeedback('No phrases found in the .txt file');
@@ -243,22 +244,49 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
     });
   };
 
-  // Update Text Folder
-  const handleUpdateTextFolder = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', rawContent: string) => {
-    const variations = rawContent
-      .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-
+  // Update a specific text file within a folder
+  const handleUpdateTextFile = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', fileId: string, rawContent: string) => {
+    const variations = rawContent.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+    const folder = assetGroup.folders[folderKey];
     onUpdateAssetGroup({
       ...assetGroup,
       folders: {
         ...assetGroup.folders,
         [folderKey]: {
-          ...assetGroup.folders[folderKey],
-          content: rawContent,
-          variations,
+          files: folder.files.map((f) =>
+            f.id === fileId ? { ...f, content: rawContent, variations } : f
+          ),
         },
+      },
+    });
+  };
+
+  // Add a new text file to a folder
+  const handleAddTextFile = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4') => {
+    const folder = assetGroup.folders[folderKey];
+    const newFile = {
+      id: `tf_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
+      fileName: `archivo_${folder.files.length + 1}.txt`,
+      content: '',
+      variations: [],
+    };
+    onUpdateAssetGroup({
+      ...assetGroup,
+      folders: {
+        ...assetGroup.folders,
+        [folderKey]: { files: [...folder.files, newFile] },
+      },
+    });
+  };
+
+  // Delete a text file from a folder
+  const handleDeleteTextFile = (folderKey: 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', fileId: string) => {
+    const folder = assetGroup.folders[folderKey];
+    onUpdateAssetGroup({
+      ...assetGroup,
+      folders: {
+        ...assetGroup.folders,
+        [folderKey]: { files: folder.files.filter((f) => f.id !== fileId) },
       },
     });
   };
@@ -401,7 +429,7 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
           {FIXED_FOLDER_TABS.map((tab) => {
             const count = tab.isText
-              ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length
+              ? assetGroup.folders[tab.key as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.reduce((sum, f) => sum + f.variations.length, 0)
               : (assetGroup.folders[tab.key as keyof typeof assetGroup.folders] as AssetItem[]).length;
             const isSelected = activeTab === tab.key;
             const isDraggingOver = dragOverSidebarTab === tab.key;
@@ -506,32 +534,23 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
           {/* Text Editor */}
           {currentTabMeta.isText ? (
             <div className="space-y-4 max-w-3xl">
+              {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-blue-600" />
                   <span className="font-bold text-sm text-gray-900">
-                    Text File: <code>{assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].fileName}</code>
+                    Carpeta: <code>{activeTab}</code>
                   </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <label className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 cursor-pointer font-medium text-xs transition-colors shadow-2xs">
-                    <Upload className="w-3.5 h-3.5 text-blue-600" />
-                    <span>Upload .txt file(s)</span>
-                    <input
-                      type="file"
-                      accept=".txt,text/plain"
-                      multiple
-                      className="hidden"
-                      onChange={(e) => {
-                        handleTextFileUpload(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.files);
-                        e.target.value = '';
-                      }}
-                    />
-                  </label>
                   <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2.5 py-1 rounded">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length} variations
+                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.length} archivos
                   </span>
                 </div>
+                <button
+                  onClick={() => handleAddTextFile(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 cursor-pointer font-bold text-xs transition-colors"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Nuevo archivo
+                </button>
               </div>
 
               {uploadFeedback && (
@@ -541,79 +560,84 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
                 </div>
               )}
 
-              <div className="bg-blue-50/50 border border-blue-100 p-3 rounded-lg text-xs text-gray-700 leading-relaxed">
-                Enter text variants separated by commas or upload one or more <code>.txt</code>. Each phrase will automatically generate a dynamic variant.
-              </div>
-
-              <div>
-                <label className="text-[10px] font-bold uppercase text-gray-500 block mb-1.5">
-                  Text file content (comma separated)
-                </label>
-                <textarea
-                  rows={4}
-                  value={assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].content}
-                  onChange={(e) =>
-                    handleUpdateTextFolder(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', e.target.value)
-                  }
-                  placeholder="e.g. Summer sale, New collection 2026, 20% off in store..."
-                  className="w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-900 font-sans text-xs focus:border-blue-500 outline-none leading-relaxed"
-                />
-              </div>
-
-              {/* Badges */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
-                    Generated variants ({assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length}):
-                  </div>
-                  <button
-                    onClick={() => {
-                      const newText = prompt('Nuevo texto:');
-                      if (newText && newText.trim()) {
-                        const folderKey = activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
-                        const existing = assetGroup.folders[folderKey];
-                        const newContent = existing.content
-                          ? existing.content + ', ' + newText.trim()
-                          : newText.trim();
-                        handleUpdateTextFolder(folderKey, newContent);
-                      }
-                    }}
-                    className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-[10px] font-bold cursor-pointer transition-colors"
-                  >
-                    <Plus className="w-3 h-3" /> Añadir texto
-                  </button>
-                </div>
-                {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].variations.map((v, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-800 text-xs flex items-center gap-2 group"
-                      >
-                        <span className="text-[10px] font-mono text-blue-600 font-bold">#{i + 1}</span>
-                        <span>{v}</span>
-                        <button
-                          onClick={() => {
-                            const folderKey = activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
-                            const existing = assetGroup.folders[folderKey];
-                            const updatedVariations = existing.variations.filter((_, idx) => idx !== i);
-                            const newContent = updatedVariations.join(', ');
-                            handleUpdateTextFolder(folderKey, newContent);
-                          }}
-                          className="ml-1 text-gray-300 hover:text-red-500 cursor-pointer transition-colors opacity-0 group-hover:opacity-100"
-                          title="Eliminar"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 italic">
-                    Write comma-separated text above or upload a .txt file to generate variations.
+              {/* Files list */}
+              {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.length === 0 ? (
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center space-y-3">
+                  <FileText className="w-8 h-8 text-gray-300 mx-auto" />
+                  <p className="text-xs text-gray-400">
+                    No hay archivos en esta carpeta. Crea uno con el botón <strong>"+ Nuevo archivo"</strong>.
                   </p>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {assetGroup.folders[activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4'].files.map((file) => (
+                    <div key={file.id} className="bg-white border border-gray-200 rounded-xl p-4 space-y-3 shadow-xs">
+                      {/* File header */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-blue-500" />
+                          <input
+                            type="text"
+                            value={file.fileName}
+                            onChange={(e) => {
+                              const folderKey = activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
+                              const folder = assetGroup.folders[folderKey];
+                              onUpdateAssetGroup({
+                                ...assetGroup,
+                                folders: {
+                                  ...assetGroup.folders,
+                                  [folderKey]: {
+                                    files: folder.files.map((f) =>
+                                      f.id === file.id ? { ...f, fileName: e.target.value } : f
+                                    ),
+                                  },
+                                },
+                              });
+                            }}
+                            className="font-bold text-xs text-gray-900 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-500 outline-none px-1 py-0.5"
+                          />
+                          <span className="text-[10px] font-mono text-gray-400 bg-gray-50 px-2 py-0.5 rounded">
+                            {file.variations.length} vars
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteTextFile(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', file.id)}
+                          className="p-1 text-gray-300 hover:text-red-500 cursor-pointer transition-colors"
+                          title="Eliminar archivo"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Content textarea */}
+                      <textarea
+                        rows={3}
+                        value={file.content}
+                        onChange={(e) =>
+                          handleUpdateTextFile(activeTab as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4', file.id, e.target.value)
+                        }
+                        placeholder="e.g. Summer sale, New collection 2026, 20% off in store..."
+                        className="w-full bg-gray-50 border border-gray-200 rounded-lg p-2.5 text-gray-900 font-sans text-xs focus:border-blue-500 outline-none leading-relaxed"
+                      />
+
+                      {/* Variation badges */}
+                      {file.variations.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {file.variations.map((v, i) => (
+                            <span
+                              key={i}
+                              className="px-2 py-1 rounded bg-blue-50 border border-blue-100 text-gray-800 text-[11px] flex items-center gap-1.5"
+                            >
+                              <span className="text-[9px] font-mono text-blue-600 font-bold">#{i + 1}</span>
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             /* Image / Logo / Background Editor */

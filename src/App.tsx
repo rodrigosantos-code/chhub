@@ -45,16 +45,39 @@ const STORAGE_ACTIVE_PROJ_KEY = 'chhub_active_project_id_v3';
 function migrateProject(proj: any): Project {
   return {
     ...proj,
-    assetGroups: (proj.assetGroups || []).map((ag: any) => ({
-      ...ag,
-      folders: {
-        ...ag.folders,
-        logo_3: ag.folders.logo_3 ?? [],
-        product_image_3: ag.folders.product_image_3 ?? [],
-        texto_3: ag.folders.texto_3 ?? { fileName: 'texto_3.txt', content: '', variations: [] },
-        texto_4: ag.folders.texto_4 ?? { fileName: 'texto_4.txt', content: '', variations: [] },
-      },
-    })),
+    assetGroups: (proj.assetGroups || []).map((ag: any) => {
+      // Migrate text folders from old single-file format to new multi-file format
+      const migrateTextFolder = (folder: any, defaultName: string) => {
+        if (!folder) return { files: [] };
+        // Already migrated (has files array)
+        if (folder.files) return folder;
+        // Old format: { fileName, content, variations }
+        if (folder.fileName || folder.content || folder.variations) {
+          const hasContent = folder.variations?.length > 0 || folder.content?.trim();
+          return {
+            files: hasContent ? [{
+              id: `tf_${Date.now()}_${Math.random().toString(36).substring(2, 5)}`,
+              fileName: folder.fileName || defaultName,
+              content: folder.content || '',
+              variations: folder.variations || [],
+            }] : [],
+          };
+        }
+        return { files: [] };
+      };
+      return {
+        ...ag,
+        folders: {
+          ...ag.folders,
+          logo_3: ag.folders.logo_3 ?? [],
+          product_image_3: ag.folders.product_image_3 ?? [],
+          texto_1: migrateTextFolder(ag.folders.texto_1, 'titulares.txt'),
+          texto_2: migrateTextFolder(ag.folders.texto_2, 'subtitulos.txt'),
+          texto_3: migrateTextFolder(ag.folders.texto_3, 'texto_3.txt'),
+          texto_4: migrateTextFolder(ag.folders.texto_4, 'texto_4.txt'),
+        },
+      };
+    }),
     templates: (proj.templates || []).map((tpl: any) => ({
       ...tpl,
       templateType: tpl.templateType || 'single',

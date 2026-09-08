@@ -85,10 +85,15 @@ export interface AssetItem {
   ratioCropData?: Partial<Record<RatioImageKey, CropData>>;
 }
 
-export interface TextFolderData {
-  fileName: string; // e.g. "titulares.txt"
-  content: string;  // comma-separated values: "Summer sale, New stock, Last units"
+export interface TextFileEntry {
+  id: string;
+  fileName: string;
+  content: string;  // comma-separated values
   variations: string[]; // parsed variations
+}
+
+export interface TextFolderData {
+  files: TextFileEntry[];
 }
 
 export interface AssetGroup {
@@ -143,10 +148,10 @@ export interface LayerRatioSettings {
 }
 
 export interface TextDynamizationSettings {
-  dynamicContent: boolean; // true = 'por carpeta' (cycles all), false = 'por archivo' (specific)
-  fixedTextIndex?: number; // When dynamicContent=false, which variant index to use
-  contrastColorEnabled: boolean; // Activa cambio de color por contraste con el fondo
-  contrastTextColor: string; // Color al que cambiar por contraste (ej. '#FFFFFF')
+  dynamicContent: boolean; // true = 'por carpeta' (all files combined), false = 'por archivo' (specific file)
+  fixedTextFileId?: string; // When dynamicContent=false, which file ID to use
+  contrastColorEnabled: boolean;
+  contrastTextColor: string;
 }
 
 export type ShapeType = 'rectangle' | 'circle' | 'ellipse' | 'line' | 'triangle';

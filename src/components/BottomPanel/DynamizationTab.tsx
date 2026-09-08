@@ -235,12 +235,14 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                           Por carpeta
                         </button>
                         <button
-                          onClick={() =>
+                          onClick={() => {
+                            const folderKey = layer.folderType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
+                            const firstFileId = assetGroup.folders[folderKey]?.files[0]?.id ?? '';
                             onUpdateTextDynamization(layer.id, {
                               dynamicContent: false,
-                              fixedTextIndex: textSettings.fixedTextIndex ?? 0,
-                            })
-                          }
+                              fixedTextFileId: textSettings.fixedTextFileId ?? firstFileId,
+                            });
+                          }}
                           className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer ${
                             !textSettings.dynamicContent
                               ? 'bg-amber-600 text-white font-bold shadow-xs'
@@ -259,14 +261,14 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                       ) : (
                         <div className="space-y-2">
                           <p className="text-[11px] text-gray-500 leading-relaxed">
-                            Texto fijo: selecciona qué frase usar de <strong className="text-gray-800">{layer.folderType}</strong>.
+                            Selecciona qué archivo usar de <strong className="text-gray-800">{layer.folderType}</strong>. Solo se usarán las variaciones de ese archivo.
                           </p>
-                          {/* Dropdown to pick specific text */}
+                          {/* Dropdown to pick specific file */}
                           <select
-                            value={textSettings.fixedTextIndex ?? 0}
+                            value={textSettings.fixedTextFileId ?? ''}
                             onChange={(e) =>
                               onUpdateTextDynamization(layer.id, {
-                                fixedTextIndex: Number(e.target.value),
+                                fixedTextFileId: e.target.value,
                               })
                             }
                             className="w-full bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-xs text-gray-900 focus:border-amber-500 outline-none cursor-pointer"
@@ -274,12 +276,12 @@ export const DynamizationTab: React.FC<DynamizationTabProps> = ({
                             {(() => {
                               const folderKey = layer.folderType as 'texto_1' | 'texto_2' | 'texto_3' | 'texto_4';
                               const folder = assetGroup.folders[folderKey];
-                              if (!folder || !folder.variations || folder.variations.length === 0) {
-                                return <option value={0}>No hay textos disponibles</option>;
+                              if (!folder || !folder.files || folder.files.length === 0) {
+                                return <option value="">No hay archivos disponibles</option>;
                               }
-                              return folder.variations.map((v, i) => (
-                                <option key={i} value={i}>
-                                  #{i + 1} — {v}
+                              return folder.files.map((f) => (
+                                <option key={f.id} value={f.id}>
+                                  {f.fileName} ({f.variations.length} variaciones)
                                 </option>
                               ));
                             })()}

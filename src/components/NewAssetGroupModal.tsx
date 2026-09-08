@@ -38,18 +38,20 @@ export const NewAssetGroupModal: React.FC<NewAssetGroupModalProps> = ({
         product_image_1: [],
         product_image_2: [],
         product_image_3: [],
-        texto_1: {
+        texto_1: { files: [{
+          id: `tf_${Date.now()}_t1`,
           fileName: 'titulares.txt',
           content: 'Big Occasion, Special Selection, Launch',
           variations: ['Big Occasion', 'Special Selection', 'Launch'],
-        },
-        texto_2: {
+        }] },
+        texto_2: { files: [{
+          id: `tf_${Date.now()}_t2`,
           fileName: 'subtitulos.txt',
           content: 'Available for a limited time',
           variations: ['Available for a limited time'],
-        },
-        texto_3: { fileName: 'texto_3.txt', content: '', variations: [] },
-        texto_4: { fileName: 'texto_4.txt', content: '', variations: [] },
+        }] },
+        texto_3: { files: [] },
+        texto_4: { files: [] },
       },
     };
 
