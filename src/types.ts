@@ -10,6 +10,8 @@ export type FolderType =
   | 'texto_2'
   | 'texto_3'
   | 'texto_4'
+  | 'texto_5'
+  | 'texto_6'
   | 'form_1'
   | 'form_2'
   | 'form_3';
@@ -108,6 +110,8 @@ export interface AssetGroup {
     texto_2: TextFolderData;
     texto_3: TextFolderData;
     texto_4: TextFolderData;
+    texto_5: TextFolderData;
+    texto_6: TextFolderData;
   };
 }
 

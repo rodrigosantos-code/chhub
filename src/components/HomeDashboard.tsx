@@ -163,7 +163,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                             const bgCount = ag.folders.background.length;
                             const logoCount = ag.folders.logo_1.length + ag.folders.logo_2.length + ag.folders.logo_3.length;
                             const productCount = ag.folders.product_image_1.length + ag.folders.product_image_2.length + ag.folders.product_image_3.length;
-                            const textCount = [ag.folders.texto_1, ag.folders.texto_2, ag.folders.texto_3, ag.folders.texto_4]
+                            const textCount = [ag.folders.texto_1, ag.folders.texto_2, ag.folders.texto_3, ag.folders.texto_4, ag.folders.texto_5, ag.folders.texto_6]
                               .filter((t) => t.variations.length > 0).length;
 
                             return (

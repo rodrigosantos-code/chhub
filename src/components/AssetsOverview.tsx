@@ -38,7 +38,7 @@ export const AssetsOverview: React.FC<AssetsOverviewProps> = ({
     let images = 0;
     let texts = 0;
     const imageFolders: (keyof typeof ag.folders)[] = ['background', 'logo_1', 'logo_2', 'logo_3', 'product_image_1', 'product_image_2', 'product_image_3'];
-    const textFolders: (keyof typeof ag.folders)[] = ['texto_1', 'texto_2', 'texto_3', 'texto_4'];
+    const textFolders: (keyof typeof ag.folders)[] = ['texto_1', 'texto_2', 'texto_3', 'texto_4', 'texto_5', 'texto_6'];
     for (const k of imageFolders) {
       images += (ag.folders[k] as AssetItem[]).length;
     }

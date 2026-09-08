@@ -53,6 +53,8 @@ function migrateProject(proj: any): Project {
         product_image_3: ag.folders.product_image_3 ?? [],
         texto_3: ag.folders.texto_3 ?? { fileName: 'texto_3.txt', content: '', variations: [] },
         texto_4: ag.folders.texto_4 ?? { fileName: 'texto_4.txt', content: '', variations: [] },
+        texto_5: ag.folders.texto_5 ?? { fileName: 'texto_5.txt', content: '', variations: [] },
+        texto_6: ag.folders.texto_6 ?? { fileName: 'texto_6.txt', content: '', variations: [] },
       },
     })),
     templates: (proj.templates || []).map((tpl: any) => ({
@@ -513,6 +515,8 @@ export default function App() {
       texto_2: 'Text 2 (Subtitle)',
       texto_3: 'Text 3',
       texto_4: 'Text 4',
+      texto_5: 'Text 5',
+      texto_6: 'Text 6',
       form_1: 'Form 1',
       form_2: 'Form 2',
       form_3: 'Form 3',
