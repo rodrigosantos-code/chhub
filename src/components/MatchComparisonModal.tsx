@@ -160,6 +160,8 @@ export const MatchComparisonModal: React.FC<MatchComparisonModalProps> = ({
     });
     onApplyNormalized(updatedItems);
     setApplied(true);
+    // Auto-close after brief feedback
+    setTimeout(() => onClose(), 800);
   };
 
   return (
