@@ -124,7 +124,14 @@ export const TemplatesOverview: React.FC<TemplatesOverviewProps> = ({
                         </button>
                       </div>
                     ) : (
-                      <div className="text-sm font-semibold text-gray-900 truncate">{tpl.name}</div>
+                      <div className="text-sm font-semibold text-gray-900 truncate flex items-center gap-1.5">
+                        {tpl.name}
+                        {tpl.templateType === 'carousel' && (
+                          <span className="text-[9px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-bold shrink-0">
+                            Carrusel · {tpl.slideCount} slides
+                          </span>
+                        )}
+                      </div>
                     )}
 
                     {/* Ratios */}

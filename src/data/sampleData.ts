@@ -400,6 +400,7 @@ export const DEFAULT_PROJECT: Project = {
       id: 'tmpl_editorial_master',
       name: 'Editorial Campaña Principal',
       description: 'Diseño publicitario con fondo dinámico, producto central, logo con contraste automático y copy condicional según el tono.',
+      templateType: 'single',
       activeAspectRatios: ['1:1', '4:5', '9:16'],
       layers: [
         {
@@ -510,6 +511,7 @@ export const DEFAULT_PROJECT: Project = {
       id: 'tmpl_story_special',
       name: 'Story & Reel Drop',
       description: 'Formato vertical optimizado para Stories y TikTok con símbolo de marca y llamado a la acción.',
+      templateType: 'single',
       activeAspectRatios: ['9:16', '1:1'],
       layers: [
         {

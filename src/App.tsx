@@ -57,6 +57,7 @@ function migrateProject(proj: any): Project {
     })),
     templates: (proj.templates || []).map((tpl: any) => ({
       ...tpl,
+      templateType: tpl.templateType || 'single',
       layers: (tpl.layers || []).map((l: any) => ({
         ...l,
         dynamizationType: l.dynamizationType === 'conditional' ? 'by_folder' : l.dynamizationType,
@@ -662,6 +663,15 @@ export default function App() {
     }
   };
 
+  const handleToggleCarouselFixed = (layerId: string) => {
+    updateActiveTemplate((t) => ({
+      ...t,
+      layers: t.layers.map((l) =>
+        l.id === layerId ? { ...l, carouselFixed: !l.carouselFixed } : l
+      ),
+    }));
+  };
+
   // Move Layer (Stack order / z-index)
   const handleMoveLayer = (layerId: string, direction: 'up' | 'down') => {
     updateActiveTemplate((t) => {
@@ -963,6 +973,7 @@ export default function App() {
               onUpdateTextDynamization={handleUpdateTextDynamization}
               onSelectVariationIndex={setCurrentVariationIndex}
               onUpdateAssetGroup={handleUpdateAssetGroup}
+              onToggleCarouselFixed={handleToggleCarouselFixed}
               projectName={currentProject.name}
               height={bottomPanelHeight}
             />

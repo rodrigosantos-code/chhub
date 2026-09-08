@@ -171,13 +171,18 @@ export interface TemplateLayer {
   textDynamization?: TextDynamizationSettings;
   shapeConfig?: ShapeConfig;
   visible: boolean;
+  carouselFixed?: boolean; // true = same content on every slide (carousel only)
   positionsByRatio: Partial<Record<AspectRatioKey, LayerRatioSettings>>;
 }
+
+export type TemplateType = 'single' | 'carousel';
 
 export interface MasterTemplate {
   id: string;
   name: string;
   description?: string;
+  templateType: TemplateType;
+  slideCount?: number; // carousel only: 2-10 slides
   activeAspectRatios: AspectRatioKey[]; // max 3 simultaneous
   layers: TemplateLayer[];
 }

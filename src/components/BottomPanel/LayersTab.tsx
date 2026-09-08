@@ -11,6 +11,8 @@ import {
   Image as ImageIcon,
   Folder,
   Upload,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import { AssetGroup, AssetItem, FolderType, TemplateLayer } from '../../types';
 import { getFolderItems } from '../../utils/variationCalculator';
@@ -20,22 +22,26 @@ interface LayersTabProps {
   layers: TemplateLayer[];
   selectedLayerId: string | null;
   assetGroup?: AssetGroup;
+  isCarousel?: boolean;
   onUpdateAssetGroup?: (group: AssetGroup) => void;
   onSelectLayer: (layerId: string) => void;
   onToggleVisibility: (layerId: string) => void;
   onMoveLayer: (layerId: string, direction: 'up' | 'down') => void;
   onDeleteLayer: (layerId: string) => void;
+  onToggleCarouselFixed?: (layerId: string) => void;
 }
 
 export const LayersTab: React.FC<LayersTabProps> = ({
   layers,
   selectedLayerId,
   assetGroup,
+  isCarousel,
   onUpdateAssetGroup,
   onSelectLayer,
   onToggleVisibility,
   onMoveLayer,
   onDeleteLayer,
+  onToggleCarouselFixed,
 }) => {
   if (layers.length === 0) {
     return (
@@ -139,6 +145,28 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                       : 'By Folder'}
                     {layer.conditionalRule ? ' + Condition' : ''}
                   </span>
+
+                  {/* Carousel Fixed/Variable badge */}
+                  {isCarousel && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleCarouselFixed?.(layer.id);
+                      }}
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 cursor-pointer transition-colors ${
+                        layer.carouselFixed
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
+                          : 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
+                      }`}
+                      title={layer.carouselFixed ? 'Fija: igual en todos los slides' : 'Variable: cambia por slide'}
+                    >
+                      {layer.carouselFixed ? (
+                        <><Lock className="w-2.5 h-2.5" /> Fija</>
+                      ) : (
+                        <><Unlock className="w-2.5 h-2.5" /> Variable</>
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

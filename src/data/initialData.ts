@@ -41,6 +41,7 @@ export function createEmptyTemplate(name = 'Template 1'): MasterTemplate {
     id: `tpl_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     name,
     description: 'Dynamic advertising template',
+    templateType: 'single',
     activeAspectRatios: ['1:1'],
     layers: [],
   };
