@@ -673,6 +673,21 @@ export default function App() {
     }));
   };
 
+  const handleToggleSlideAssignment = (layerId: string, slideIndex: number) => {
+    updateActiveTemplate((t) => ({
+      ...t,
+      layers: t.layers.map((l) => {
+        if (l.id !== layerId) return l;
+        const current = l.visibleOnSlides ?? [0];
+        const isAssigned = current.includes(slideIndex);
+        const updated = isAssigned
+          ? current.filter((s) => s !== slideIndex)
+          : [...current, slideIndex].sort((a, b) => a - b);
+        return { ...l, visibleOnSlides: updated };
+      }),
+    }));
+  };
+
   // Move Layer (Stack order / z-index)
   const handleMoveLayer = (layerId: string, direction: 'up' | 'down') => {
     updateActiveTemplate((t) => {
@@ -1004,6 +1019,8 @@ export default function App() {
               onSelectVariationIndex={setCurrentVariationIndex}
               onUpdateAssetGroup={handleUpdateAssetGroup}
               onToggleCarouselFixed={handleToggleCarouselFixed}
+              onToggleSlideAssignment={handleToggleSlideAssignment}
+              currentSlideIndex={currentSlideIndex}
               projectName={currentProject.name}
               height={bottomPanelHeight}
             />

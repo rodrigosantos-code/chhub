@@ -23,12 +23,15 @@ interface LayersTabProps {
   selectedLayerId: string | null;
   assetGroup?: AssetGroup;
   isCarousel?: boolean;
+  slideCount?: number;
+  currentSlideIndex?: number;
   onUpdateAssetGroup?: (group: AssetGroup) => void;
   onSelectLayer: (layerId: string) => void;
   onToggleVisibility: (layerId: string) => void;
   onMoveLayer: (layerId: string, direction: 'up' | 'down') => void;
   onDeleteLayer: (layerId: string) => void;
   onToggleCarouselFixed?: (layerId: string) => void;
+  onToggleSlideAssignment?: (layerId: string, slideIndex: number) => void;
 }
 
 export const LayersTab: React.FC<LayersTabProps> = ({
@@ -36,12 +39,15 @@ export const LayersTab: React.FC<LayersTabProps> = ({
   selectedLayerId,
   assetGroup,
   isCarousel,
+  slideCount,
+  currentSlideIndex,
   onUpdateAssetGroup,
   onSelectLayer,
   onToggleVisibility,
   onMoveLayer,
   onDeleteLayer,
   onToggleCarouselFixed,
+  onToggleSlideAssignment,
 }) => {
   if (layers.length === 0) {
     return (
@@ -166,6 +172,33 @@ export const LayersTab: React.FC<LayersTabProps> = ({
                         <><Unlock className="w-2.5 h-2.5" /> Variable</>
                       )}
                     </button>
+                  )}
+
+                  {/* Slide assignment pills for variable layers */}
+                  {isCarousel && !layer.carouselFixed && slideCount && (
+                    <div className="flex items-center gap-0.5 ml-1" onClick={(e) => e.stopPropagation()}>
+                      {Array.from({ length: slideCount }, (_, i) => {
+                        const assignedSlides = layer.visibleOnSlides ?? [0];
+                        const isAssigned = assignedSlides.includes(i);
+                        const isCurrent = i === (currentSlideIndex ?? 0);
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => onToggleSlideAssignment?.(layer.id, i)}
+                            className={`w-5 h-5 rounded text-[8px] font-bold cursor-pointer transition-all ${
+                              isAssigned
+                                ? isCurrent
+                                  ? 'bg-violet-600 text-white shadow-sm scale-110'
+                                  : 'bg-violet-100 text-violet-700 border border-violet-300'
+                                : 'bg-gray-100 text-gray-400 border border-gray-200 hover:bg-gray-200'
+                            }`}
+                            title={`Slide ${i + 1}: ${isAssigned ? 'Asignada' : 'No asignada'}`}
+                          >
+                            {i + 1}
+                          </button>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
               </div>

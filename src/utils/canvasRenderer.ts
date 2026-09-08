@@ -173,10 +173,12 @@ export async function renderVariationOnCanvas(
   // Render layers in stack order
   for (const layer of template.layers) {
     if (!layer.visible) continue;
-    // Carousel: skip non-fixed layers on non-first slides
-    const isCarousel = template.templateType === 'carousel';
-    const slideIdx = currentSlideIndex ?? 0;
-    if (isCarousel && !layer.carouselFixed && slideIdx > 0) continue;
+    // Carousel: variable layers only show on explicitly assigned slides
+    if (template.templateType === 'carousel' && !layer.carouselFixed) {
+      const slideIdx = currentSlideIndex ?? 0;
+      const assignedSlides = layer.visibleOnSlides ?? [0];
+      if (!assignedSlides.includes(slideIdx)) continue;
+    }
 
     const resolved = variation.resolvedLayers[layer.id];
     if (!resolved) continue;

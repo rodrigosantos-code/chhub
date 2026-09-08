@@ -172,6 +172,7 @@ export interface TemplateLayer {
   shapeConfig?: ShapeConfig;
   visible: boolean;
   carouselFixed?: boolean; // true = same content on every slide (carousel only)
+  visibleOnSlides?: number[]; // carousel variable layers: which slides this layer appears on
   positionsByRatio: Partial<Record<AspectRatioKey, LayerRatioSettings>>;
 }
 

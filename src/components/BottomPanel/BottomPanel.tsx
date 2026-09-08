@@ -40,6 +40,8 @@ interface BottomPanelProps {
   onSelectVariationIndex: (index: number) => void;
   onUpdateAssetGroup?: (group: AssetGroup) => void;
   onToggleCarouselFixed?: (layerId: string) => void;
+  onToggleSlideAssignment?: (layerId: string, slideIndex: number) => void;
+  currentSlideIndex?: number;
   projectName: string;
   height?: number;
 }
@@ -61,6 +63,8 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
   projectName,
   onUpdateAssetGroup,
   onToggleCarouselFixed,
+  onToggleSlideAssignment,
+  currentSlideIndex,
   height,
 }) => {
   const [activeTab, setActiveTab] = useState<BottomPanelTab>('layers');
@@ -152,12 +156,15 @@ export const BottomPanel: React.FC<BottomPanelProps> = ({
             selectedLayerId={selectedLayerId}
             assetGroup={assetGroup}
             isCarousel={template.templateType === 'carousel'}
+            slideCount={template.slideCount}
+            currentSlideIndex={currentSlideIndex}
             onUpdateAssetGroup={onUpdateAssetGroup}
             onSelectLayer={onSelectLayer}
             onToggleVisibility={onToggleVisibility}
             onMoveLayer={onMoveLayer}
             onDeleteLayer={onDeleteLayer}
             onToggleCarouselFixed={onToggleCarouselFixed}
+            onToggleSlideAssignment={onToggleSlideAssignment}
           />
         )}
 

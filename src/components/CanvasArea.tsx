@@ -561,9 +561,11 @@ export const CanvasArea: React.FC<CanvasAreaProps> = ({
           {/* Interactive Bounding Box Overlays for Layers */}
           {template.layers.map((layer) => {
             if (!layer.visible) return null;
-            // Carousel: non-fixed layers hidden on non-zero slides
-            const isCarousel = template.templateType === 'carousel';
-            if (isCarousel && !layer.carouselFixed && currentSlideIndex > 0) return null;
+            // Carousel: variable layers only show on assigned slides
+            if (template.templateType === 'carousel' && !layer.carouselFixed) {
+              const assignedSlides = layer.visibleOnSlides ?? [0];
+              if (!assignedSlides.includes(currentSlideIndex)) return null;
+            }
             const isSelected = layer.id === selectedLayerId;
             const pos = layer.positionsByRatio[selectedRatio] || layer.positionsByRatio['1:1'];
 
