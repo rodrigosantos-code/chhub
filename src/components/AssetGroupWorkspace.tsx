@@ -1682,7 +1682,8 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
 
       {/* Match Comparison Modal */}
       {showMatchModal && (() => {
-        const folderItems = assetGroup.folders[activeTab as keyof typeof assetGroup.folders];
+        const folderKey = activeTab as keyof typeof assetGroup.folders;
+        const folderItems = assetGroup.folders[folderKey];
         const imageItems = Array.isArray(folderItems)
           ? (folderItems as AssetItem[]).filter((i) => i.url)
           : [];
@@ -1691,6 +1692,20 @@ export const AssetGroupWorkspace: React.FC<AssetGroupWorkspaceProps> = ({
             items={imageItems}
             folderLabel={getTabLabel(currentTabMeta)}
             onClose={() => setShowMatchModal(false)}
+            onApplyNormalized={(updatedItems) => {
+              // Rebuild full folder: update matched items, keep non-image items
+              const fullFolder = assetGroup.folders[folderKey];
+              const newFolder = Array.isArray(fullFolder)
+                ? (fullFolder as AssetItem[]).map((orig) => {
+                    const updated = updatedItems.find((u) => u.id === orig.id);
+                    return updated || orig;
+                  })
+                : fullFolder;
+              onUpdateAssetGroup({
+                ...assetGroup,
+                folders: { ...assetGroup.folders, [folderKey]: newFolder },
+              });
+            }}
           />
         );
       })()}

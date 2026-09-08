@@ -128,3 +128,41 @@ export function drawNormalized(
 
   ctx.drawImage(img, drawX, drawY, drawW, drawH);
 }
+
+/**
+ * Generate a normalized PNG data URL for an image.
+ * The output canvas has the same dimensions as the original, but the content
+ * is re-centered and scaled so its RMS radius matches targetRadius.
+ */
+export function normalizeImageToDataUrl(
+  img: HTMLImageElement,
+  analysis: AlphaAnalysis,
+  targetRadius: number
+): string {
+  // Use the original image dimensions as output canvas
+  const outW = img.naturalWidth;
+  const outH = img.naturalHeight;
+  const canvas = document.createElement('canvas');
+  canvas.width = outW;
+  canvas.height = outH;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return img.src;
+
+  const scale = analysis.rmsRadius > 0 ? targetRadius / analysis.rmsRadius : 1;
+
+  const cx = analysis.centroidX * analysis.width;
+  const cy = analysis.centroidY * analysis.height;
+
+  // Center of output canvas
+  const canvasCx = outW / 2;
+  const canvasCy = outH / 2;
+
+  const drawX = canvasCx - cx * scale;
+  const drawY = canvasCy - cy * scale;
+  const drawW = analysis.width * scale;
+  const drawH = analysis.height * scale;
+
+  ctx.drawImage(img, drawX, drawY, drawW, drawH);
+
+  return canvas.toDataURL('image/png');
+}
